@@ -6,3 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+ureq = { version = "2.3.1", features = ["json"] }
+serde = { version = "1.0.130", features = ["derive"] }
