@@ -32,14 +32,14 @@ fn deserialize(response: ureq::Response) -> Result<Release, ReleaseError> {
 
 #[derive(Debug)]
 pub enum ReleaseError {
-    Http(String, ureq::Error),
+    Http(ureq::Error),
     Json(String),
 }
 
 impl ReleaseError {
     pub fn http_error(error: ureq::Error) -> Self {
         // TODO: should check status code to understand if the repository does not exists
-        Self::Http(error.to_string(), error)
+        Self::Http(error)
     }
 
     pub fn json(error: std::io::Error) -> Self {
@@ -53,7 +53,9 @@ impl ReleaseError {
 impl std::fmt::Display for ReleaseError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ReleaseError::Http(message, _) => f.write_str(message),
+            ReleaseError::Http(e) => {
+                f.write_str(&format!("Error fetching latest release. {}", e.to_string()))
+            }
             ReleaseError::Json(e) => f.write_str(e),
         }
     }
@@ -69,19 +71,21 @@ pub fn download_asset(asset: &Asset) -> Result<impl Read + Send, DownloadAssetEr
 
 #[derive(Debug)]
 pub enum DownloadAssetError {
-    Http(String, ureq::Error),
+    Http(ureq::Error),
 }
 
 impl DownloadAssetError {
     pub fn http_error(error: ureq::Error) -> Self {
-        Self::Http(error.to_string(), error)
+        Self::Http(error)
     }
 }
 
 impl std::fmt::Display for DownloadAssetError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DownloadAssetError::Http(message, _) => f.write_str(message),
+            DownloadAssetError::Http(e) => {
+                f.write_str(&format!("Error downloading asset. {}", e.to_string()))
+            }
         }
     }
 }
