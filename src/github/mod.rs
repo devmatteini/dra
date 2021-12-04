@@ -6,7 +6,7 @@ use crate::github::release::{Asset, Release};
 
 pub mod release;
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct Repository {
     pub owner: String,
     pub repo: String,
