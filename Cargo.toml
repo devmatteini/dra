@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 ureq = { version = "2.3.1", features = ["json"] }
 serde = { version = "1.0.130", features = ["derive"] }
+structopt = "0.3.25"
