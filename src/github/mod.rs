@@ -1,7 +1,8 @@
 use std::fmt::Formatter;
+use std::io::Read;
 use std::time::Duration;
 
-use crate::github::release::Release;
+use crate::github::release::{Asset, Release};
 
 pub mod release;
 
@@ -54,6 +55,33 @@ impl std::fmt::Display for ReleaseError {
         match self {
             ReleaseError::Http(message, _) => f.write_str(message),
             ReleaseError::Json(e) => f.write_str(e),
+        }
+    }
+}
+
+pub fn download_asset(asset: &Asset) -> Result<impl Read + Send, DownloadAssetError> {
+    ureq::get(&asset.download_url)
+        .timeout(Duration::from_secs(5))
+        .call()
+        .map_err(DownloadAssetError::http_error)
+        .map(|response| response.into_reader())
+}
+
+#[derive(Debug)]
+pub enum DownloadAssetError {
+    Http(String, ureq::Error),
+}
+
+impl DownloadAssetError {
+    pub fn http_error(error: ureq::Error) -> Self {
+        Self::Http(error.to_string(), error)
+    }
+}
+
+impl std::fmt::Display for DownloadAssetError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            DownloadAssetError::Http(message, _) => f.write_str(message),
         }
     }
 }
