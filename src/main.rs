@@ -24,5 +24,8 @@ fn handle_error(error: HandlerError) {
             eprintln!("{}", msg);
             exit(1)
         }
+        HandlerError::OperationCancelled(msg) => {
+            println!("Operation cancelled: {}", msg);
+        }
     }
 }
