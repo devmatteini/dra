@@ -1,4 +1,4 @@
-all: build test
+all: format-check build lint test
 
 build:
 	cargo build --all-features
