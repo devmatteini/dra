@@ -63,7 +63,6 @@ impl std::fmt::Display for ReleaseError {
 
 pub fn download_asset(asset: &Asset) -> Result<impl Read + Send, DownloadAssetError> {
     ureq::get(&asset.download_url)
-        .timeout(Duration::from_secs(5))
         .call()
         .map_err(DownloadAssetError::http_error)
         .map(|response| response.into_reader())
