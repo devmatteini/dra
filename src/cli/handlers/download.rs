@@ -43,25 +43,25 @@ impl DownloadHandler {
     fn download_asset(selected_asset: &Asset) -> Result<(), String> {
         let spinner = DownloadSpinner::new(&selected_asset.name);
         spinner.start();
-        let mut stream = github::download_asset(&selected_asset).map_err(|e| e.to_string())?;
+        let mut stream = github::download_asset(selected_asset).map_err(|e| e.to_string())?;
         let mut destination = Self::create_file(&selected_asset.name)?;
         std::io::copy(&mut stream, &mut destination).unwrap();
         spinner.stop();
         Ok(())
     }
 
-    fn create_file(selected_name: &String) -> Result<File, String> {
-        File::create(&selected_name).map_err(|e| e.to_string())
+    fn create_file(selected_name: &str) -> Result<File, String> {
+        File::create(selected_name).map_err(|e| e.to_string())
     }
 
-    fn assets_names(assets: &Vec<Asset>) -> Vec<String> {
+    fn assets_names(assets: &[Asset]) -> Vec<String> {
         assets
             .iter()
             .map(|x| x.name.clone())
             .collect::<Vec<String>>()
     }
 
-    fn find_asset_by_name(name: &String, assets: Vec<Asset>) -> Asset {
-        assets.into_iter().find(|x| &x.name == name).unwrap()
+    fn find_asset_by_name(name: &str, assets: Vec<Asset>) -> Asset {
+        assets.into_iter().find(|x| x.name == name).unwrap()
     }
 }
