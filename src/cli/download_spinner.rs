@@ -29,7 +29,7 @@ impl DownloadSpinner {
         self.pb.enable_steady_tick(TICK_DURATION);
     }
 
-    pub fn finish(&self) {
+    pub fn stop(&self) {
         self.pb.finish_and_clear();
         println!("Download {} completed!", &self.asset_name);
     }

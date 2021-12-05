@@ -46,7 +46,7 @@ impl DownloadHandler {
         let mut stream = github::download_asset(&selected_asset).map_err(|e| e.to_string())?;
         let mut destination = Self::create_file(&selected_asset.name)?;
         std::io::copy(&mut stream, &mut destination).unwrap();
-        spinner.finish();
+        spinner.stop();
         Ok(())
     }
 
