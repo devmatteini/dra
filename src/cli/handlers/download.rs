@@ -1,8 +1,8 @@
 use crate::cli::download_spinner::DownloadSpinner;
-use crate::cli::handlers::HandlerResult;
+use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::github;
 use crate::github::release::{Asset, Release};
-use crate::github::Repository;
+use crate::github::{DownloadAssetError, ReleaseError, Repository};
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Select;
 use std::fs::File;
@@ -23,8 +23,8 @@ impl DownloadHandler {
         Ok(())
     }
 
-    fn fetch_latest_release(&self) -> Result<Release, String> {
-        github::latest_release(&self.repository).map_err(|e| e.to_string())
+    fn fetch_latest_release(&self) -> Result<Release, HandlerError> {
+        github::latest_release(&self.repository).map_err(Self::release_error)
     }
 
     fn ask_select_asset(assets: Vec<Asset>) -> Asset {
@@ -40,18 +40,18 @@ impl DownloadHandler {
         Self::find_asset_by_name(selected_name, assets)
     }
 
-    fn download_asset(selected_asset: &Asset) -> Result<(), String> {
+    fn download_asset(selected_asset: &Asset) -> Result<(), HandlerError> {
         let spinner = DownloadSpinner::new(&selected_asset.name);
         spinner.start();
-        let mut stream = github::download_asset(selected_asset).map_err(|e| e.to_string())?;
+        let mut stream = github::download_asset(selected_asset).map_err(Self::download_error)?;
         let mut destination = Self::create_file(&selected_asset.name)?;
         std::io::copy(&mut stream, &mut destination).unwrap();
         spinner.stop();
         Ok(())
     }
 
-    fn create_file(selected_name: &str) -> Result<File, String> {
-        File::create(selected_name).map_err(|e| e.to_string())
+    fn create_file(selected_name: &str) -> Result<File, HandlerError> {
+        File::create(selected_name).map_err(|e| HandlerError::new(e.to_string()))
     }
 
     fn assets_names(assets: &[Asset]) -> Vec<String> {
@@ -63,5 +63,13 @@ impl DownloadHandler {
 
     fn find_asset_by_name(name: &str, assets: Vec<Asset>) -> Asset {
         assets.into_iter().find(|x| x.name == name).unwrap()
+    }
+
+    fn release_error(e: ReleaseError) -> HandlerError {
+        HandlerError::new(e.to_string())
+    }
+
+    fn download_error(e: DownloadAssetError) -> HandlerError {
+        HandlerError::new(e.to_string())
     }
 }
