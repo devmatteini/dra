@@ -18,7 +18,7 @@ impl DownloadHandler {
 
     pub fn run(&self) -> HandlerResult {
         let release = self.fetch_latest_release()?;
-        let selected_asset = Self::ask_select_asset(release.assets);
+        let selected_asset = Self::ask_select_asset(release.assets)?;
         Self::download_asset(&selected_asset)?;
         Ok(())
     }
@@ -27,17 +27,19 @@ impl DownloadHandler {
         github::latest_release(&self.repository).map_err(Self::release_error)
     }
 
-    fn ask_select_asset(assets: Vec<Asset>) -> Asset {
+    fn ask_select_asset(assets: Vec<Asset>) -> Result<Asset, HandlerError> {
         let items = Self::assets_names(&assets);
         let index = Select::with_theme(&ColorfulTheme::default())
             .with_prompt("Pick the asset to download")
             .default(0)
             .items(&items)
-            // TODO: check out interact_out() to allow user to exit selection and stop download
-            .interact()
-            .unwrap();
-        let selected_name = &items[index];
-        Self::find_asset_by_name(selected_name, assets)
+            .interact_opt()
+            .map_err(|e| HandlerError::new(e.to_string()))?;
+        if index.is_none() {
+            return Err(HandlerError::op_cancelled("No asset selected"));
+        }
+        let selected_name = &items[index.unwrap()];
+        Ok(Self::find_asset_by_name(selected_name, assets))
     }
 
     fn download_asset(selected_asset: &Asset) -> Result<(), HandlerError> {

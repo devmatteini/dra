@@ -12,7 +12,7 @@ impl HandlerError {
         Self::Default(message)
     }
 
-    pub fn op_cancelled(message: String) -> Self {
-        Self::OperationCancelled(message)
+    pub fn op_cancelled(message: &str) -> Self {
+        Self::OperationCancelled(message.to_string())
     }
 }
