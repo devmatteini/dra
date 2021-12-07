@@ -1,10 +1,10 @@
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
-pub struct AssetId(u64);
+pub struct AssetId(pub u64);
 
 #[derive(Deserialize, Debug)]
-pub struct Tag(String);
+pub struct Tag(pub String);
 
 #[derive(Deserialize, Debug)]
 pub struct Asset {
