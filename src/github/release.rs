@@ -6,6 +6,12 @@ pub struct AssetId(pub u64);
 #[derive(Deserialize, Debug)]
 pub struct Tag(pub String);
 
+impl Tag {
+    pub fn version(&self) -> String {
+        self.0.replace("v", "")
+    }
+}
+
 #[derive(Deserialize, Debug)]
 pub struct Asset {
     pub id: AssetId,
