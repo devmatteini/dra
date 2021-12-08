@@ -3,8 +3,16 @@ use crate::github::release::{Asset, Tag};
 pub struct TaggedAsset;
 
 impl TaggedAsset {
+    fn placeholder() -> &'static str {
+        "{tag}"
+    }
+
+    pub fn tag(tag: &Tag, untagged: String) -> String {
+        untagged.replace(Self::placeholder(), &tag.version())
+    }
+
     pub fn untag(tag: &Tag, asset: &Asset) -> String {
-        asset.name.replace(&tag.version(), "{tag}")
+        asset.name.replace(&tag.version(), Self::placeholder())
     }
 }
 
@@ -36,6 +44,34 @@ mod tests {
     #[test]
     fn no_tag_in_asset_name() {
         let result = TaggedAsset::untag(&tag_for("v1.5.3"), &asset_for("file-linux.deb"));
+
+        assert_eq!("file-linux.deb".to_string(), result);
+    }
+
+    #[test]
+    fn tag() {
+        let result = TaggedAsset::tag(&tag_for("1.5.3"), "file-{tag}-linux.deb".to_string());
+
+        assert_eq!("file-1.5.3-linux.deb".to_string(), result);
+    }
+
+    #[test]
+    fn tag_with_vtag() {
+        let result = TaggedAsset::tag(&tag_for("v1.5.3"), "file-v{tag}-linux.deb".to_string());
+
+        assert_eq!("file-v1.5.3-linux.deb".to_string(), result);
+    }
+
+    #[test]
+    fn tag_vtag_without_v_in_file() {
+        let result = TaggedAsset::tag(&tag_for("v1.5.3"), "file-{tag}-linux.deb".to_string());
+
+        assert_eq!("file-1.5.3-linux.deb".to_string(), result);
+    }
+
+    #[test]
+    fn tag_no_tag_in_asset_name() {
+        let result = TaggedAsset::tag(&tag_for("v1.5.3"), "file-linux.deb".to_string());
 
         assert_eq!("file-linux.deb".to_string(), result);
     }
