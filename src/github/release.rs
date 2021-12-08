@@ -1,9 +1,6 @@
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
-pub struct AssetId(pub u64);
-
-#[derive(Deserialize, Debug)]
 pub struct Tag(pub String);
 
 impl Tag {
@@ -14,7 +11,6 @@ impl Tag {
 
 #[derive(Deserialize, Debug)]
 pub struct Asset {
-    pub id: AssetId,
     pub name: String,
     #[serde(rename(deserialize = "browser_download_url"))]
     pub download_url: String,

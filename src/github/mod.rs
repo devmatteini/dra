@@ -94,7 +94,6 @@ pub fn untag_asset(tag: &Tag, asset: &Asset) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::github::release::AssetId;
 
     #[test]
     fn replace_tag() {
@@ -130,7 +129,6 @@ mod tests {
 
     fn asset_for(name: &str) -> Asset {
         Asset {
-            id: AssetId(1),
             name: name.to_string(),
             download_url: "ANY_DOWNLOAD_URL".to_string(),
         }
