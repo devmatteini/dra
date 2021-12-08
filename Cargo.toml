@@ -11,3 +11,6 @@ serde = { version = "1.0.130", features = ["derive"] }
 structopt = "0.3.25"
 dialoguer = "0.9.0"
 indicatif = "0.16.2"
+
+[dev-dependencies]
+test-case = "1.2.1"
