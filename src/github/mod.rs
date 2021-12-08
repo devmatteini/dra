@@ -87,8 +87,12 @@ impl std::fmt::Display for DownloadAssetError {
     }
 }
 
-pub fn untag_asset(tag: &Tag, asset: &Asset) -> String {
-    asset.name.replace(&tag.version(), "{tag}")
+pub struct TaggedAsset;
+
+impl TaggedAsset {
+    pub fn untag(tag: &Tag, asset: &Asset) -> String {
+        asset.name.replace(&tag.version(), "{tag}")
+    }
 }
 
 #[cfg(test)]
@@ -97,28 +101,28 @@ mod tests {
 
     #[test]
     fn replace_tag() {
-        let result = untag_asset(&tag_for("1.5.3"), &asset_for("file-1.5.3-linux.deb"));
+        let result = TaggedAsset::untag(&tag_for("1.5.3"), &asset_for("file-1.5.3-linux.deb"));
 
         assert_eq!("file-{tag}-linux.deb".to_string(), result);
     }
 
     #[test]
     fn replace_vtag() {
-        let result = untag_asset(&tag_for("v1.5.3"), &asset_for("file-v1.5.3-linux.deb"));
+        let result = TaggedAsset::untag(&tag_for("v1.5.3"), &asset_for("file-v1.5.3-linux.deb"));
 
         assert_eq!("file-v{tag}-linux.deb".to_string(), result);
     }
 
     #[test]
     fn replace_vtag_without_v_in_file() {
-        let result = untag_asset(&tag_for("v1.5.3"), &asset_for("file-1.5.3-linux.deb"));
+        let result = TaggedAsset::untag(&tag_for("v1.5.3"), &asset_for("file-1.5.3-linux.deb"));
 
         assert_eq!("file-{tag}-linux.deb".to_string(), result);
     }
 
     #[test]
     fn no_tag_in_asset_name() {
-        let result = untag_asset(&tag_for("v1.5.3"), &asset_for("file-linux.deb"));
+        let result = TaggedAsset::untag(&tag_for("v1.5.3"), &asset_for("file-linux.deb"));
 
         assert_eq!("file-linux.deb".to_string(), result);
     }
