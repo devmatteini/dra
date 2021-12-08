@@ -3,16 +3,14 @@ use crate::github::release::{Asset, Tag};
 pub struct TaggedAsset;
 
 impl TaggedAsset {
-    fn placeholder() -> &'static str {
-        "{tag}"
-    }
+    const PLACEHOLDER: &'static str = "{tag}";
 
     pub fn tag(tag: &Tag, untagged: &str) -> String {
-        untagged.replace(Self::placeholder(), &tag.version())
+        untagged.replace(Self::PLACEHOLDER, &tag.version())
     }
 
     pub fn untag(tag: &Tag, asset: &Asset) -> String {
-        asset.name.replace(&tag.version(), Self::placeholder())
+        asset.name.replace(&tag.version(), Self::PLACEHOLDER)
     }
 }
 
