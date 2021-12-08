@@ -1,4 +1,5 @@
 use crate::cli::handlers::download::DownloadHandler;
+use crate::cli::handlers::untag::UntagHandler;
 use crate::cli::handlers::HandlerError;
 use crate::cli::root_command::{Cli, Command};
 use std::process::exit;
@@ -12,6 +13,11 @@ fn main() {
     match cli.cmd {
         Command::Download => {
             if let Err(e) = DownloadHandler::new(cli.repo).run() {
+                handle_error(e)
+            }
+        }
+        Command::Untag => {
+            if let Err(e) = UntagHandler::new(cli.repo).run() {
                 handle_error(e)
             }
         }

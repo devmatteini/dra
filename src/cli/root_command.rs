@@ -21,4 +21,7 @@ pub struct Cli {
 pub enum Command {
     /// Select and download an asset
     Download,
+
+    /// Select an asset and generate an untagged version of it
+    Untag,
 }
