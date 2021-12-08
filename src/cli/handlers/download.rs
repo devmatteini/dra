@@ -8,11 +8,12 @@ use std::fs::File;
 
 pub struct DownloadHandler {
     repository: Repository,
+    select: Option<String>,
 }
 
 impl DownloadHandler {
-    pub fn new(repository: Repository) -> Self {
-        DownloadHandler { repository }
+    pub fn new(repository: Repository, select: Option<String>) -> Self {
+        DownloadHandler { repository, select }
     }
 
     pub fn run(&self) -> HandlerResult {

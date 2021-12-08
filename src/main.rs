@@ -11,7 +11,7 @@ mod github;
 fn main() {
     let cli: Cli = Cli::from_args();
     match cli.cmd {
-        Command::Download => handle(DownloadHandler::new(cli.repo).run()),
+        Command::Download { select } => handle(DownloadHandler::new(cli.repo, select).run()),
         Command::Untag => handle(UntagHandler::new(cli.repo).run()),
     }
 }
