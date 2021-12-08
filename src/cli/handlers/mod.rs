@@ -1,4 +1,5 @@
 pub mod download;
+mod select;
 
 pub enum HandlerError {
     Default(String),

@@ -1,10 +1,9 @@
 use crate::cli::download_spinner::DownloadSpinner;
+use crate::cli::handlers::select;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::github;
 use crate::github::release::{Asset, Release};
 use crate::github::{DownloadAssetError, ReleaseError, Repository};
-use dialoguer::theme::ColorfulTheme;
-use dialoguer::Select;
 use std::fs::File;
 
 pub struct DownloadHandler {
@@ -27,19 +26,14 @@ impl DownloadHandler {
         github::latest_release(&self.repository).map_err(Self::release_error)
     }
 
-    fn ask_select_asset(assets: Vec<Asset>) -> Result<Asset, HandlerError> {
-        let items = Self::assets_names(&assets);
-        let index = Select::with_theme(&ColorfulTheme::default())
-            .with_prompt("Pick the asset to download")
-            .default(0)
-            .items(&items)
-            .interact_opt()
-            .map_err(|e| HandlerError::new(e.to_string()))?;
-        if index.is_none() {
-            return Err(HandlerError::op_cancelled("No asset selected"));
-        }
-        let selected_name = &items[index.unwrap()];
-        Ok(Self::find_asset_by_name(selected_name, assets))
+    fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
+        select::ask_select_asset(
+            assets,
+            select::Messages {
+                select_prompt: "Pick the asset to download",
+                quit_select: "No asset selected",
+            },
+        )
     }
 
     fn download_asset(selected_asset: &Asset) -> Result<(), HandlerError> {
@@ -54,17 +48,6 @@ impl DownloadHandler {
 
     fn create_file(selected_name: &str) -> Result<File, HandlerError> {
         File::create(selected_name).map_err(|e| HandlerError::new(e.to_string()))
-    }
-
-    fn assets_names(assets: &[Asset]) -> Vec<String> {
-        assets
-            .iter()
-            .map(|x| x.name.clone())
-            .collect::<Vec<String>>()
-    }
-
-    fn find_asset_by_name(name: &str, assets: Vec<Asset>) -> Asset {
-        assets.into_iter().find(|x| x.name == name).unwrap()
     }
 
     fn release_error(e: ReleaseError) -> HandlerError {
