@@ -7,7 +7,7 @@ impl TaggedAsset {
         "{tag}"
     }
 
-    pub fn tag(tag: &Tag, untagged: String) -> String {
+    pub fn tag(tag: &Tag, untagged: &str) -> String {
         untagged.replace(Self::placeholder(), &tag.version())
     }
 
@@ -41,14 +41,14 @@ mod tests {
     #[test_case("v1.5.3", "file-v{tag}-linux.deb", "file-v1.5.3-linux.deb"; "v-tag")]
     #[test_case("v1.5.3", "file-{tag}-linux.deb", "file-1.5.3-linux.deb"; "v-tag but asset only version")]
     fn tag(tag: &str, untagged: &str, expected: &str) {
-        let result = TaggedAsset::tag(&tag_for(tag), untagged.to_string());
+        let result = TaggedAsset::tag(&tag_for(tag), untagged);
 
         assert_eq!(expected.to_string(), result);
     }
 
     #[test]
     fn tag_no_tag_in_asset_name() {
-        let result = TaggedAsset::tag(&tag_for("v1.5.3"), "file-linux.deb".to_string());
+        let result = TaggedAsset::tag(&tag_for("v1.5.3"), "file-linux.deb");
 
         assert_eq!("file-linux.deb".to_string(), result);
     }
