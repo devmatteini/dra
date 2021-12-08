@@ -1,5 +1,6 @@
 pub mod download;
 mod select;
+pub mod untag;
 
 pub enum HandlerError {
     Default(String),
