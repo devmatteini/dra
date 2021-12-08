@@ -19,29 +19,26 @@ impl DownloadHandler {
 
     pub fn run(&self) -> HandlerResult {
         let release = self.fetch_latest_release()?;
-
-        let selected_asset = if let Some(untagged) = self.select.as_ref() {
-            Self::autoselect_asset(release, untagged)
-        } else {
-            Self::ask_select_asset(release.assets)
-        }?;
-
+        let selected_asset = self.autoselect_or_ask(release)?;
         Self::download_asset(&selected_asset)?;
         Ok(())
     }
 
+    fn autoselect_or_ask(&self, release: Release) -> Result<Asset, HandlerError> {
+        if let Some(untagged) = self.select.as_ref() {
+            Self::autoselect_asset(release, untagged)
+        } else {
+            Self::ask_select_asset(release.assets)
+        }
+    }
+
     fn autoselect_asset(release: Release, untagged: &str) -> Result<Asset, HandlerError> {
         let asset_name = TaggedAsset::tag(&release.tag, untagged);
-        let opt_asset = release.assets.into_iter().find(|x| x.name == asset_name);
-
-        if let Some(asset) = opt_asset {
-            Ok(asset)
-        } else {
-            Err(HandlerError::new(format!(
-                "No asset found for {}",
-                untagged
-            )))
-        }
+        release
+            .assets
+            .into_iter()
+            .find(|x| x.name == asset_name)
+            .ok_or_else(|| HandlerError::new(format!("No asset found for {}", untagged)))
     }
 
     fn fetch_latest_release(&self) -> Result<Release, HandlerError> {
