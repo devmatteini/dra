@@ -1,9 +1,10 @@
 use crate::cli::handlers::select;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::github;
+use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release};
 use crate::github::tagged_asset::TaggedAsset;
-use crate::github::{ReleaseError, Repository};
+use crate::github::Repository;
 
 pub struct UntagHandler {
     repository: Repository,
@@ -36,7 +37,7 @@ impl UntagHandler {
         )
     }
 
-    fn release_error(e: ReleaseError) -> HandlerError {
-        HandlerError::new(e.to_string())
+    fn release_error(e: GithubError) -> HandlerError {
+        HandlerError::new(format!("Error fetching latest release. {}", e))
     }
 }

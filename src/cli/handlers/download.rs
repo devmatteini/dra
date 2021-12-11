@@ -2,9 +2,10 @@ use crate::cli::download_spinner::DownloadSpinner;
 use crate::cli::handlers::select;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::github;
+use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release};
 use crate::github::tagged_asset::TaggedAsset;
-use crate::github::{DownloadAssetError, ReleaseError, Repository};
+use crate::github::Repository;
 use std::fs::File;
 
 pub struct DownloadHandler {
@@ -69,11 +70,11 @@ impl DownloadHandler {
         File::create(selected_name).map_err(|e| HandlerError::new(e.to_string()))
     }
 
-    fn release_error(e: ReleaseError) -> HandlerError {
-        HandlerError::new(e.to_string())
+    fn release_error(e: GithubError) -> HandlerError {
+        HandlerError::new(format!("Error fetching latest release. {}", e))
     }
 
-    fn download_error(e: DownloadAssetError) -> HandlerError {
-        HandlerError::new(e.to_string())
+    fn download_error(e: GithubError) -> HandlerError {
+        HandlerError::new(format!("Error downloading asset. {}", e))
     }
 }
