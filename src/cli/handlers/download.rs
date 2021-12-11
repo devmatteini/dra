@@ -20,12 +20,12 @@ impl DownloadHandler {
 
     pub fn run(&self) -> HandlerResult {
         let release = self.fetch_latest_release()?;
-        let selected_asset = self.autoselect_or_ask(release)?;
+        let selected_asset = self.autoselect_or_ask_asset(release)?;
         Self::download_asset(&selected_asset)?;
         Ok(())
     }
 
-    fn autoselect_or_ask(&self, release: Release) -> Result<Asset, HandlerError> {
+    fn autoselect_or_ask_asset(&self, release: Release) -> Result<Asset, HandlerError> {
         if let Some(untagged) = self.select.as_ref() {
             Self::autoselect_asset(release, untagged)
         } else {
