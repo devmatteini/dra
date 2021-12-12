@@ -27,7 +27,8 @@ impl DownloadHandler {
     pub fn run(&self) -> HandlerResult {
         let release = self.fetch_latest_release()?;
         let selected_asset = self.autoselect_or_ask_asset(release)?;
-        Self::download_asset(&selected_asset, self.output.as_ref())?;
+        let output_path = Self::output_path_from(self.output.as_ref(), &selected_asset.name);
+        Self::download_asset(&selected_asset, output_path)?;
         Ok(())
     }
 
@@ -62,11 +63,7 @@ impl DownloadHandler {
         )
     }
 
-    fn download_asset(
-        selected_asset: &Asset,
-        output: Option<&PathBuf>,
-    ) -> Result<(), HandlerError> {
-        let output_path = Self::output_path_from(output, &selected_asset.name);
+    fn download_asset(selected_asset: &Asset, output_path: &Path) -> Result<(), HandlerError> {
         let spinner = DownloadSpinner::new(&selected_asset.name, output_path);
         spinner.start();
         let mut stream = github::download_asset(selected_asset).map_err(Self::download_error)?;
