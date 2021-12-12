@@ -7,21 +7,27 @@ use crate::github::release::{Asset, Release};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::Repository;
 use std::fs::File;
+use std::path::{Path, PathBuf};
 
 pub struct DownloadHandler {
     repository: Repository,
     select: Option<String>,
+    output: Option<PathBuf>,
 }
 
 impl DownloadHandler {
-    pub fn new(repository: Repository, select: Option<String>) -> Self {
-        DownloadHandler { repository, select }
+    pub fn new(repository: Repository, select: Option<String>, output: Option<PathBuf>) -> Self {
+        DownloadHandler {
+            repository,
+            select,
+            output,
+        }
     }
 
     pub fn run(&self) -> HandlerResult {
         let release = self.fetch_latest_release()?;
         let selected_asset = self.autoselect_or_ask_asset(release)?;
-        Self::download_asset(&selected_asset)?;
+        Self::download_asset(&selected_asset, self.output.as_ref())?;
         Ok(())
     }
 
@@ -56,18 +62,28 @@ impl DownloadHandler {
         )
     }
 
-    fn download_asset(selected_asset: &Asset) -> Result<(), HandlerError> {
-        let spinner = DownloadSpinner::new(&selected_asset.name);
+    fn download_asset(
+        selected_asset: &Asset,
+        output: Option<&PathBuf>,
+    ) -> Result<(), HandlerError> {
+        let output_path = Self::output_path_from(output, &selected_asset.name);
+        let spinner = DownloadSpinner::new(&selected_asset.name, output_path);
         spinner.start();
         let mut stream = github::download_asset(selected_asset).map_err(Self::download_error)?;
-        let mut destination = Self::create_file(&selected_asset.name)?;
+        let mut destination = Self::create_file(output_path)?;
         std::io::copy(&mut stream, &mut destination).unwrap();
         spinner.stop();
         Ok(())
     }
 
-    fn create_file(selected_name: &str) -> Result<File, HandlerError> {
-        File::create(selected_name).map_err(|e| HandlerError::new(e.to_string()))
+    fn output_path_from<'a>(output: Option<&'a PathBuf>, asset_name: &'a str) -> &'a Path {
+        output
+            .map(|x| x.as_path())
+            .unwrap_or_else(|| Path::new(asset_name))
+    }
+
+    fn create_file(path: &Path) -> Result<File, HandlerError> {
+        File::create(path).map_err(|e| HandlerError::new(e.to_string()))
     }
 
     fn release_error(e: GithubError) -> HandlerError {
