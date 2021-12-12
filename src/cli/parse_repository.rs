@@ -5,16 +5,14 @@ pub fn try_parse_repository(src: &str) -> Result<Repository, String> {
         return Err("Invalid repository. Cannot be empty".to_string());
     }
     if !src.contains('/') {
-        return Err(String::from(
-            "Invalid repository. Use {owner}/{repo} format",
-        ));
+        return Err("Invalid repository. Use {owner}/{repo} format".to_string());
     }
     let parts = src
         .split('/')
         .filter(|x| !x.is_empty())
         .collect::<Vec<&str>>();
     if parts.len() < 2 {
-        return Err(String::from("Invalid repository. Missing owner or repo"));
+        return Err("Invalid repository. Missing owner or repo".to_string());
     }
 
     Ok(Repository {
