@@ -19,7 +19,7 @@ impl UntagHandler {
         let release = Self::fetch_latest_release(&self.repository)?;
         let selected_asset = Self::ask_select_asset(release.assets)?;
         let untagged = TaggedAsset::untag(&release.tag, &selected_asset);
-        println!("Untagged asset: {}", untagged);
+        println!("{}", untagged);
         Ok(())
     }
 
