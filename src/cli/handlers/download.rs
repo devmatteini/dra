@@ -83,7 +83,13 @@ impl DownloadHandler {
     }
 
     fn create_file(path: &Path) -> Result<File, HandlerError> {
-        File::create(path).map_err(|e| HandlerError::new(e.to_string()))
+        File::create(path).map_err(|e| {
+            HandlerError::new(format!(
+                "Failed to create the file {}: {}",
+                path.display(),
+                e.to_string()
+            ))
+        })
     }
 
     fn release_error(e: GithubError) -> HandlerError {
