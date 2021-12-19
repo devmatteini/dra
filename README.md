@@ -1,7 +1,9 @@
 # DAG - Download Asset from GitHub releases
+
 [![CI](https://github.com/devmatteini/dag/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/devmatteini/dag/actions/workflows/ci.yml)
 
 Download an asset from the latest GitHub release.
+![dag demo](./assets/demo.gif)
 
 ## Table of contents
 
