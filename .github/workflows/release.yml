@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags:
+      # x.y.z version format
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install minimal stable rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+          components: rustfmt, clippy
+
+      - name: Build
+        run: make build
+
+      - name: Format check
+        run: make format-check
+
+      - name: Lint
+        run: make lint
+
+      - name: Tests
+        run: make test
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get the release version from the tag
+        run: |
+          echo "DAG_VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+
+      - name: Print release version
+        run: |
+          echo "Version is: $DAG_VERSION"
+
+      - name: Install minimal stable rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Build release binary
+        run: make release
+
+      - name: Strip release binary
+        run: strip target/release/dag
+
+      - name: Build archive
+        id: build_archive
+        run: |
+          asset=$(./scripts/create-release-archive.sh "$DAG_VERSION")
+          echo "::set-output name=ARCHIVE::$asset"
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.DAG_VERSION }}
+          release_name: ${{ env.DAG_VERSION }}
+
+      - name: Upload release assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.build_archive.outputs.ARCHIVE }}
+          asset_name: ${{ steps.build_archive.outputs.ARCHIVE }}
+          asset_content_type: application/gzip
