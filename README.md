@@ -7,9 +7,18 @@ Download an asset from the latest GitHub release.
 
 ## Table of contents
 
+- [Why should I use dag?](#why-should-i-use-dag)
 - [Installation](#installation)
 - [Usage](#usage)
 - [License](#license)
+
+## Why should I use dag?
+You can do everything `dag` does with the official [GitHub cli](https://cli.github.com/).
+
+`dag` helps you download release assets more easily:
+- no authentication for public repository (you cannot use `gh` without authentication)
+- [Built-in generation of pattern](#non-interactive) to select an asset to download
+  (with `gh` you need to provide [glob pattern](https://cli.github.com/manual/gh_release_download) that you need to create manually).
 
 ## Installation
 
