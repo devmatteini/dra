@@ -6,6 +6,7 @@ Download an asset from the latest GitHub release.
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [License](#license)
 
 ## Installation
 
@@ -64,3 +65,9 @@ For more information on args/flags/options/commands run:
 $ dag --help
 $ dag <command> --help
 ```
+
+## License
+
+`dag` is made available under the terms of the MIT License.
+
+See the [LICENSE](LICENSE) file for license details.
