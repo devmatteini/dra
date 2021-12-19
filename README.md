@@ -3,14 +3,13 @@
 [![CI](https://github.com/devmatteini/dag/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/devmatteini/dag/actions/workflows/ci.yml)
 
 Download an asset from the latest GitHub release.
+
+[Why should I use dag?](#why-should-i-use-dag) •
+[Installation](#installation) •
+[Usage](#usage) •
+[License](#license)
+
 ![dag demo](./assets/demo.gif)
-
-## Table of contents
-
-- [Why should I use dag?](#why-should-i-use-dag)
-- [Installation](#installation)
-- [Usage](#usage)
-- [License](#license)
 
 ## Why should I use dag?
 You can do everything `dag` does with the official [GitHub cli](https://cli.github.com/).
