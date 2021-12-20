@@ -1,3 +1,4 @@
+use crate::cli::color::Color;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::path::Path;
 
@@ -19,7 +20,7 @@ impl<'a> DownloadSpinner<'a> {
                 .tick_strings(TICKS)
                 .template("{spinner:.blue} {msg}"),
         );
-        pb.set_message(format!("Downloading {}", asset_name));
+        pb.set_message(format!("Downloading {}", Color::new(asset_name).bold()));
         Self { pb, output_path }
     }
 
@@ -29,6 +30,9 @@ impl<'a> DownloadSpinner<'a> {
 
     pub fn stop(&self) {
         self.pb.finish_and_clear();
-        println!("Saved to: {}", self.output_path.display());
+        println!(
+            "Saved to: {}",
+            Color::new(&format!("{}", self.output_path.display())).bold()
+        );
     }
 }
