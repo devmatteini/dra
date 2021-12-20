@@ -38,6 +38,6 @@ impl UntagHandler {
     }
 
     fn release_error(e: GithubError) -> HandlerError {
-        HandlerError::new(format!("Error fetching latest release. {}", e))
+        HandlerError::new(format!("Error fetching latest release: {}", e))
     }
 }
