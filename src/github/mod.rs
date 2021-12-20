@@ -23,7 +23,7 @@ pub fn latest_release(repository: &Repository) -> Result<Release, GithubError> {
     ureq::get(&url)
         .timeout(Duration::from_secs(5))
         .call()
-        .map_err(GithubError::Http)
+        .map_err(GithubError::from)
         .and_then(deserialize)
 }
 
@@ -36,6 +36,6 @@ fn deserialize(response: ureq::Response) -> Result<Release, GithubError> {
 pub fn download_asset(asset: &Asset) -> Result<impl Read + Send, GithubError> {
     ureq::get(&asset.download_url)
         .call()
-        .map_err(GithubError::Http)
+        .map_err(GithubError::from)
         .map(|response| response.into_reader())
 }
