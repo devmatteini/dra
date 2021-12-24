@@ -34,6 +34,14 @@ make release
 ./target/release/dra --version
 ```
 
+### From AUR
+
+Arch Linux users can install [dra](https://aur.archlinux.org/packages/?O=0&SeB=nd&K=download+assets+from+GitHub+release&outdated=&SB=n&SO=a&PP=50&do_Search=Go) from the AUR using an [AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers). For example:
+
+```bash
+paru -S dra
+```
+
 ## Usage
 
 ### Interactive
