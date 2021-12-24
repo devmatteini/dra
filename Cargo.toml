@@ -9,7 +9,6 @@ repository = "https://github.com/devmatteini/dag"
 documentation = "https://github.com/devmatteini/dag"
 readme = "README.md"
 license = "MIT"
-license-file = "LICENSE"
 categories = ["command-line-utilities"]
 keywords = ["github", "cli"]
 
