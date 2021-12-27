@@ -10,7 +10,7 @@ A command line tool to download release assets from GitHub.
 [Usage](#usage) •
 [License](#license)
 
-<img src="./assets/demo.gif" alt="dra demo" width="882" height="507"/>
+![dra demo](./assets/demo.gif)
 
 ## Why should I use dra?
 You can do everything `dra` does with the official [GitHub cli](https://cli.github.com/).
