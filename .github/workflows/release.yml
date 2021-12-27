@@ -43,11 +43,11 @@ jobs:
 
       - name: Get the release version from the tag
         run: |
-          echo "DAG_VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          echo "DRA_VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
       - name: Print release version
         run: |
-          echo "Version is: $DAG_VERSION"
+          echo "Version is: $DRA_VERSION"
 
       - name: Install minimal stable rust
         uses: actions-rs/toolchain@v1
@@ -60,12 +60,12 @@ jobs:
         run: make release
 
       - name: Strip release binary
-        run: strip target/release/dag
+        run: strip target/release/dra
 
       - name: Build archive
         id: build_archive
         run: |
-          asset=$(./scripts/create-release-archive.sh "$DAG_VERSION")
+          asset=$(./scripts/create-release-archive.sh "$DRA_VERSION")
           echo "::set-output name=ARCHIVE::$asset"
 
       - name: Create release
@@ -74,8 +74,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.DAG_VERSION }}
-          release_name: ${{ env.DAG_VERSION }}
+          tag_name: ${{ env.DRA_VERSION }}
+          release_name: ${{ env.DRA_VERSION }}
 
       - name: Upload release assets
         uses: actions/upload-release-asset@v1

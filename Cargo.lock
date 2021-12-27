@@ -89,18 +89,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dag"
-version = "0.1.0"
-dependencies = [
- "dialoguer",
- "indicatif",
- "serde",
- "structopt",
- "test-case",
- "ureq",
-]
-
-[[package]]
 name = "dialoguer"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -110,6 +98,18 @@ dependencies = [
  "lazy_static",
  "tempfile",
  "zeroize",
+]
+
+[[package]]
+name = "dra"
+version = "0.1.0"
+dependencies = [
+ "dialoguer",
+ "indicatif",
+ "serde",
+ "structopt",
+ "test-case",
+ "ureq",
 ]
 
 [[package]]

@@ -6,19 +6,19 @@ function usage() {
   echo "Usage: $(basename "$0") <version>"
   echo
   echo "ARGS:"
-  echo "    <version> dag version using format x.y.z"
+  echo "    <version> version using format x.y.z"
   exit 1
 }
 
 if [[ -z $1 ]]; then usage; fi
 
 version="$1"
-output="dag-$version"
+output="dra-$version"
 archive="${output}.tar.gz"
 
 mkdir -p "$output"
 
-cp target/release/dag "$output"
+cp target/release/dra "$output"
 cp README.md "$output"
 cp LICENSE "$output"
 

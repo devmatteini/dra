@@ -5,8 +5,8 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
-    name = "dag",
-    about = "A command line tool to download assets from Github"
+    name = "dra",
+    about = "A command line tool to download release assets from GitHub"
 )]
 pub struct Cli {
     #[structopt(subcommand)]

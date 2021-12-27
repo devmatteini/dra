@@ -1,12 +1,12 @@
 [package]
-name = "dag"
+name = "dra"
 version = "0.1.0"
 edition = "2021"
 authors = ["devmatteini <dev.matteini@gmail.com>"]
-description = "A command line tool to download assets from GitHub releases"
-homepage = "https://github.com/devmatteini/dag"
-repository = "https://github.com/devmatteini/dag"
-documentation = "https://github.com/devmatteini/dag"
+description = "A command line tool to download release assets from GitHub"
+homepage = "https://github.com/devmatteini/dra"
+repository = "https://github.com/devmatteini/dra"
+documentation = "https://github.com/devmatteini/dra"
 readme = "README.md"
 license = "MIT"
 categories = ["command-line-utilities"]
