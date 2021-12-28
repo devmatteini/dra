@@ -13,12 +13,15 @@ A command line tool to download release assets from GitHub.
 ![dra demo](./assets/demo.gif)
 
 ## Why should I use dra?
+
 You can do everything `dra` does with the official [GitHub cli](https://cli.github.com/).
 
 `dra` helps you download release assets more easily:
+
 - no authentication for public repository (you cannot use `gh` without authentication)
 - [Built-in generation of pattern](#non-interactive) to select an asset to download
-  (with `gh` you need to provide [glob pattern](https://cli.github.com/manual/gh_release_download) that you need to create manually).
+  (with `gh` you need to provide [glob pattern](https://cli.github.com/manual/gh_release_download) that you need to
+  create manually).
 
 ## Installation
 
@@ -85,6 +88,10 @@ For more information on args/flags/options/commands run:
 $ dra --help
 $ dra <command> --help
 ```
+
+## Contributing
+
+Take a look at the [CONTRIBUTING.md](CONTRIBUTING.md) guide.
 
 ## License
 
