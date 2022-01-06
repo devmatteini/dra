@@ -26,3 +26,12 @@ indicatif = "0.16.2"
 
 [dev-dependencies]
 test-case = "1.2.1"
+
+[package.metadata.deb]
+section = "utility"
+extended-description = """\
+Download Release Assets (dra) is a command line tool
+to download release assets from GitHub.
+Provides interactive and non-interactive ways to download assets
+to meet your needs in different scenarios.
+"""
