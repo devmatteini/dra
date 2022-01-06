@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2022-01-06
+
+### Added
+
+- Created `CONTRIBUTING.md` guidelines
+- Instructions for installing on Arch Linux from AUR, by
+  @orhun ([See pull request](https://github.com/devmatteini/dra/pull/2))
+- Instructions for installing on Debian-based distributions.
+
 ## [0.2.0] - 2021-12-27
+
 Change application name from `dag` to `dra`.
 
 `dag` is widely used as the acronym of [Directed Acyclic Graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph).
