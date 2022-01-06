@@ -65,6 +65,13 @@ jobs:
           asset=$(./scripts/create-release-archive.sh "$DRA_VERSION")
           echo "::set-output name=ARCHIVE::$asset"
 
+      - name: Build debian package
+        id: build_deb
+        run: |
+          cargo install cargo-deb
+          deb_file=$(./scripts/create-deb.sh)
+          echo "::set-output name=DEB_FILE::$deb_file"
+
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -74,7 +81,7 @@ jobs:
           tag_name: ${{ env.DRA_VERSION }}
           release_name: ${{ env.DRA_VERSION }}
 
-      - name: Upload release assets
+      - name: Upload archive to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -83,3 +90,13 @@ jobs:
           asset_path: ${{ steps.build_archive.outputs.ARCHIVE }}
           asset_name: ${{ steps.build_archive.outputs.ARCHIVE }}
           asset_content_type: application/gzip
+
+      - name: Upload deb to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.build_deb.outputs.DEB_FILE }}
+          asset_name: ${{ steps.build_deb.outputs.DEB_FILE }}
+          asset_content_type: application/octet-stream
