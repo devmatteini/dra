@@ -29,6 +29,15 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 
 Download from the [latest release](https://github.com/devmatteini/dra/releases/latest).
 
+### Debian-based distributions
+
+Download the latest `.deb` package from the [release page](https://github.com/devmatteini/dra/releases/latest) and
+install it via:
+
+```bash
+sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number 
+```
+
 ### From source
 
 ```bash
@@ -39,7 +48,9 @@ make release
 
 ### From AUR
 
-Arch Linux users can install [dra](https://aur.archlinux.org/packages/?O=0&SeB=nd&K=download+assets+from+GitHub+release&outdated=&SB=n&SO=a&PP=50&do_Search=Go) from the AUR using an [AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers). For example:
+Arch Linux users can
+install [dra](https://aur.archlinux.org/packages/?O=0&SeB=nd&K=download+assets+from+GitHub+release&outdated=&SB=n&SO=a&PP=50&do_Search=Go)
+from the AUR using an [AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers). For example:
 
 ```bash
 paru -S dra
