@@ -12,9 +12,11 @@ mod github;
 fn main() {
     let cli: Cli = Cli::from_args();
     match cli.cmd {
-        Command::Download { select, output } => {
-            handle(DownloadHandler::new(cli.repo, select, output).run())
-        }
+        Command::Download {
+            select,
+            tag,
+            output,
+        } => handle(DownloadHandler::new(cli.repo, select, tag, output).run()),
         Command::Untag => handle(UntagHandler::new(cli.repo).run()),
     }
 }

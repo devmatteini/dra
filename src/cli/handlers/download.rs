@@ -3,7 +3,7 @@ use crate::cli::handlers::select;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::github;
 use crate::github::error::GithubError;
-use crate::github::release::{Asset, Release};
+use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::Repository;
 use std::fs::File;
@@ -12,20 +12,27 @@ use std::path::{Path, PathBuf};
 pub struct DownloadHandler {
     repository: Repository,
     select: Option<String>,
+    tag: Option<Tag>,
     output: Option<PathBuf>,
 }
 
 impl DownloadHandler {
-    pub fn new(repository: Repository, select: Option<String>, output: Option<PathBuf>) -> Self {
+    pub fn new(
+        repository: Repository,
+        select: Option<String>,
+        tag: Option<String>,
+        output: Option<PathBuf>,
+    ) -> Self {
         DownloadHandler {
             repository,
             select,
+            tag: tag.map(Tag),
             output,
         }
     }
 
     pub fn run(&self) -> HandlerResult {
-        let release = self.fetch_latest_release()?;
+        let release = self.fetch_release()?;
         let selected_asset = self.autoselect_or_ask_asset(release)?;
         let output_path = Self::output_path_from(self.output.as_ref(), &selected_asset.name);
         Self::download_asset(&selected_asset, output_path)?;
@@ -49,8 +56,8 @@ impl DownloadHandler {
             .ok_or_else(|| HandlerError::new(format!("No asset found for {}", untagged)))
     }
 
-    fn fetch_latest_release(&self) -> Result<Release, HandlerError> {
-        github::get_release(&self.repository, None).map_err(Self::release_error)
+    fn fetch_release(&self) -> Result<Release, HandlerError> {
+        github::get_release(&self.repository, self.tag.as_ref()).map_err(Self::release_error)
     }
 
     fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
@@ -90,7 +97,7 @@ impl DownloadHandler {
     }
 
     fn release_error(e: GithubError) -> HandlerError {
-        HandlerError::new(format!("Error fetching latest release: {}", e))
+        HandlerError::new(format!("Error fetching the release: {}", e))
     }
 
     fn download_error(e: GithubError) -> HandlerError {
