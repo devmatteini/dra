@@ -24,7 +24,7 @@ impl UntagHandler {
     }
 
     fn fetch_latest_release(repository: &Repository) -> Result<Release, HandlerError> {
-        github::latest_release(repository).map_err(Self::release_error)
+        github::get_release(repository, None).map_err(Self::release_error)
     }
 
     fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
