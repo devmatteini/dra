@@ -1,4 +1,4 @@
-use crate::github::release::{Asset, Release};
+use crate::github::release::{Asset, Release, Tag};
 use error::GithubError;
 use std::io::Read;
 use std::time::Duration;
@@ -13,11 +13,14 @@ pub struct Repository {
     pub repo: String,
 }
 
-pub fn latest_release(repository: &Repository) -> Result<Release, GithubError> {
+pub fn get_release(repository: &Repository, tag: Option<&Tag>) -> Result<Release, GithubError> {
     let url = format!(
-        "https://api.github.com/repos/{owner}/{repo}/releases/latest",
+        "https://api.github.com/repos/{owner}/{repo}/releases/{release}",
         owner = &repository.owner,
-        repo = &repository.repo
+        repo = &repository.repo,
+        release = tag
+            .map(|t| format!("tags/{}", t.0))
+            .unwrap_or_else(|| String::from("latest"))
     );
 
     ureq::get(&url)

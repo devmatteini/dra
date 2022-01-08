@@ -50,7 +50,7 @@ impl DownloadHandler {
     }
 
     fn fetch_latest_release(&self) -> Result<Release, HandlerError> {
-        github::latest_release(&self.repository).map_err(Self::release_error)
+        github::get_release(&self.repository, None).map_err(Self::release_error)
     }
 
     fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
