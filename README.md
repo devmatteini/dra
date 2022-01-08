@@ -38,14 +38,6 @@ install it via:
 sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number 
 ```
 
-### From source
-
-```bash
-git clone https://github.com/devmatteini/dra && cd dra
-make release
-./target/release/dra --version
-```
-
 ### From AUR
 
 Arch Linux users can
@@ -56,12 +48,20 @@ from the AUR using an [AUR helper](https://wiki.archlinux.org/index.php/AUR_help
 paru -S dra
 ```
 
+### From source
+
+```bash
+git clone https://github.com/devmatteini/dra && cd dra
+make release
+./target/release/dra --version
+```
+
 ## Usage
 
-In order to download assets from private repositories export an environment
-variable `GITHUB_TOKEN=<token>`.
+In order to download assets from private repositories export an environment variable `GITHUB_TOKEN=<token>`.
 
-Follow the official guide to create a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) 
+Follow the official guide to create
+a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
 ### Interactive
 
