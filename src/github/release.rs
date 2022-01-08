@@ -12,7 +12,7 @@ impl Tag {
 #[derive(Deserialize, Debug)]
 pub struct Asset {
     pub name: String,
-    #[serde(rename(deserialize = "browser_download_url"))]
+    #[serde(rename(deserialize = "url"))]
     pub download_url: String,
 }
 

@@ -36,8 +36,10 @@ fn deserialize(response: ureq::Response) -> Result<Release, GithubError> {
         .map_err(GithubError::JsonDeserialization)
 }
 
+// DOCS: https://docs.github.com/en/rest/reference/releases#get-a-release-asset
 pub fn download_asset(asset: &Asset) -> Result<impl Read + Send, GithubError> {
     ureq::get(&asset.download_url)
+        .set("Accept", "application/octet-stream")
         .call()
         .map_err(GithubError::from)
         .map(|response| response.into_reader())
