@@ -9,6 +9,8 @@ pub mod error;
 pub mod release;
 pub mod tagged_asset;
 
+pub const GITHUB_TOKEN: &str = "GITHUB_TOKEN";
+
 #[derive(Debug, Eq, PartialEq)]
 pub struct Repository {
     pub owner: String,

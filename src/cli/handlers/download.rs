@@ -1,4 +1,5 @@
 use crate::cli::download_spinner::DownloadSpinner;
+use crate::cli::get_env;
 use crate::cli::handlers::select;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::github;
@@ -6,7 +7,7 @@ use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
-use crate::github::Repository;
+use crate::github::{Repository, GITHUB_TOKEN};
 use std::fs::File;
 use std::path::{Path, PathBuf};
 
@@ -33,7 +34,7 @@ impl DownloadHandler {
     }
 
     pub fn run(&self) -> HandlerResult {
-        let client = GithubClient::new(None);
+        let client = GithubClient::new(get_env(GITHUB_TOKEN));
         let release = self.fetch_release(&client)?;
         let selected_asset = self.autoselect_or_ask_asset(release)?;
         let output_path = Self::output_path_from(self.output.as_ref(), &selected_asset.name);
