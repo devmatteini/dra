@@ -2,6 +2,7 @@ use crate::cli::download_spinner::DownloadSpinner;
 use crate::cli::handlers::select;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::github;
+use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
@@ -32,10 +33,11 @@ impl DownloadHandler {
     }
 
     pub fn run(&self) -> HandlerResult {
-        let release = self.fetch_release()?;
+        let client = GithubClient::new(None);
+        let release = self.fetch_release(&client)?;
         let selected_asset = self.autoselect_or_ask_asset(release)?;
         let output_path = Self::output_path_from(self.output.as_ref(), &selected_asset.name);
-        Self::download_asset(&selected_asset, output_path)?;
+        Self::download_asset(&client, &selected_asset, output_path)?;
         Ok(())
     }
 
@@ -56,8 +58,9 @@ impl DownloadHandler {
             .ok_or_else(|| HandlerError::new(format!("No asset found for {}", untagged)))
     }
 
-    fn fetch_release(&self) -> Result<Release, HandlerError> {
-        github::get_release(&self.repository, self.tag.as_ref()).map_err(Self::release_error)
+    fn fetch_release(&self, client: &GithubClient) -> Result<Release, HandlerError> {
+        github::get_release(client, &self.repository, self.tag.as_ref())
+            .map_err(Self::release_error)
     }
 
     fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
@@ -70,10 +73,15 @@ impl DownloadHandler {
         )
     }
 
-    fn download_asset(selected_asset: &Asset, output_path: &Path) -> Result<(), HandlerError> {
+    fn download_asset(
+        client: &GithubClient,
+        selected_asset: &Asset,
+        output_path: &Path,
+    ) -> Result<(), HandlerError> {
         let spinner = DownloadSpinner::new(&selected_asset.name, output_path);
         spinner.start();
-        let mut stream = github::download_asset(selected_asset).map_err(Self::download_error)?;
+        let mut stream =
+            github::download_asset(client, selected_asset).map_err(Self::download_error)?;
         let mut destination = Self::create_file(output_path)?;
         std::io::copy(&mut stream, &mut destination).unwrap();
         spinner.stop();

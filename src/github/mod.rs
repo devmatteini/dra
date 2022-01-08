@@ -1,3 +1,4 @@
+use crate::github::client::GithubClient;
 use crate::github::release::{Asset, Release, Tag};
 use error::GithubError;
 use std::io::Read;
@@ -14,7 +15,11 @@ pub struct Repository {
     pub repo: String,
 }
 
-pub fn get_release(repository: &Repository, tag: Option<&Tag>) -> Result<Release, GithubError> {
+pub fn get_release(
+    client: &GithubClient,
+    repository: &Repository,
+    tag: Option<&Tag>,
+) -> Result<Release, GithubError> {
     let url = format!(
         "https://api.github.com/repos/{owner}/{repo}/releases/{release}",
         owner = &repository.owner,
@@ -24,7 +29,8 @@ pub fn get_release(repository: &Repository, tag: Option<&Tag>) -> Result<Release
             .unwrap_or_else(|| String::from("latest"))
     );
 
-    ureq::get(&url)
+    client
+        .get(&url)
         .timeout(Duration::from_secs(5))
         .call()
         .map_err(GithubError::from)
@@ -38,8 +44,12 @@ fn deserialize(response: ureq::Response) -> Result<Release, GithubError> {
 }
 
 // DOCS: https://docs.github.com/en/rest/reference/releases#get-a-release-asset
-pub fn download_asset(asset: &Asset) -> Result<impl Read + Send, GithubError> {
-    ureq::get(&asset.download_url)
+pub fn download_asset(
+    client: &GithubClient,
+    asset: &Asset,
+) -> Result<impl Read + Send, GithubError> {
+    client
+        .get(&asset.download_url)
         .set("Accept", "application/octet-stream")
         .call()
         .map_err(GithubError::from)
