@@ -61,7 +61,8 @@ make release
 In order to download assets from private repositories export an environment variable `GITHUB_TOKEN=<token>`.
 
 Follow the official guide to create
-a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+The minimum set of scopes needed is: `Full control of private repositories `.
 
 ### Interactive
 
