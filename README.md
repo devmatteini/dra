@@ -77,6 +77,12 @@ Select and download an asset to custom path
 $ dra devmatteini/dra-example download --output /tmp/dra-example
 ```
 
+Select and download an asset from a specific release
+
+```
+$ dra devmatteini/dra-example download --tag v1.0.2
+```
+
 ### Non-Interactive
 
 This mode is useful to be used in automated scripts.
