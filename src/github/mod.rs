@@ -3,6 +3,7 @@ use error::GithubError;
 use std::io::Read;
 use std::time::Duration;
 
+pub mod client;
 pub mod error;
 pub mod release;
 pub mod tagged_asset;
