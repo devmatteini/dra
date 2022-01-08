@@ -27,6 +27,12 @@ pub enum Command {
         #[structopt(short = "s", long = "select")]
         select: Option<String>,
 
+        /// Set the tag name for fetching a specific release
+        ///
+        /// Latest release is used if not specified
+        #[structopt(short = "t", long = "tag")]
+        tag: Option<String>,
+
         /// Save asset to custom path
         ///
         /// Default path is current working directory and the name of the asset
