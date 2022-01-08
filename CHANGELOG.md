@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2022-01-08
+
+### Added
+
+- Download assets from a specific release, by @orhun (see [issue 3](https://github.com/devmatteini/dra/issues/3)).
+  If none is specified, the latest release is used.
+
+  e.g: `dra <repo> download --tag <tag>`
+- Download assets from private repositories by exporting `GITHUB_TOKEN` environment variable
+
 ## [0.2.1] - 2022-01-06
 
 ### Added
