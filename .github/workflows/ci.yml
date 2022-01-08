@@ -4,7 +4,13 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - 'assets/**'
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'assets/**'
 
 env:
   CARGO_TERM_COLOR: always
