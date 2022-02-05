@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3] - 2022-02-05
+
+This release update some of our dependencies and migrates to clap v3 as args parser.
+
+### Changed
+
+- Migration to clap v3 instead of using structopt (fe132c1).
+
+### Updated dependencies
+
+- serde 1.0.130 -> 1.0.136
+- ureq 2.3.1 -> 2.4.0
+
 ## [0.2.2] - 2022-01-08
 
 ### Added
