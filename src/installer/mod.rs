@@ -16,13 +16,11 @@ enum FileInfoType {
 struct FileInfo {
     path: PathBuf,
     extension: Option<OsString>,
-    file_type: Option<FileInfoType>,
 }
 
 #[derive(Debug)]
 struct SupportedFileInfo {
     path: PathBuf,
-    extension: Option<OsString>,
     file_type: FileInfoType,
 }
 
@@ -39,24 +37,20 @@ fn file_info_from(path: &Path) -> Result<FileInfo, InstallError> {
         return Err(InstallError::not_a_file(path));
     }
 
-    let get_extension = |p: &Path| p.extension().map(OsString::from);
     Ok(FileInfo {
         path: PathBuf::from(path),
-        extension: get_extension(path),
-        file_type: get_extension(path).and_then(file_type_for),
+        extension: path.extension().map(OsString::from),
     })
 }
 
 fn is_supported(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
-    if file.file_type.is_some() {
-        Ok(SupportedFileInfo {
-            path: file.path,
-            extension: file.extension,
-            file_type: file.file_type.unwrap(),
+    file.extension
+        .and_then(file_type_for)
+        .map(|file_type| SupportedFileInfo {
+            path: PathBuf::from(&file.path),
+            file_type,
         })
-    } else {
-        Err(InstallError::not_supported(&file.path))
-    }
+        .ok_or_else(|| InstallError::not_supported(&file.path))
 }
 
 fn find_installer_for(file_type: &FileInfoType) -> fn(&Path) -> InstallerResult {
