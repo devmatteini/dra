@@ -20,7 +20,8 @@ fn run(cli: Cli) -> HandlerResult {
             select,
             tag,
             output,
-        } => DownloadHandler::new(cli.repo, select, tag, output).run(),
+            install,
+        } => DownloadHandler::new(cli.repo, select, tag, output, install).run(),
         Command::Untag => UntagHandler::new(cli.repo).run(),
     }
 }

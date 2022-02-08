@@ -16,6 +16,7 @@ pub struct DownloadHandler {
     select: Option<String>,
     tag: Option<Tag>,
     output: Option<PathBuf>,
+    install: bool,
 }
 
 impl DownloadHandler {
@@ -24,12 +25,14 @@ impl DownloadHandler {
         select: Option<String>,
         tag: Option<String>,
         output: Option<PathBuf>,
+        install: bool,
     ) -> Self {
         DownloadHandler {
             repository,
             select,
             tag: tag.map(Tag),
             output,
+            install,
         }
     }
 

@@ -39,6 +39,13 @@ pub enum Command {
         /// Default path is current working directory and the name of the asset
         #[clap(short = 'o', long = "output", parse(from_os_str))]
         output: Option<PathBuf>,
+
+        /// Install downloaded asset
+        ///
+        /// If the downloaded asset is a supported file, it will try to install it.
+        /// By default is not used.
+        #[clap(short = 'i', long = "install")]
+        install: bool,
     },
 
     /// Select an asset and generate an untagged version of it
