@@ -7,6 +7,17 @@ use crate::installer::error::InstallError;
 mod debian;
 pub mod error;
 
+pub fn install(path: &Path) -> Result<(), InstallError> {
+    let file_info = file_info_from(path).and_then(is_supported)?;
+    let installer = find_installer_for(&file_info.file_type);
+
+    installer(&file_info.path).map_err(InstallError::Fatal)?;
+
+    Ok(())
+}
+
+type InstallerResult = Result<(), String>;
+
 #[derive(Debug, Eq, PartialEq)]
 enum FileType {
     Debian,
@@ -58,14 +69,3 @@ fn find_installer_for(file_type: &FileType) -> fn(&Path) -> InstallerResult {
         FileType::Debian => DebianInstaller::run,
     }
 }
-
-pub fn install(path: &Path) -> Result<(), InstallError> {
-    let file_info = file_info_from(path).and_then(is_supported)?;
-    let installer = find_installer_for(&file_info.file_type);
-
-    installer(&file_info.path).map_err(InstallError::Fatal)?;
-
-    Ok(())
-}
-
-pub type InstallerResult = Result<(), String>;
