@@ -8,7 +8,7 @@ mod debian;
 pub mod error;
 
 #[derive(Debug, Eq, PartialEq)]
-enum FileInfoType {
+enum FileType {
     Debian,
 }
 
@@ -21,12 +21,12 @@ struct FileInfo {
 #[derive(Debug)]
 struct SupportedFileInfo {
     path: PathBuf,
-    file_type: FileInfoType,
+    file_type: FileType,
 }
 
-fn file_type_for(extension: OsString) -> Option<FileInfoType> {
+fn file_type_for(extension: OsString) -> Option<FileType> {
     if extension == "deb" {
-        return Some(FileInfoType::Debian);
+        return Some(FileType::Debian);
     }
 
     None
@@ -53,9 +53,9 @@ fn is_supported(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
         .ok_or_else(|| InstallError::not_supported(&file.path))
 }
 
-fn find_installer_for(file_type: &FileInfoType) -> fn(&Path) -> InstallerResult {
+fn find_installer_for(file_type: &FileType) -> fn(&Path) -> InstallerResult {
     match file_type {
-        FileInfoType::Debian => DebianInstaller::run,
+        FileType::Debian => DebianInstaller::run,
     }
 }
 
