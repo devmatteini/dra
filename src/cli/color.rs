@@ -23,6 +23,12 @@ impl<'a> Color<'a> {
             inner: self.inner.red(),
         }
     }
+
+    pub fn green(self) -> Self {
+        Color {
+            inner: self.inner.green(),
+        }
+    }
 }
 
 impl Display for Color<'_> {
