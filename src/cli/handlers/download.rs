@@ -2,12 +2,12 @@ use crate::cli::get_env;
 use crate::cli::handlers::select;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::cli::spinner::Spinner;
-use crate::github;
 use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
+use crate::{github, installer};
 use std::fs::File;
 use std::path::{Path, PathBuf};
 
@@ -42,6 +42,7 @@ impl DownloadHandler {
         let selected_asset = self.autoselect_or_ask_asset(release)?;
         let output_path = Self::output_path_from(self.output.as_ref(), &selected_asset.name);
         Self::download_asset(&client, &selected_asset, output_path)?;
+        self.maybe_install(output_path)?;
         Ok(())
     }
 
@@ -51,6 +52,13 @@ impl DownloadHandler {
         } else {
             Self::ask_select_asset(release.assets)
         }
+    }
+
+    fn maybe_install(&self, path: &Path) -> Result<(), HandlerError> {
+        if self.install {
+            return Self::install_asset(path);
+        }
+        Ok(())
     }
 
     fn autoselect_asset(release: Release, untagged: &str) -> Result<Asset, HandlerError> {
@@ -88,6 +96,19 @@ impl DownloadHandler {
             github::download_asset(client, selected_asset).map_err(Self::download_error)?;
         let mut destination = Self::create_file(output_path)?;
         std::io::copy(&mut stream, &mut destination).unwrap();
+        spinner.stop();
+        Ok(())
+    }
+
+    fn install_asset(asset_path: &Path) -> Result<(), HandlerError> {
+        let spinner = Spinner::install();
+        spinner.start();
+        installer::install(asset_path)
+            .map_err(|x| HandlerError::new(x.to_string()))
+            .and_then(|_| {
+                // Cleanup downloaded asset
+                std::fs::remove_file(asset_path).map_err(|x| HandlerError::new(x.to_string()))
+            })?;
         spinner.stop();
         Ok(())
     }

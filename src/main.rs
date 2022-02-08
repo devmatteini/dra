@@ -8,6 +8,7 @@ use std::process::exit;
 
 mod cli;
 mod github;
+mod installer;
 
 fn main() {
     let cli: Cli = Cli::parse();

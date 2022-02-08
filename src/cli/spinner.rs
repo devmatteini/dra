@@ -42,4 +42,11 @@ impl Spinner {
             ),
         )
     }
+
+    pub fn install() -> Spinner {
+        Spinner::new(
+            "Installing".into(),
+            format!("{}", Color::new("Installation completed!").green()),
+        )
+    }
 }
