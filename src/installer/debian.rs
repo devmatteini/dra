@@ -1,15 +1,16 @@
-use crate::installer::InstallerResult;
 use std::path::Path;
+use std::process::Command;
+
+use crate::installer::command::exec_command;
+use crate::installer::InstallerResult;
+
+const DPKG: &str = "dpkg";
 
 pub struct DebianInstaller;
 
 impl DebianInstaller {
     pub fn run(path: &Path) -> InstallerResult {
-        let result = std::process::Command::new("dpkg")
-            .arg("--install")
-            .arg(path)
-            .output()
-            .map_err(|x| format!("An error occurred while installing: {}", x))?;
+        let result = exec_command(Command::new(DPKG).arg("--install").arg(path), DPKG)?;
 
         if result.status.success() {
             Ok(())

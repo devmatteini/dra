@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 use crate::installer::debian::DebianInstaller;
 use crate::installer::error::InstallError;
 
+mod command;
 mod debian;
 pub mod error;
 
