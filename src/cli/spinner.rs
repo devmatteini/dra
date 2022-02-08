@@ -7,21 +7,21 @@ use std::path::Path;
 const TICKS: &[&str] = &["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 const TICK_DURATION: u64 = 80;
 
-pub struct DownloadSpinner<'a> {
+pub struct Spinner {
     pb: ProgressBar,
-    output_path: &'a Path,
+    end_message: String,
 }
 
-impl<'a> DownloadSpinner<'a> {
-    pub fn new(asset_name: &str, output_path: &'a Path) -> Self {
+impl Spinner {
+    pub fn new(message: String, end_message: String) -> Self {
         let pb = ProgressBar::new_spinner();
         pb.set_style(
             ProgressStyle::default_spinner()
                 .tick_strings(TICKS)
                 .template("{spinner:.blue} {msg}"),
         );
-        pb.set_message(format!("Downloading {}", Color::new(asset_name).bold()));
-        Self { pb, output_path }
+        pb.set_message(message);
+        Self { pb, end_message }
     }
 
     pub fn start(&self) {
@@ -30,9 +30,16 @@ impl<'a> DownloadSpinner<'a> {
 
     pub fn stop(&self) {
         self.pb.finish_and_clear();
-        println!(
-            "Saved to: {}",
-            Color::new(&format!("{}", self.output_path.display())).bold()
-        );
+        println!("{}", &self.end_message);
+    }
+
+    pub fn download(download_asset: &str, output_path: &Path) -> Spinner {
+        Spinner::new(
+            format!("Downloading {}", Color::new(download_asset).bold()),
+            format!(
+                "Saved to: {}",
+                Color::new(&format!("{}", output_path.display())).bold()
+            ),
+        )
     }
 }
