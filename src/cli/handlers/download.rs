@@ -7,6 +7,7 @@ use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
+use crate::installer::cleanup::InstallCleanup;
 use crate::{github, installer};
 use std::fs::File;
 use std::path::{Path, PathBuf};
@@ -104,11 +105,8 @@ impl DownloadHandler {
         let spinner = Spinner::install();
         spinner.start();
         installer::install(asset_path)
-            .map_err(|x| HandlerError::new(x.to_string()))
-            .and_then(|_| {
-                // Cleanup downloaded asset
-                std::fs::remove_file(asset_path).map_err(|x| HandlerError::new(x.to_string()))
-            })?;
+            .cleanup(asset_path)
+            .map_err(|x| HandlerError::new(x.to_string()))?;
         spinner.stop();
         Ok(())
     }
