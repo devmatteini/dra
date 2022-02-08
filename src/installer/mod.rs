@@ -36,14 +36,6 @@ struct SupportedFileInfo {
     file_type: FileType,
 }
 
-fn file_type_for(extension: OsString) -> Option<FileType> {
-    if extension == "deb" {
-        return Some(FileType::Debian);
-    }
-
-    None
-}
-
 fn file_info_from(path: &Path) -> Result<FileInfo, InstallError> {
     if !path.is_file() {
         return Err(InstallError::not_a_file(path));
@@ -63,6 +55,14 @@ fn is_supported(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
             file_type,
         })
         .ok_or_else(|| InstallError::not_supported(&file.path))
+}
+
+fn file_type_for(extension: OsString) -> Option<FileType> {
+    if extension == "deb" {
+        return Some(FileType::Debian);
+    }
+
+    None
 }
 
 fn find_installer_for(file_type: &FileType) -> fn(&Path) -> InstallerResult {
