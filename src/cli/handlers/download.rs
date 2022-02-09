@@ -128,7 +128,7 @@ impl DownloadHandler {
             HandlerError::new(format!(
                 "Failed to create the file {}: {}",
                 path.display(),
-                e.to_string()
+                e
             ))
         })
     }
