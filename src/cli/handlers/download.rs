@@ -41,7 +41,7 @@ impl DownloadHandler {
         let client = GithubClient::new(get_env(GITHUB_TOKEN));
         let release = self.fetch_release(&client)?;
         let selected_asset = self.autoselect_or_ask_asset(release)?;
-        let output_path = Self::output_path_from(self.output.as_ref(), &selected_asset.name);
+        let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&client, &selected_asset, &output_path)?;
         self.maybe_install(&output_path)?;
         Ok(())
@@ -111,8 +111,14 @@ impl DownloadHandler {
         Ok(())
     }
 
-    fn output_path_from(output: Option<&PathBuf>, asset_name: &str) -> PathBuf {
-        output
+    fn choose_output_path(&self, asset_name: &str) -> PathBuf {
+        // If your installing always use current working directory to save the file
+        if self.install {
+            return PathBuf::from(asset_name);
+        }
+
+        self.output
+            .as_ref()
             .map(PathBuf::from)
             .unwrap_or_else(|| PathBuf::from(asset_name))
     }
