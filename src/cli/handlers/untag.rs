@@ -1,6 +1,6 @@
 use crate::cli::get_env;
-use crate::cli::handlers::select;
 use crate::cli::handlers::{HandlerError, HandlerResult};
+use crate::cli::select;
 use crate::github;
 use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
