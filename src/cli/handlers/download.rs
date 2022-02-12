@@ -112,9 +112,8 @@ impl DownloadHandler {
     }
 
     fn choose_output_path(&self, asset_name: &str) -> PathBuf {
-        // If your installing always use current working directory to save the file
         if self.install {
-            return PathBuf::from(asset_name);
+            return crate::cli::temp_file::temp_file();
         }
 
         self.output
