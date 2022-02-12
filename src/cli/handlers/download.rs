@@ -43,7 +43,7 @@ impl DownloadHandler {
         let selected_asset = self.autoselect_or_ask_asset(release)?;
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&client, &selected_asset, &output_path)?;
-        self.maybe_install(&output_path)?;
+        self.maybe_install(&selected_asset.name, &output_path)?;
         Ok(())
     }
 
@@ -55,9 +55,9 @@ impl DownloadHandler {
         }
     }
 
-    fn maybe_install(&self, path: &Path) -> Result<(), HandlerError> {
+    fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
         if self.install {
-            return Self::install_asset(path);
+            return Self::install_asset(String::from(asset_name), path);
         }
         Ok(())
     }
@@ -101,10 +101,10 @@ impl DownloadHandler {
         Ok(())
     }
 
-    fn install_asset(asset_path: &Path) -> Result<(), HandlerError> {
+    fn install_asset(asset_name: String, asset_path: &Path) -> Result<(), HandlerError> {
         let spinner = Spinner::install();
         spinner.start();
-        installer::install(asset_path)
+        installer::install(asset_name, asset_path)
             .cleanup(asset_path)
             .map_err(|x| HandlerError::new(x.to_string()))?;
         spinner.stop();

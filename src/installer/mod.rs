@@ -9,8 +9,8 @@ mod command;
 mod debian;
 pub mod error;
 
-pub fn install(path: &Path) -> Result<(), InstallError> {
-    let file_info = file_info_from(path).and_then(is_supported)?;
+pub fn install(asset_name: String, path: &Path) -> Result<(), InstallError> {
+    let file_info = file_info_from(&asset_name, path).and_then(is_supported)?;
     let installer = find_installer_for(&file_info.file_type);
 
     installer(&file_info.path).map_err(InstallError::Fatal)?;
@@ -28,6 +28,7 @@ enum FileType {
 #[derive(Debug)]
 struct FileInfo {
     path: PathBuf,
+    name: String,
     extension: Option<OsString>,
 }
 
@@ -37,14 +38,15 @@ struct SupportedFileInfo {
     file_type: FileType,
 }
 
-fn file_info_from(path: &Path) -> Result<FileInfo, InstallError> {
+fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
     if !path.is_file() {
         return Err(InstallError::not_a_file(path));
     }
 
     Ok(FileInfo {
         path: PathBuf::from(path),
-        extension: path.extension().map(OsString::from),
+        name: String::from(name),
+        extension: Path::new(name).extension().map(OsString::from),
     })
 }
 
@@ -55,7 +57,7 @@ fn is_supported(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
             path: PathBuf::from(&file.path),
             file_type,
         })
-        .ok_or_else(|| InstallError::not_supported(&file.path))
+        .ok_or_else(|| InstallError::not_supported(&file.name))
 }
 
 fn file_type_for(extension: OsString) -> Option<FileType> {

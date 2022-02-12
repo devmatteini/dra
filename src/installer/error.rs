@@ -13,8 +13,8 @@ impl InstallError {
         InstallError::NotAFile(format!("{} is not a file", path.display()))
     }
 
-    pub fn not_supported(path: &Path) -> InstallError {
-        InstallError::NotSupported(format!("{} is not supported", path.display()))
+    pub fn not_supported(name: &str) -> InstallError {
+        InstallError::NotSupported(format!("{} is not supported", name,))
     }
 }
 
