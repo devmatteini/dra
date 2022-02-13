@@ -3,11 +3,13 @@ use std::path::{Path, PathBuf};
 
 use crate::installer::debian::DebianInstaller;
 use crate::installer::error::InstallError;
+use crate::installer::tar_archive::TarArchiveInstaller;
 
 pub mod cleanup;
 mod command;
 mod debian;
 pub mod error;
+mod tar_archive;
 
 pub fn install(
     asset_name: String,
@@ -27,6 +29,7 @@ type InstallerResult = Result<(), String>;
 #[derive(Debug, Eq, PartialEq)]
 enum FileType {
     Debian,
+    TarArchive,
 }
 
 #[derive(Debug)]
@@ -68,6 +71,10 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     if extension == "deb" {
         return Some(FileType::Debian);
     }
+    // TODO: add support for this archives as well: tar, bz2, xz
+    if extension == "gz" {
+        return Some(FileType::TarArchive);
+    }
 
     None
 }
@@ -75,5 +82,6 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
 fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path) -> InstallerResult {
     match file_type {
         FileType::Debian => DebianInstaller::run,
+        FileType::TarArchive => TarArchiveInstaller::run,
     }
 }
