@@ -9,11 +9,15 @@ mod command;
 mod debian;
 pub mod error;
 
-pub fn install(asset_name: String, path: &Path) -> Result<(), InstallError> {
-    let file_info = file_info_from(&asset_name, path).and_then(is_supported)?;
+pub fn install(
+    asset_name: String,
+    source: &Path,
+    destination_dir: &Path,
+) -> Result<(), InstallError> {
+    let file_info = file_info_from(&asset_name, source).and_then(is_supported)?;
     let installer = find_installer_for(&file_info.file_type);
 
-    installer(&file_info.path).map_err(InstallError::Fatal)?;
+    installer(&file_info.path, destination_dir).map_err(InstallError::Fatal)?;
 
     Ok(())
 }
@@ -68,7 +72,7 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     None
 }
 
-fn find_installer_for(file_type: &FileType) -> fn(&Path) -> InstallerResult {
+fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path) -> InstallerResult {
     match file_type {
         FileType::Debian => DebianInstaller::run,
     }

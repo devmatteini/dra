@@ -9,8 +9,8 @@ const DPKG: &str = "dpkg";
 pub struct DebianInstaller;
 
 impl DebianInstaller {
-    pub fn run(path: &Path) -> InstallerResult {
-        let result = exec_command(Command::new(DPKG).arg("--install").arg(path), DPKG)?;
+    pub fn run(source: &Path, _destination_dir: &Path) -> InstallerResult {
+        let result = exec_command(Command::new(DPKG).arg("--install").arg(source), DPKG)?;
 
         if result.status.success() {
             Ok(())

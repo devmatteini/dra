@@ -57,9 +57,30 @@ impl DownloadHandler {
 
     fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
         if self.install {
-            return Self::install_asset(String::from(asset_name), path);
+            let destination_dir = self.output_dir_or_cwd()?;
+            return Self::install_asset(String::from(asset_name), path, &destination_dir);
         }
         Ok(())
+    }
+
+    fn output_dir_or_cwd(&self) -> Result<PathBuf, HandlerError> {
+        self.output
+            .as_ref()
+            .map(|x| {
+                if x.is_dir() {
+                    Ok(PathBuf::from(x))
+                } else {
+                    Err(HandlerError::new(format!(
+                        "{} is not a directory",
+                        x.display()
+                    )))
+                }
+            })
+            .unwrap_or_else(|| {
+                std::env::current_dir().map_err(|x| {
+                    HandlerError::new(format!("Error retrieving current directory: {}", x))
+                })
+            })
     }
 
     fn autoselect_asset(release: Release, untagged: &str) -> Result<Asset, HandlerError> {
@@ -101,10 +122,14 @@ impl DownloadHandler {
         Ok(())
     }
 
-    fn install_asset(asset_name: String, asset_path: &Path) -> Result<(), HandlerError> {
+    fn install_asset(
+        asset_name: String,
+        asset_path: &Path,
+        destination_dir: &Path,
+    ) -> Result<(), HandlerError> {
         let spinner = Spinner::install();
         spinner.start();
-        installer::install(asset_name, asset_path)
+        installer::install(asset_name, asset_path, destination_dir)
             .cleanup(asset_path)
             .map_err(|x| HandlerError::new(x.to_string()))?;
         spinner.stop();

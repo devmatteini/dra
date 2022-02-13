@@ -36,7 +36,9 @@ pub enum Command {
 
         /// Save asset to custom path
         ///
-        /// Default path is current working directory and the name of the asset
+        /// Default path is current working directory and the name of the asset.
+        ///
+        /// If used with `--install` it must be a directory path
         #[clap(short = 'o', long = "output", parse(from_os_str))]
         output: Option<PathBuf>,
 
