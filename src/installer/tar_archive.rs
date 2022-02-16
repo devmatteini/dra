@@ -32,7 +32,8 @@ impl TarArchiveInstaller {
     }
 
     fn extract_archive(source: &Path, temp_dir: &Path) -> Result<(), String> {
-        let result = exec_command(
+        exec_command(
+            TAR,
             Command::new(TAR)
                 .arg("zxf")
                 .arg(source)
@@ -40,21 +41,7 @@ impl TarArchiveInstaller {
                 .arg(&temp_dir)
                 // Remove the root dir inside the tar archive. See https://askubuntu.com/a/470266
                 .arg("--strip-components=1"),
-            TAR,
-        )?;
-        if result.status.success() {
-            Ok(())
-        } else {
-            Err(format!(
-                "An error occurred while installing (status: {}):\n{}",
-                result
-                    .status
-                    .code()
-                    .map(|x| x.to_string())
-                    .unwrap_or_else(|| "Unknown".into()),
-                String::from_utf8(result.stderr).unwrap_or_else(|_| "Unknown tar error".into())
-            ))
-        }
+        )
     }
 
     fn find_executable(directory: &Path) -> Result<ExecutableFile, String> {
