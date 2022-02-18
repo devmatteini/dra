@@ -4,12 +4,14 @@ use std::path::{Path, PathBuf};
 use crate::installer::debian::DebianInstaller;
 use crate::installer::error::InstallError;
 use crate::installer::tar_archive::TarArchiveInstaller;
+use crate::installer::zip_archive::ZipArchiveInstaller;
 
 pub mod cleanup;
 mod command;
 mod debian;
 pub mod error;
 mod tar_archive;
+mod zip_archive;
 
 pub fn install(
     asset_name: String,
@@ -30,6 +32,7 @@ type InstallerResult = Result<(), String>;
 enum FileType {
     Debian,
     TarArchive,
+    ZipArchive,
 }
 
 #[derive(Debug)]
@@ -75,6 +78,9 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     if extension == "gz" {
         return Some(FileType::TarArchive);
     }
+    if extension == "zip" {
+        return Some(FileType::ZipArchive);
+    }
 
     None
 }
@@ -83,5 +89,6 @@ fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path) -> InstallerResu
     match file_type {
         FileType::Debian => DebianInstaller::run,
         FileType::TarArchive => TarArchiveInstaller::run,
+        FileType::ZipArchive => ZipArchiveInstaller::run,
     }
 }

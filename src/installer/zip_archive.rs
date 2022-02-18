@@ -7,11 +7,11 @@ use std::process::Command;
 use crate::installer::command::exec_command;
 use crate::installer::InstallerResult;
 
-const TAR: &str = "tar";
+const UNZIP: &str = "unzip";
 
-pub struct TarArchiveInstaller;
+pub struct ZipArchiveInstaller;
 
-impl TarArchiveInstaller {
+impl ZipArchiveInstaller {
     pub fn run(source: &Path, destination_dir: &Path) -> InstallerResult {
         let temp_dir = Self::create_temp_dir()?;
         Self::extract_archive(source, &temp_dir)?;
@@ -33,14 +33,13 @@ impl TarArchiveInstaller {
 
     fn extract_archive(source: &Path, temp_dir: &Path) -> Result<(), String> {
         exec_command(
-            TAR,
-            Command::new(TAR)
-                .arg("zxf")
+            UNZIP,
+            Command::new(UNZIP)
+                // Remove the root dir inside the zip archive. see man unzip
+                .arg("-j")
                 .arg(source)
-                .arg("-C")
-                .arg(temp_dir)
-                // Remove the root dir inside the tar archive. See https://askubuntu.com/a/470266
-                .arg("--strip-components=1"),
+                .arg("-d")
+                .arg(temp_dir),
         )
     }
 
