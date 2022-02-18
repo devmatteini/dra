@@ -6,6 +6,7 @@ use crate::installer::error::InstallError;
 use crate::installer::tar_archive::TarArchiveInstaller;
 use crate::installer::zip_archive::ZipArchiveInstaller;
 
+mod archive;
 pub mod cleanup;
 mod command;
 mod debian;
