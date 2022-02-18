@@ -117,7 +117,14 @@ impl DownloadHandler {
         let mut stream =
             github::download_asset(client, selected_asset).map_err(Self::download_error)?;
         let mut destination = Self::create_file(output_path)?;
-        std::io::copy(&mut stream, &mut destination).unwrap();
+        std::io::copy(&mut stream, &mut destination).map_err(|x| {
+            HandlerError::new(format!(
+                "Error copying {} to {}: {}",
+                &selected_asset.name,
+                output_path.display(),
+                x
+            ))
+        })?;
         spinner.stop();
         Ok(())
     }
