@@ -58,7 +58,9 @@ impl TarArchiveInstaller {
             .as_ref()
             .map(|x| {
                 let path = x.path();
-                path.is_file() && (path.metadata().unwrap().permissions().mode() & 0o111) != 0
+                path.metadata()
+                    .map(|metadata| path.is_file() && (metadata.permissions().mode() & 0o111) != 0)
+                    .unwrap_or(false)
             })
             .unwrap_or(false)
     }
