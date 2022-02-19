@@ -27,3 +27,13 @@ impl std::fmt::Display for InstallError {
         }
     }
 }
+
+pub trait MapErrWithMessage<T> {
+    fn map_err_with(self, message: String) -> Result<T, String>;
+}
+
+impl<T> MapErrWithMessage<T> for std::io::Result<T> {
+    fn map_err_with(self, message: String) -> Result<T, String> {
+        self.map_err(|e| format!("{}:\n  {}", &message, e))
+    }
+}

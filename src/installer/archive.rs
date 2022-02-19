@@ -1,3 +1,4 @@
+use crate::installer::error::MapErrWithMessage;
 use std::ffi::OsString;
 use std::fs::DirEntry;
 use std::os::unix::prelude::PermissionsExt;
@@ -27,16 +28,16 @@ impl ArchiveInstaller {
         let temp_dir = crate::cli::temp_file::temp_dir();
         std::fs::create_dir(&temp_dir)
             .map(|_| temp_dir)
-            .map_err(|x| format!("Error creating temp dir:\n  {}", x))
+            .map_err_with("Error creating temp dir".into())
     }
 
     fn find_executable(directory: &Path) -> Result<ExecutableFile, String> {
         std::fs::read_dir(directory)
-            .map_err(|x| format!("Error reading files in {}:\n  {}", directory.display(), x))?
+            .map_err_with(format!("Error reading files in {}", directory.display()))?
             .find(Self::is_executable)
             .ok_or_else(|| String::from("No executable found"))?
             .map(ExecutableFile::from_file)
-            .map_err(|e| format!("Cannot read file information:\n  {}", e))
+            .map_err_with("Cannot read file information".into())
     }
 
     fn is_executable(entry: &std::io::Result<DirEntry>) -> bool {
@@ -59,18 +60,15 @@ impl ArchiveInstaller {
         to.push(executable.name);
         std::fs::rename(&executable.path, &to)
             .map(|_| ())
-            .map_err(|x| {
-                format!(
-                    "Error moving {} to {}:\n {}",
-                    &executable.path.display(),
-                    to.display(),
-                    x
-                )
-            })
+            .map_err_with(format!(
+                "Error moving {} to {}",
+                &executable.path.display(),
+                to.display(),
+            ))
     }
 
     fn cleanup(temp_dir: &Path) -> Result<(), String> {
-        std::fs::remove_dir_all(temp_dir).map_err(|x| format!("Error deleting temp dir:\n  {}", x))
+        std::fs::remove_dir_all(temp_dir).map_err_with("Error deleting temp dir".into())
     }
 }
 

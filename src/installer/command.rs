@@ -1,9 +1,10 @@
+use crate::installer::error::MapErrWithMessage;
 use std::process::{Command, Output};
 
 pub fn exec_command(name: &str, command: &mut Command) -> Result<(), String> {
     command
         .output()
-        .map_err(|x| format!("An error occurred executing '{}':\n  {}", name, x))
+        .map_err_with(format!("An error occurred executing '{}'", name))
         .and_then(|output| handle_command_output(name, output))
 }
 
