@@ -17,7 +17,7 @@ impl ArchiveInstaller {
 
         let executable = Self::find_executable(&temp_dir)?;
 
-        Self::copy_executable_to_destination_dir(executable, destination_dir)?;
+        Self::move_executable_to_destination_dir(executable, destination_dir)?;
         Self::cleanup(&temp_dir)?;
 
         Ok(())
@@ -51,17 +51,17 @@ impl ArchiveInstaller {
             .unwrap_or(false)
     }
 
-    fn copy_executable_to_destination_dir(
+    fn move_executable_to_destination_dir(
         executable: ExecutableFile,
         destination_dir: &Path,
     ) -> Result<(), String> {
         let mut to = PathBuf::from(destination_dir);
         to.push(executable.name);
-        std::fs::copy(&executable.path, &to)
+        std::fs::rename(&executable.path, &to)
             .map(|_| ())
             .map_err(|x| {
                 format!(
-                    "Error copying {} to {}: {}",
+                    "Error moving {} to {}: {}",
                     &executable.path.display(),
                     to.display(),
                     x
