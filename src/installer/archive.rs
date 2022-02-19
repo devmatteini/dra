@@ -27,16 +27,16 @@ impl ArchiveInstaller {
         let temp_dir = crate::cli::temp_file::temp_dir();
         std::fs::create_dir(&temp_dir)
             .map(|_| temp_dir)
-            .map_err(|x| format!("Error creating temp dir: {}", x))
+            .map_err(|x| format!("Error creating temp dir:\n  {}", x))
     }
 
     fn find_executable(directory: &Path) -> Result<ExecutableFile, String> {
         std::fs::read_dir(directory)
-            .map_err(|x| format!("Error reading files in {}: {}", directory.display(), x))?
+            .map_err(|x| format!("Error reading files in {}:\n  {}", directory.display(), x))?
             .find(Self::is_executable)
             .ok_or_else(|| String::from("No executable found"))?
             .map(ExecutableFile::from_file)
-            .map_err(|e| format!("Cannot read file information: {}", e))
+            .map_err(|e| format!("Cannot read file information:\n  {}", e))
     }
 
     fn is_executable(entry: &std::io::Result<DirEntry>) -> bool {
@@ -61,7 +61,7 @@ impl ArchiveInstaller {
             .map(|_| ())
             .map_err(|x| {
                 format!(
-                    "Error moving {} to {}: {}",
+                    "Error moving {} to {}:\n {}",
                     &executable.path.display(),
                     to.display(),
                     x
@@ -70,7 +70,7 @@ impl ArchiveInstaller {
     }
 
     fn cleanup(temp_dir: &Path) -> Result<(), String> {
-        std::fs::remove_dir_all(temp_dir).map_err(|x| format!("Error deleting temp dir: {}", x))
+        std::fs::remove_dir_all(temp_dir).map_err(|x| format!("Error deleting temp dir:\n  {}", x))
     }
 }
 

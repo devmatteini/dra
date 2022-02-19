@@ -3,7 +3,7 @@ use std::process::{Command, Output};
 pub fn exec_command(name: &str, command: &mut Command) -> Result<(), String> {
     command
         .output()
-        .map_err(|x| format!("An error occurred executing '{}': {}", name, x))
+        .map_err(|x| format!("An error occurred executing '{}':\n  {}", name, x))
         .and_then(|output| handle_command_output(name, output))
 }
 
@@ -12,7 +12,7 @@ fn handle_command_output(name: &str, output: Output) -> Result<(), String> {
         Ok(())
     } else {
         Err(format!(
-            "An error occurred while executing (status: {}):\n{}",
+            "An error occurred while executing (status: {}):\n  {}",
             output
                 .status
                 .code()
