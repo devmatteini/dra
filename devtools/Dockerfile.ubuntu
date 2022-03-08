@@ -5,4 +5,6 @@ COPY src/ src/
 RUN cargo install --path .
 
 FROM ubuntu:20.04
+# Add user with no root permissions
+RUN useradd -ms /bin/bash tester
 COPY --from=builder /usr/local/cargo/bin/dra /usr/local/bin/dra
