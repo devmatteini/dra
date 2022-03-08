@@ -6,8 +6,11 @@ build:
 build-docker:
 	docker build -t dra-ubuntu -f ./devtools/Dockerfile.ubuntu .
 
-test:
+test: build-docker
 	cargo test
+
+integration-tests: build-docker
+	cargo test --test '*'
 
 release:
 	cargo build --release
@@ -25,4 +28,4 @@ lint:
 install-components:
 	rustup component add rustfmt clippy
 
-.PHONY: all build build-docker test release format format-check lint install-components
+.PHONY: all build build-docker test integration-tests release format format-check lint install-components
