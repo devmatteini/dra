@@ -1,0 +1,8 @@
+FROM rust as builder
+WORKDIR /app
+COPY Cargo.* .
+COPY src/ src/
+RUN cargo install --path .
+
+FROM ubuntu:20.04
+COPY --from=builder /usr/local/cargo/bin/dra /usr/local/bin/dra
