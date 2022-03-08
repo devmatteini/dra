@@ -31,9 +31,12 @@ impl Docker {
             .expect("'docker stop' failed to start");
     }
 
-    pub fn exec(&self, command: &str) -> ExecResult {
+    pub const NO_ARGS: &'static [&'static str] = &[];
+
+    pub fn exec(&self, command: &str, args: &[&str]) -> ExecResult {
         let result = Command::new("docker")
             .arg("exec")
+            .args(args)
             .arg(&self.id)
             .arg("sh")
             .arg("-c")
