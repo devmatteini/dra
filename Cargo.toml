@@ -27,6 +27,7 @@ uuid = { version = "0.8.2", features = ["v4"] }
 
 [dev-dependencies]
 test-case = "1.2.1"
+predicates = "2.1.1"
 
 [package.metadata.deb]
 section = "utility"
