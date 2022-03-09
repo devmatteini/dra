@@ -23,7 +23,7 @@ format-check:
 	cargo fmt --all -- --check
 
 lint:
-	cargo clippy
+	cargo clippy --all-targets --all-features
 
 install-components:
 	rustup component add rustfmt clippy
