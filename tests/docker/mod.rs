@@ -1,5 +1,9 @@
 use std::process::Command;
 
+pub mod users {
+    pub const TESTER: &str = "tester";
+}
+
 #[derive(Debug)]
 pub struct Docker {
     id: String,
@@ -20,7 +24,7 @@ impl Docker {
         let id = String::from_utf8(result.stdout)
             .expect("cannot read 'docker run' output")
             .replace('\n', "");
-        Self { id: id.to_string() }
+        Self { id }
     }
 
     pub fn stop(&self) {
@@ -31,12 +35,10 @@ impl Docker {
             .expect("'docker stop' failed to start");
     }
 
-    pub const NO_ARGS: &'static [&'static str] = &[];
-
-    pub fn exec(&self, command: &str, args: &[&str]) -> ExecResult {
+    pub fn exec(&self, command: &str, args: ExecArgs) -> ExecResult {
         let result = Command::new("docker")
             .arg("exec")
-            .args(args)
+            .args(&args.to_args())
             .arg(&self.id)
             .arg("sh")
             .arg("-c")
@@ -60,4 +62,18 @@ impl Docker {
 pub enum ExecResult {
     Success(String),
     Error(String),
+}
+
+pub enum ExecArgs {
+    Default,
+    User(String),
+}
+
+impl ExecArgs {
+    pub fn to_args(&self) -> Vec<&str> {
+        match self {
+            ExecArgs::Default => Vec::new(),
+            ExecArgs::User(user) => vec!["--user", user],
+        }
+    }
 }

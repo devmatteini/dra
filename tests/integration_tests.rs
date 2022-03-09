@@ -4,7 +4,7 @@ mod docker;
 #[cfg(test)]
 mod debian {
     use crate::assertions::{assert_contains, assert_error, assert_success};
-    use crate::docker::Docker;
+    use crate::docker::{users, Docker, ExecArgs};
 
     #[test]
     fn installed_successfully() {
@@ -13,7 +13,7 @@ mod debian {
         // FIXME: create repo instead of using external repos :)
         let result = container.exec(
             "dra sharkdp/bat download -s bat_{tag}_amd64.deb -i",
-            Docker::NO_ARGS,
+            ExecArgs::Default,
         );
 
         let output = assert_success(result);
@@ -29,7 +29,7 @@ mod debian {
         // FIXME: create repo instead of using external repos :)
         let result = container.exec(
             "dra sharkdp/bat download -s bat_{tag}_amd64.deb -i",
-            &["--user", "tester"],
+            ExecArgs::User(users::TESTER.into()),
         );
 
         let output = assert_error(result);
