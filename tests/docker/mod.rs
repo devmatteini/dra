@@ -1,5 +1,9 @@
 use std::process::Command;
 
+pub mod images {
+    pub const UBUNTU: &str = "dra-ubuntu";
+}
+
 pub mod users {
     pub const TESTER: &str = "tester";
 }

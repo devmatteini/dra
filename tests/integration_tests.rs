@@ -4,11 +4,11 @@ mod docker;
 #[cfg(test)]
 mod debian {
     use crate::assertions::{assert_contains, assert_error, assert_success};
-    use crate::docker::{users, Docker, ExecArgs};
+    use crate::docker::{images, users, Docker, ExecArgs};
 
     #[test]
     fn installed_successfully() {
-        let container = Docker::run("dra-ubuntu");
+        let container = Docker::run(images::UBUNTU);
 
         // FIXME: create repo instead of using external repos :)
         let result = container.exec(
@@ -24,7 +24,7 @@ mod debian {
 
     #[test]
     fn wrong_privileges() {
-        let container = Docker::run("dra-ubuntu");
+        let container = Docker::run(images::UBUNTU);
 
         // FIXME: create repo instead of using external repos :)
         let result = container.exec(
