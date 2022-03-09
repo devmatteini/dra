@@ -62,6 +62,12 @@ impl Docker {
     }
 }
 
+impl Drop for Docker {
+    fn drop(&mut self) {
+        self.stop()
+    }
+}
+
 #[derive(Debug)]
 pub enum ExecResult {
     Success(String),

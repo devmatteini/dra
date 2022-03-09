@@ -18,8 +18,6 @@ mod debian {
 
         let output = assert_success(result);
         assert_contains("Installation completed", &output);
-
-        container.stop();
     }
 
     #[test]
@@ -35,7 +33,5 @@ mod debian {
         let output = assert_error(result);
         assert_contains("dpkg", &output);
         assert_contains("requires superuser privilege", &output);
-
-        container.stop();
     }
 }
