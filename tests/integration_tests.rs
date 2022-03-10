@@ -10,9 +10,8 @@ mod debian {
     fn installed_successfully() {
         let container = Docker::run(images::UBUNTU);
 
-        // FIXME: create repo instead of using external repos :)
         let result = container.exec(
-            "dra sharkdp/bat download -s bat_{tag}_amd64.deb -i",
+            "dra devmatteini/dra-tests download -s helloworld.deb -i",
             ExecArgs::Default,
         );
 
@@ -24,9 +23,8 @@ mod debian {
     fn wrong_privileges() {
         let container = Docker::run(images::UBUNTU);
 
-        // FIXME: create repo instead of using external repos :)
         let result = container.exec(
-            "dra sharkdp/bat download -s bat_{tag}_amd64.deb -i",
+            "dra devmatteini/dra-tests download -s helloworld.deb -i",
             ExecArgs::User(users::TESTER.into()),
         );
 
