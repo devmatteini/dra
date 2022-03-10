@@ -1,6 +1,6 @@
 FROM rust as builder
 WORKDIR /app
-COPY Cargo.* .
+COPY Cargo.* ./
 COPY src/ src/
 RUN cargo install --path .
 
