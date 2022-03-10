@@ -5,6 +5,8 @@ COPY src/ src/
 RUN cargo install --path .
 
 FROM ubuntu:20.04
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=$GITHUB_TOKEN
 # Add user with no root permissions
 RUN useradd -ms /bin/bash tester
 COPY --from=builder /usr/local/cargo/bin/dra /usr/local/bin/dra
