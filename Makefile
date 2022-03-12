@@ -7,8 +7,9 @@ build-docker:
 # @ prevents to show github token in output
 	@docker build --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t dra-ubuntu -f ./devtools/Dockerfile.ubuntu .
 
-test: build-docker
-	cargo test
+test:
+# only unit tests
+	cargo test --bins
 
 integration-tests: build-docker
 	cargo test --test '*'
