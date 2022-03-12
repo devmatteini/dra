@@ -12,6 +12,7 @@ mod command;
 mod debian;
 pub mod error;
 mod tar_archive;
+mod tests;
 mod zip_archive;
 
 pub fn install(
@@ -37,14 +38,14 @@ enum FileType {
 }
 
 #[derive(Debug)]
-struct FileInfo {
+pub struct FileInfo {
     path: PathBuf,
     name: String,
     extension: Option<OsString>,
 }
 
 #[derive(Debug)]
-struct SupportedFileInfo {
+pub struct SupportedFileInfo {
     path: PathBuf,
     file_type: FileType,
 }
@@ -61,7 +62,7 @@ fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
     })
 }
 
-fn is_supported(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
+pub fn is_supported(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
     file.extension
         .and_then(file_type_for)
         .map(|file_type| SupportedFileInfo {
