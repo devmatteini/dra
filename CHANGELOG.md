@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Download and install some supported assets (`dra <repo> download --[i]nstall`).
+
+  The supported assets are:
+  - Debian packages (`.deb`)
+  - Tar archive with executable inside (`.tar.[gz|bz2|xz]`)
+  - Zip file with executable inside (`.zip`)
+
+### Internals
+
+Integration tests have been added to test the installation methods for the various supported assets.
+For more information on how this tests works, read the [docs](./tests/README.md).
+
 ## [0.2.3] - 2022-02-05
 
 This release update some of our dependencies and migrates to clap v3 as args parser.
