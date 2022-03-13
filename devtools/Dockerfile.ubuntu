@@ -1,8 +1,13 @@
 FROM rust as builder
 WORKDIR /app
+RUN cargo init --bin
 COPY Cargo.* ./
+# This step will be cached when dependencies do not change (https://whitfin.io/speeding-up-rust-docker-builds/)
+RUN cargo build
+RUN rm -rf src/ target/debug/deps/dra*
+# Copy real source files
 COPY src/ src/
-RUN cargo install --path .
+RUN cargo install --debug --path .
 
 FROM ubuntu:20.04
 ARG GITHUB_TOKEN
