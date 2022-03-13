@@ -1,4 +1,4 @@
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 pub mod images {
     pub const UBUNTU: &str = "dra-ubuntu";
@@ -35,7 +35,8 @@ impl Docker {
         Command::new("docker")
             .arg("stop")
             .arg(&self.id)
-            .output()
+            .stdout(Stdio::piped())
+            .spawn()
             .expect("'docker stop' failed to start");
     }
 
