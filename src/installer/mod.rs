@@ -23,9 +23,7 @@ pub fn install(
     let file_info = file_info_from(&asset_name, source).and_then(is_supported)?;
     let installer = find_installer_for(&file_info.file_type);
 
-    installer(&file_info.path, destination_dir).map_err(InstallError::Fatal)?;
-
-    Ok(())
+    installer(&file_info.path, destination_dir).map_err(InstallError::Fatal)
 }
 
 type InstallerResult = Result<(), String>;
