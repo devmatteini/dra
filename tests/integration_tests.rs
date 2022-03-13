@@ -1,7 +1,6 @@
 mod assertions;
 mod docker;
 
-#[cfg(test)]
 mod debian {
     use crate::assertions::{assert_contains, assert_error, assert_success};
     use crate::docker::{images, users, Docker, ExecArgs};
@@ -34,15 +33,15 @@ mod debian {
     }
 }
 
-#[cfg(test)]
-mod tar_archive {
+mod archives {
     use crate::assertions::{assert_contains, assert_error, assert_success};
     use crate::docker::{images, Docker, ExecArgs};
     use test_case::test_case;
 
-    #[test_case("helloworld.tar.gz"; "gzip")]
-    #[test_case("helloworld.tar.bz2"; "bzip2")]
-    #[test_case("helloworld.tar.xz"; "xz")]
+    #[test_case("helloworld.tar.gz"; "tar gzip")]
+    #[test_case("helloworld.tar.bz2"; "tar bzip2")]
+    #[test_case("helloworld.tar.xz"; "tar xz")]
+    #[test_case("helloworld.zip"; "zip")]
     fn installed_successfully(asset: &str) {
         let container = Docker::run(images::UBUNTU);
 
