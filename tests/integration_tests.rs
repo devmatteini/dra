@@ -40,7 +40,7 @@ mod tar_archive {
     use crate::docker::{images, Docker, ExecArgs};
     use test_case::test_case;
 
-    #[test_case("helloworld.tar.gz"; "gzipped")]
+    #[test_case("helloworld.tar.gz"; "gzip")]
     #[test_case("helloworld.tar.bz2"; "bzip2")]
     #[test_case("helloworld.tar.xz"; "xz")]
     fn installed_successfully(asset: &str) {
