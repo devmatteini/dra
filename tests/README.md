@@ -13,8 +13,10 @@ Tests are written in rust. It's possible to interact with docker api through a c
 ### How to write a test
 
 1. Start docker container `dra-ubuntu` with `Docker::run()`
-2. Execute `dra` command to be tested and wait for its result using `Docker::exec()`
-3. Do assertions on command result (you can find helpers methods in [assertions](assertions/mod.rs) module)
+2. Execute `dra` command to be tested and wait for its result using `Docker::exec()`.
+
+   You need to use [devmatteini/dra-tests](https://github.com/devmatteini/dra-tests) repository.
+4. Do assertions on command result (you can find helpers methods in [assertions](assertions/mod.rs) module)
 
 **Note**: when the docker container started in step 1 goes out of scope, is then stopped in background.
 
