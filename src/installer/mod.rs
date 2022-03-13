@@ -76,8 +76,7 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     if extension == "deb" {
         return Some(FileType::Debian);
     }
-    // TODO: add support for this archives as well: tar, bz2, xz
-    if extension == "gz" {
+    if extension == "gz" || extension == "bz2" || extension == "xz" {
         return Some(FileType::TarArchive);
     }
     if extension == "zip" {

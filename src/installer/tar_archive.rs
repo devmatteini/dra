@@ -18,7 +18,7 @@ impl TarArchiveInstaller {
         exec_command(
             TAR,
             Command::new(TAR)
-                .arg("zxf")
+                .arg("xf")
                 .arg(source)
                 .arg("-C")
                 .arg(temp_dir)

@@ -9,6 +9,8 @@ mod tests {
 
     #[test_case("deb", FileType::Debian)]
     #[test_case("gz", FileType::TarArchive)]
+    #[test_case("bz2", FileType::TarArchive)]
+    #[test_case("xz", FileType::TarArchive)]
     #[test_case("zip", FileType::ZipArchive)]
     fn supported_file(file_extension: &str, expected_file_type: FileType) {
         let file_info = any_file_info(Some(file_extension));
@@ -17,8 +19,7 @@ mod tests {
         assert_ok_equal(expected_file_type, result);
     }
 
-    #[test_case("bz2")]
-    #[test_case("xz")]
+    #[test_case("txt")]
     fn not_supported(file_extension: &str) {
         let file_info = any_file_info(Some(file_extension));
         let result = is_supported(file_info);
