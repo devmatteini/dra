@@ -84,6 +84,20 @@ Select and download an asset from a specific release
 $ dra devmatteini/dra-tests download --tag 0.1.1
 ```
 
+### Install assets
+
+Download and install an asset (on both interactive and non-interactive modes)
+
+```
+$ dra devmatteini/dra-tests download --install
+```
+
+Supported assets that can be installed are:
+
+- Debian packages (`.deb`)
+- Tar archive with executable (`.tar.[gz|bz2|xz]`)
+- Zip file with executable (`.zip`)
+
 ### Non-Interactive
 
 This mode is useful to be used in automated scripts.
