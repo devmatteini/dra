@@ -1,3 +1,6 @@
+use std::fs::File;
+use std::path::{Path, PathBuf};
+
 use crate::cli::get_env;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::cli::select;
@@ -9,8 +12,6 @@ use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
 use crate::installer::cleanup::InstallCleanup;
 use crate::{github, installer};
-use std::fs::File;
-use std::path::{Path, PathBuf};
 
 pub struct DownloadHandler {
     repository: Repository,
@@ -143,7 +144,7 @@ impl DownloadHandler {
         Ok(())
     }
 
-    fn choose_output_path(&self, asset_name: &str) -> PathBuf {
+    pub fn choose_output_path(&self, asset_name: &str) -> PathBuf {
         if self.install {
             return crate::cli::temp_file::temp_file();
         }
@@ -170,5 +171,58 @@ impl DownloadHandler {
 
     fn download_error(e: GithubError) -> HandlerError {
         HandlerError::new(format!("Error downloading asset: {}", e))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INSTALL: bool = true;
+    const NO_INSTALL: bool = false;
+
+    #[test]
+    fn temp_output_when_installing() {
+        let output = PathBuf::from("/some/path");
+        let handler = handler_for(Some(output), INSTALL);
+
+        let result = handler.choose_output_path("ANY");
+
+        assert!(result
+            .to_str()
+            .expect("Error: no path available")
+            .contains("dra-"))
+    }
+
+    #[test]
+    fn selected_output() {
+        let output = PathBuf::from("/some/path");
+        let handler = handler_for(Some(output.clone()), NO_INSTALL);
+
+        let result = handler.choose_output_path("ANY");
+
+        assert_eq!(output, result)
+    }
+
+    #[test]
+    fn no_output() {
+        let handler = handler_for(None, NO_INSTALL);
+
+        let result = handler.choose_output_path("my_asset.deb");
+
+        assert_eq!(PathBuf::from("my_asset.deb"), result)
+    }
+
+    fn handler_for(output: Option<PathBuf>, install: bool) -> DownloadHandler {
+        DownloadHandler {
+            select: None,
+            output,
+            install,
+            tag: None,
+            repository: Repository {
+                owner: "ANY".into(),
+                repo: "ANY".into(),
+            },
+        }
     }
 }
