@@ -12,7 +12,19 @@ mod installer;
 
 fn main() {
     let cli: Cli = Cli::parse();
+    init_ctrl_c_handler();
     handle(run(cli));
+}
+
+// NOTE: this is needed to restore the cursor if CTRL+C is
+// pressed during the asset selection (https://github.com/mitsuhiko/dialoguer/issues/77)
+fn init_ctrl_c_handler() {
+    ctrlc::set_handler(move || {
+        let term = dialoguer::console::Term::stderr();
+        let _ = term.show_cursor();
+        exit(1);
+    })
+    .expect("Error initializing CTRL+C handler")
 }
 
 fn run(cli: Cli) -> HandlerResult {
