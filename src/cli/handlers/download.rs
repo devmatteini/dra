@@ -69,16 +69,7 @@ impl DownloadHandler {
     fn output_dir_or_cwd(&self) -> Result<PathBuf, HandlerError> {
         self.output
             .as_ref()
-            .map(|x| {
-                if x.is_dir() {
-                    Ok(PathBuf::from(x))
-                } else {
-                    Err(HandlerError::new(format!(
-                        "{} is not a directory",
-                        x.display()
-                    )))
-                }
-            })
+            .map(|x| Self::dir_or_error(x))
             .unwrap_or_else(|| {
                 std::env::current_dir().map_err(|x| {
                     HandlerError::new(format!("Error retrieving current directory: {}", x))
@@ -120,14 +111,8 @@ impl DownloadHandler {
         let mut stream =
             github::download_asset(client, selected_asset).map_err(Self::download_error)?;
         let mut destination = Self::create_file(output_path)?;
-        std::io::copy(&mut stream, &mut destination).map_err(|x| {
-            HandlerError::new(format!(
-                "Error copying {} to {}: {}",
-                &selected_asset.name,
-                output_path.display(),
-                x
-            ))
-        })?;
+        std::io::copy(&mut stream, &mut destination)
+            .map_err(|x| Self::copy_err(&selected_asset.name, output_path, x))?;
         spinner.stop();
         Ok(())
     }
@@ -165,6 +150,26 @@ impl DownloadHandler {
                 e
             ))
         })
+    }
+
+    pub fn copy_err(asset_name: &str, output_path: &Path, error: std::io::Error) -> HandlerError {
+        HandlerError::new(format!(
+            "Error copying {} to {}: {}",
+            asset_name,
+            output_path.display(),
+            error
+        ))
+    }
+
+    fn dir_or_error(path: &Path) -> Result<PathBuf, HandlerError> {
+        if path.is_dir() {
+            Ok(PathBuf::from(path))
+        } else {
+            Err(HandlerError::new(format!(
+                "{} is not a directory",
+                path.display()
+            )))
+        }
     }
 
     fn release_error(e: GithubError) -> HandlerError {
