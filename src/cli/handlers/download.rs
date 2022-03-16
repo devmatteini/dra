@@ -2,6 +2,7 @@ use std::fs::File;
 use std::path::{Path, PathBuf};
 
 use crate::cli::get_env;
+use crate::cli::handlers::common::check_has_assets;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::cli::select;
 use crate::cli::spinner::Spinner;
@@ -41,6 +42,7 @@ impl DownloadHandler {
     pub fn run(&self) -> HandlerResult {
         let client = GithubClient::new(get_env(GITHUB_TOKEN));
         let release = self.fetch_release(&client)?;
+        check_has_assets(&release)?;
         let selected_asset = self.autoselect_or_ask_asset(release)?;
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&client, &selected_asset, &output_path)?;
