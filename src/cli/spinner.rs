@@ -33,6 +33,11 @@ impl Spinner {
         println!("{}", &self.end_message);
     }
 
+    pub fn stop_with_message(&self, message: &str) {
+        self.pb.finish_and_clear();
+        println!("{}", message);
+    }
+
     pub fn download(download_asset: &str, output_path: &Path) -> Spinner {
         Spinner::new(
             format!("Downloading {}", Color::new(download_asset).bold()),
@@ -48,5 +53,9 @@ impl Spinner {
             "Installing".into(),
             format!("{}", Color::new("Installation completed!").green()),
         )
+    }
+
+    pub fn no_messages() -> Spinner {
+        Spinner::new(String::new(), String::new())
     }
 }

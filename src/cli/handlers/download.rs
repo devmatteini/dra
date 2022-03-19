@@ -12,7 +12,7 @@ use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
 use crate::installer::cleanup::InstallCleanup;
-use crate::{github, installer};
+use crate::{github, installer, Color};
 
 pub struct DownloadHandler {
     repository: Repository,
@@ -87,8 +87,15 @@ impl DownloadHandler {
     }
 
     fn fetch_release(&self, client: &GithubClient) -> Result<Release, HandlerError> {
-        github::get_release(client, &self.repository, self.tag.as_ref())
-            .map_err(Self::release_error)
+        let spinner = Spinner::no_messages();
+        spinner.start();
+
+        let release = github::get_release(client, &self.repository, self.tag.as_ref())
+            .map_err(Self::release_error)?;
+
+        let message = format!("Release tag is {}", Color::new(&release.tag.0).bold());
+        spinner.stop_with_message(&message);
+        Ok(release)
     }
 
     fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
