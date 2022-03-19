@@ -2,7 +2,7 @@ use std::fs::File;
 use std::path::{Path, PathBuf};
 
 use crate::cli::get_env;
-use crate::cli::handlers::common::check_has_assets;
+use crate::cli::handlers::common::{check_has_assets, fetch_release_for};
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::cli::select;
 use crate::cli::spinner::Spinner;
@@ -12,7 +12,7 @@ use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
 use crate::installer::cleanup::InstallCleanup;
-use crate::{github, installer, Color};
+use crate::{github, installer};
 
 pub struct DownloadHandler {
     repository: Repository,
@@ -87,15 +87,7 @@ impl DownloadHandler {
     }
 
     fn fetch_release(&self, client: &GithubClient) -> Result<Release, HandlerError> {
-        let spinner = Spinner::no_messages();
-        spinner.start();
-
-        let release = github::get_release(client, &self.repository, self.tag.as_ref())
-            .map_err(Self::release_error)?;
-
-        let message = format!("Release tag is {}", Color::new(&release.tag.0).bold());
-        spinner.stop_with_message(&message);
-        Ok(release)
+        fetch_release_for(client, &self.repository, self.tag.as_ref())
     }
 
     fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
@@ -177,10 +169,6 @@ impl DownloadHandler {
                 path.display()
             )))
         }
-    }
-
-    fn release_error(e: GithubError) -> HandlerError {
-        HandlerError::new(format!("Error fetching the release: {}", e))
     }
 
     fn download_error(e: GithubError) -> HandlerError {
