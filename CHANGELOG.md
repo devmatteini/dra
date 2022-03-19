@@ -7,6 +7,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.1] - 2022-03-19
+
+### Changed
+
+- Improve `dra-download` and `dra-untag` UX by showing a spinner while fetching the release information
+- `dra-download` and `dra-untag` now print which release tag is currently used
+
+### Fixed
+
+- GitHub releases with no assets are now handled properly
+- If CTRL+C was pressed during the asset selection the cursor would not be restored (in both `dra-download` and `dra-untag` sub commands).
+
+  The issue and solution that we implemented is described here [mitsuhiko/dialoguer/issues/77](https://github.com/mitsuhiko/dialoguer/issues/77).
+
 ## [0.3.0] - 2022-03-15
 
 ### Added
