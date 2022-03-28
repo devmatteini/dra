@@ -1,4 +1,5 @@
 use crate::cli::color::Color;
+use crate::cli::handlers::completion::CompletionHandler;
 use crate::cli::handlers::download::DownloadHandler;
 use crate::cli::handlers::untag::UntagHandler;
 use crate::cli::handlers::{HandlerError, HandlerResult};
@@ -36,6 +37,7 @@ fn run(cli: Cli) -> HandlerResult {
             install,
         } => DownloadHandler::new(cli.repo, select, tag, output, install).run(),
         Command::Untag => UntagHandler::new(cli.repo).run(),
+        Command::Completion { shell } => CompletionHandler::new(shell).run(),
     }
 }
 

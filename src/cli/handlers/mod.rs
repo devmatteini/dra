@@ -1,4 +1,5 @@
 mod common;
+pub mod completion;
 pub mod download;
 pub mod untag;
 

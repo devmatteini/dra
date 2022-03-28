@@ -1,7 +1,9 @@
+use std::path::PathBuf;
+
+use clap::{Parser, ValueHint};
+
 use crate::cli::parse_repository::try_parse_repository;
 use crate::github::Repository;
-use clap::Parser;
-use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
 #[clap(
@@ -39,7 +41,7 @@ pub enum Command {
         /// Default path is current working directory and the name of the asset.
         ///
         /// If used with `--install` it must be a directory path
-        #[clap(short = 'o', long = "output", parse(from_os_str))]
+        #[clap(short = 'o', long = "output", parse(from_os_str), value_hint = ValueHint::AnyPath)]
         output: Option<PathBuf>,
 
         /// Install downloaded asset
@@ -52,4 +54,10 @@ pub enum Command {
 
     /// Select an asset and generate an untagged version of it
     Untag,
+
+    /// Generate shell completion
+    Completion {
+        #[clap(arg_enum)]
+        shell: clap_complete::Shell,
+    },
 }
