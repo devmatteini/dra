@@ -69,19 +69,19 @@ The minimum set of scopes needed is: `Full control of private repositories `.
 Select and download an asset from a repository
 
 ```
-$ dra devmatteini/dra-tests download
+$ dra download devmatteini/dra-tests
 ```
 
 Select and download an asset to custom path
 
 ```
-$ dra devmatteini/dra-tests download --output /tmp/dra-example
+$ dra download --output /tmp/dra-example devmatteini/dra-tests
 ```
 
 Select and download an asset from a specific release
 
 ```
-$ dra devmatteini/dra-tests download --tag 0.1.1
+$ dra download --tag 0.1.1 devmatteini/dra-tests
 ```
 
 ### Install assets
@@ -89,7 +89,7 @@ $ dra devmatteini/dra-tests download --tag 0.1.1
 Download and install an asset (on both interactive and non-interactive modes)
 
 ```
-$ dra devmatteini/dra-tests download --install
+$ dra download --install devmatteini/dra-tests
 ```
 
 Supported assets that can be installed are:
@@ -105,14 +105,14 @@ This mode is useful to be used in automated scripts.
 First you need to generate an untagged asset name:
 
 ```
-$ dra devmatteini/dra-tests untag
+$ dra untag devmatteini/dra-tests
 helloworld_{tag}.tar.gz
 ```
 
 Copy the output and run:
 
 ```
-$ dra devmatteini/dra-tests download --select "helloworld_{tag}.tar.gz"
+$ dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
 ```
 
 This last command can be used in automated scripts without human interaction.
