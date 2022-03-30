@@ -117,6 +117,17 @@ $ dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
 
 This last command can be used in automated scripts without human interaction.
 
+### Shell completion
+
+Generate shell completion
+
+```
+$ dra completion bash > dra-completion
+$ source dra-completion
+```
+
+See all supported shell with `dra completion -h`
+
 ---
 
 For more information on args/flags/options/commands run:
