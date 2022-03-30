@@ -31,12 +31,13 @@ fn init_ctrl_c_handler() {
 fn run(cli: Cli) -> HandlerResult {
     match cli.cmd {
         Command::Download {
+            repo,
             select,
             tag,
             output,
             install,
-        } => DownloadHandler::new(cli.repo, select, tag, output, install).run(),
-        Command::Untag => UntagHandler::new(cli.repo).run(),
+        } => DownloadHandler::new(repo, select, tag, output, install).run(),
+        Command::Untag { repo } => UntagHandler::new(repo).run(),
         Command::Completion { shell } => CompletionHandler::new(shell).run(),
     }
 }

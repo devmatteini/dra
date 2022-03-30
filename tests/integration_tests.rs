@@ -10,7 +10,7 @@ mod debian {
         let container = Docker::run(images::UBUNTU);
 
         let result = container.exec(
-            "dra devmatteini/dra-tests download -s helloworld.deb -i",
+            "dra download -s helloworld.deb -i devmatteini/dra-tests",
             ExecArgs::Default,
         );
 
@@ -23,7 +23,7 @@ mod debian {
         let container = Docker::run(images::UBUNTU);
 
         let result = container.exec(
-            "dra devmatteini/dra-tests download -s helloworld.deb -i",
+            "dra download -s helloworld.deb -i devmatteini/dra-tests",
             ExecArgs::User(users::TESTER.into()),
         );
 
@@ -46,7 +46,7 @@ mod archives {
         let container = Docker::run(images::UBUNTU);
 
         let result = container.exec(
-            &format!("dra devmatteini/dra-tests download -s {} -i", asset),
+            &format!("dra download -s {} -i devmatteini/dra-tests", asset),
             ExecArgs::Default,
         );
 
@@ -59,7 +59,7 @@ mod archives {
         let container = Docker::run(images::UBUNTU);
 
         let result = container.exec(
-            "dra devmatteini/dra-tests download -s no_executable.tar.gz -i",
+            "dra download -s no_executable.tar.gz -i devmatteini/dra-tests",
             ExecArgs::Default,
         );
 
