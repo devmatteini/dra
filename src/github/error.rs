@@ -2,7 +2,7 @@ use std::fmt::Formatter;
 
 #[derive(Debug)]
 pub enum GithubError {
-    Http(ureq::Error),
+    Http(Box<ureq::Error>),
     JsonDeserialization(std::io::Error),
     RepositoryOrReleaseNotFound,
 }
@@ -11,8 +11,8 @@ impl GithubError {
     pub fn from(error: ureq::Error) -> Self {
         match error {
             ureq::Error::Status(404, _) => Self::RepositoryOrReleaseNotFound,
-            ureq::Error::Status(_, _) => Self::Http(error),
-            ureq::Error::Transport(_) => Self::Http(error),
+            ureq::Error::Status(_, _) => Self::Http(Box::new(error)),
+            ureq::Error::Transport(_) => Self::Http(Box::new(error)),
         }
     }
 }
