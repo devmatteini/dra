@@ -7,6 +7,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.2] - 2022-03-31
+
+### :warning: Breaking Changes :warning:
+
+The command line interface has changed to `dra <SUBCOMMAND>`.
+
+The `<REPO>` positional argument must be passed after choosing `download` or `untag` subcommand (e.g `dra download <REPO>`)
+
+This change was needed in order to add subcommands/flags that didn't require `<REPO>`, like the newly added `completion`.
+
+### Added
+
+- Generate shell completion with `dra completion <SHELL>`
+
+### Updated dependencies
+
+- clap 3.0.13 -> 3.1.6
+
 ## [0.3.1] - 2022-03-19
 
 ### Changed
