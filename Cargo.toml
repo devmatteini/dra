@@ -28,7 +28,7 @@ uuid = { version = "0.8.2", features = ["v4"] }
 ctrlc = "3.2.1"
 
 [dev-dependencies]
-test-case = "1.2.1"
+test-case = "1.2.3"
 predicates = "2.1.1"
 
 [package.metadata.deb]
