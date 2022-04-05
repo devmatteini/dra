@@ -1,0 +1,15 @@
+version: 2
+
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+      time: "11:00"
+      timezone: Europe/Rome
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: cargo
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-major" ]
