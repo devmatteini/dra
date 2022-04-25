@@ -3,7 +3,7 @@ all: format-check build lint test
 build:
 	cargo build --all-features
 
-build-docker:
+build-docker: build
 # @ prevents to show github token in output
 	@docker build --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t dra-ubuntu -f ./devtools/Dockerfile.ubuntu .
 
