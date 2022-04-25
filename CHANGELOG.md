@@ -7,6 +7,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.3] - 2022-04-25
+
+### Changed
+
+- The [release workflow](./.github/workflows/release.yml) is now using [github cli](https://cli.github.com/) to create github release and upload
+  assets, since `actions/create-release` and `actions/upload-release-asset` are not maintained anymore.
+
+### Development
+
+- [Dependabot](https://github.com/dependabot) is now used to weekly update cargo crates and github actions
+- Integration tests are now faster to run on both host machine and CI (see 1f36ffc12e4bb2da07be3106bc982d76419c7bf0 for more details)
+
+### Updated dependencies
+
+- `test-case` from 1.2.1 to 1.2.3
+- `dialoguer` from 0.9.0 to 0.10.0
+- `ctrlc` from 3.2.1 to 3.2.2
+- `clap` from 3.1.6 to 3.1.12
+- `clap_complete` from 3.1.1 to 3.1.2
+
 ## [0.3.2] - 2022-03-31
 
 ### :warning: Breaking Changes :warning:
