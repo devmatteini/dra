@@ -18,6 +18,10 @@ if ! command -v gh >/dev/null; then
   echo "Missing gh command"
   usage
 fi
+if [[ -z $GITHUB_REPOSITORY ]]; then
+  echo "Missing GITHUB_REPOSITORY env variable. Format must be owner/repo"
+  usage
+fi
 
 version="$1"
 release_message=$(git log -1 --pretty=%B)
@@ -27,5 +31,5 @@ echo "version $version"
 gh release create "$version" \
   --title "$version" \
   --notes "$release_message" \
-  --repo devmatteini/dra \
+  --repo "$GITHUB_REPOSITORY" \
   "${@:2}" # assets
