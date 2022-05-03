@@ -21,9 +21,7 @@ impl TarArchiveInstaller {
                 .arg("xf")
                 .arg(source)
                 .arg("-C")
-                .arg(temp_dir)
-                // Remove the root dir inside the tar archive. See https://askubuntu.com/a/470266
-                .arg("--strip-components=1"),
+                .arg(temp_dir),
         )
     }
 }

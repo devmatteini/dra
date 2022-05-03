@@ -66,4 +66,17 @@ mod archives {
         let output = assert_error(result);
         assert_contains("No executable found", &output);
     }
+
+    #[test]
+    fn no_root_directory() {
+        let container = Docker::run(images::UBUNTU);
+
+        let result = container.exec(
+            "dra download -s no_root_directory.tar.gz -i devmatteini/dra-tests",
+            ExecArgs::Default,
+        );
+
+        let output = assert_success(result);
+        assert_contains("Installation completed", &output);
+    }
 }

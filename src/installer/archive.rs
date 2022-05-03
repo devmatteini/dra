@@ -1,9 +1,10 @@
-use crate::installer::error::MapErrWithMessage;
 use std::ffi::OsString;
-use std::fs::DirEntry;
 use std::os::unix::prelude::PermissionsExt;
 use std::path::{Path, PathBuf};
 
+use walkdir::WalkDir;
+
+use crate::installer::error::MapErrWithMessage;
 use crate::installer::InstallerResult;
 
 pub struct ArchiveInstaller;
@@ -32,23 +33,24 @@ impl ArchiveInstaller {
     }
 
     fn find_executable(directory: &Path) -> Result<ExecutableFile, String> {
-        std::fs::read_dir(directory)
-            .map_err_with(format!("Error reading files in {}", directory.display()))?
+        let ignore_error = |result: walkdir::Result<walkdir::DirEntry>| result.ok();
+
+        WalkDir::new(directory)
+            .max_depth(2)
+            .into_iter()
+            .filter_map(ignore_error)
             .find(Self::is_executable)
-            .ok_or_else(|| String::from("No executable found"))?
+            .ok_or_else(|| String::from("No executable found"))
             .map(ExecutableFile::from_file)
-            .map_err_with("Cannot read file information".into())
     }
 
-    fn is_executable(entry: &std::io::Result<DirEntry>) -> bool {
-        entry
-            .as_ref()
-            .map(|x| {
-                let path = x.path();
-                path.metadata()
-                    .map(|metadata| path.is_file() && (metadata.permissions().mode() & 0o111) != 0)
-                    .unwrap_or(false)
-            })
+    fn is_executable(x: &walkdir::DirEntry) -> bool {
+        let path = x.path();
+        let is_executable =
+            |metadata: std::fs::Metadata| (metadata.permissions().mode() & 0o111) != 0;
+
+        path.metadata()
+            .map(|metadata| path.is_file() && is_executable(metadata))
             .unwrap_or(false)
     }
 
@@ -78,10 +80,10 @@ struct ExecutableFile {
 }
 
 impl ExecutableFile {
-    fn from_file(x: DirEntry) -> Self {
+    fn from_file(x: walkdir::DirEntry) -> Self {
         Self {
-            path: x.path(),
-            name: x.file_name(),
+            name: x.file_name().to_os_string(),
+            path: x.path().to_path_buf(),
         }
     }
 }
