@@ -1,7 +1,7 @@
 all: format-check build lint test
 
 build:
-	cargo build --all-features
+	cargo build --tests
 
 build-docker: build
 # @ prevents to show github token in output
