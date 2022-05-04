@@ -17,12 +17,7 @@ impl ZipArchiveInstaller {
     fn extract_archive(source: &Path, temp_dir: &Path) -> Result<(), String> {
         exec_command(
             UNZIP,
-            Command::new(UNZIP)
-                // Remove the root dir inside the zip archive. see man unzip
-                .arg("-j")
-                .arg(source)
-                .arg("-d")
-                .arg(temp_dir),
+            Command::new(UNZIP).arg(source).arg("-d").arg(temp_dir),
         )
     }
 }

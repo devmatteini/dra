@@ -67,12 +67,13 @@ mod archives {
         assert_contains("No executable found", &output);
     }
 
-    #[test]
-    fn no_root_directory() {
+    #[test_case("no_root_directory.tar.gz"; "tar")]
+    #[test_case("no_root_directory.zip"; "zip")]
+    fn no_root_directory(asset: &str) {
         let container = Docker::run(images::UBUNTU);
 
         let result = container.exec(
-            "dra download -s no_root_directory.tar.gz -i devmatteini/dra-tests",
+            &format!("dra download -s {} -i devmatteini/dra-tests", asset),
             ExecArgs::Default,
         );
 
