@@ -1,0 +1,3 @@
+FROM ubuntu:20.04
+RUN apt-get update && apt-get install --no-install-recommends -y unzip xz-utils && rm -rf /var/lib/apt/lists/*
+RUN useradd -ms /bin/bash tester
