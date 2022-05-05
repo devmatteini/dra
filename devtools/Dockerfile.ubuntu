@@ -1,7 +1,4 @@
-FROM ubuntu:20.04
+FROM devmatteini/dra-ubuntu-base
 ARG GITHUB_TOKEN
 ENV GITHUB_TOKEN=$GITHUB_TOKEN
-RUN apt-get update && apt-get install -y unzip xz-utils && rm -rf /var/lib/apt/lists/*
-# Add user with no root permissions
-RUN useradd -ms /bin/bash tester
 COPY ./target/debug/dra /usr/local/bin/dra
