@@ -5,11 +5,13 @@ pub enum GithubError {
     Http(Box<ureq::Error>),
     JsonDeserialization(std::io::Error),
     RepositoryOrReleaseNotFound,
+    RateLimitExceeded,
 }
 
 impl GithubError {
     pub fn from(error: ureq::Error) -> Self {
         match error {
+            ureq::Error::Status(403, _) => Self::RateLimitExceeded,
             ureq::Error::Status(404, _) => Self::RepositoryOrReleaseNotFound,
             ureq::Error::Status(_, _) => Self::Http(Box::new(error)),
             ureq::Error::Transport(_) => Self::Http(Box::new(error)),
@@ -27,6 +29,11 @@ impl std::fmt::Display for GithubError {
             GithubError::RepositoryOrReleaseNotFound => {
                 f.write_str("Repository or release not found")
             }
+            GithubError::RateLimitExceeded => f.write_str(
+                "GitHub API rate limit exceeded.
+Export GITHUB_TOKEN environment variable to avoid this error.
+More information can be found at https://github.com/devmatteini/dra#usage",
+            ),
         }
     }
 }
