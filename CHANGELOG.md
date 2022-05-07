@@ -7,6 +7,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.4] - 2022-05-07
+
+### Added
+
+- More useful error message on rate limit exceeded and unauthorized errors from GitHub API
+- `dra --help` and `dra help` now display examples of the most common commands used.
+
+### Fixed
+
+Previously when installing a tar/zip archive without a root directory it would result in an error.
+
+Now this type of structures inside tar/zip archives are supported.
+
+More info on commit [5f73077](https://github.com/devmatteini/dra/commit/5f7307753ea87701a2b8180698a68d86278ee0f8)
+
+### Development
+
+In order to speed up integration tests on CI it was created a custom docker image with all
+runtime dependencies already installed ([devmatteini/dra-ubuntu-base](https://hub.docker.com/r/devmatteini/dra-ubuntu-base)).
+
+### Updated dependencies
+
+- `clap` from 3.1.12 to 3.1.14
+- `clap_complete` from 3.1.2 to 3.1.3
+- `serde` from 1.0.136 to 1.0.137
+
 ## [0.3.3] - 2022-04-25
 
 ### Changed
