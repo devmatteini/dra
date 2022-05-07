@@ -9,7 +9,23 @@ use crate::github::Repository;
 #[clap(
     name = "dra",
     version,
-    about = "A command line tool to download release assets from GitHub"
+    about = "A command line tool to download release assets from GitHub",
+    long_about = "A command line tool to download release assets from GitHub.
+
+EXAMPLES:
+Select and download an asset:
+$ dra download devmatteini/dra-tests
+
+Automatically select and download an asset:
+$ dra untag devmatteini/dra-tests
+helloworld_{tag}.tar.gz
+$ dra download --select \"helloworld_{tag}.tar.gz\" devmatteini/dra-tests
+
+Download and install an asset:
+$ dra download --install devmatteini/dra-tests
+
+More examples can be found at https://github.com/devmatteini/dra#usage
+"
 )]
 pub struct Cli {
     #[clap(subcommand)]
