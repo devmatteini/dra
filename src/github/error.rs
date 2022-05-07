@@ -6,11 +6,13 @@ pub enum GithubError {
     JsonDeserialization(std::io::Error),
     RepositoryOrReleaseNotFound,
     RateLimitExceeded,
+    Unauthorized,
 }
 
 impl GithubError {
     pub fn from(error: ureq::Error) -> Self {
         match error {
+            ureq::Error::Status(401, _) => Self::Unauthorized,
             ureq::Error::Status(403, _) => Self::RateLimitExceeded,
             ureq::Error::Status(404, _) => Self::RepositoryOrReleaseNotFound,
             ureq::Error::Status(_, _) => Self::Http(Box::new(error)),
@@ -33,6 +35,10 @@ impl std::fmt::Display for GithubError {
                 "GitHub API rate limit exceeded.
 Export GITHUB_TOKEN environment variable to avoid this error.
 More information can be found at https://github.com/devmatteini/dra#usage",
+            ),
+            GithubError::Unauthorized => f.write_str(
+                "Invalid GitHub credentials.
+Make sure GITHUB_TOKEN is valid",
             ),
         }
     }
