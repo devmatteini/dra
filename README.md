@@ -58,7 +58,7 @@ make release
 
 ## Usage
 
-In order to download assets from private repositories export an environment variable `GITHUB_TOKEN=<token>`.
+In order to download assets from private repositories (and avoid rate limit issues) export an environment variable `GITHUB_TOKEN=<token>`.
 
 Follow the official guide to create
 a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
