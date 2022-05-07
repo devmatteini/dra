@@ -156,7 +156,7 @@ checksum = "6184e33543162437515c2e2b48714794e37845ec9851711914eec9d308f6ebe8"
 
 [[package]]
 name = "dra"
-version = "0.3.3"
+version = "0.3.4"
 dependencies = [
  "clap",
  "clap_complete",
