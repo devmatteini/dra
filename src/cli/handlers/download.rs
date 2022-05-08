@@ -1,4 +1,6 @@
+use std::cmp;
 use std::fs::File;
+use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use crate::cli::get_env;
@@ -107,11 +109,22 @@ impl DownloadHandler {
     ) -> Result<(), HandlerError> {
         let spinner = Spinner::download(&selected_asset.name, output_path);
         spinner.start();
-        let mut stream =
+        let (mut stream, content_length) =
             github::download_asset(client, selected_asset).map_err(Self::download_error)?;
+        spinner.set_max_progress(content_length);
         let mut destination = Self::create_file(output_path)?;
-        std::io::copy(&mut stream, &mut destination)
-            .map_err(|x| Self::copy_err(&selected_asset.name, output_path, x))?;
+        let mut downloaded = 0;
+        let mut buffer = [0; 1024];
+        while let Ok(bytes_read) = stream.read(&mut buffer) {
+            if bytes_read == 0 {
+                break;
+            }
+            destination
+                .write(&buffer[..bytes_read])
+                .map_err(|x| Self::write_err(&selected_asset.name, output_path, x))?;
+            downloaded = cmp::min(downloaded + bytes_read as u64, content_length);
+            spinner.update_progress(downloaded);
+        }
         spinner.stop();
         Ok(())
     }
@@ -151,9 +164,9 @@ impl DownloadHandler {
         })
     }
 
-    pub fn copy_err(asset_name: &str, output_path: &Path, error: std::io::Error) -> HandlerError {
+    pub fn write_err(asset_name: &str, output_path: &Path, error: std::io::Error) -> HandlerError {
         HandlerError::new(format!(
-            "Error copying {} to {}: {}",
+            "Error saving {} to {}: {}",
             asset_name,
             output_path.display(),
             error

@@ -49,11 +49,15 @@ fn deserialize(response: ureq::Response) -> Result<Release, GithubError> {
 pub fn download_asset(
     client: &GithubClient,
     asset: &Asset,
-) -> Result<impl Read + Send, GithubError> {
-    client
+) -> Result<(impl Read + Send, u64), GithubError> {
+    let response = client
         .get(&asset.download_url)
         .set("Accept", "application/octet-stream")
         .call()
-        .map_err(GithubError::from)
-        .map(|response| response.into_reader())
+        .map_err(GithubError::from)?;
+    let content_length = response
+        .header("Content-Length")
+        .and_then(|v| v.parse().ok())
+        .ok_or(GithubError::InvalidContentLength)?;
+    Ok((response.into_reader(), content_length))
 }
