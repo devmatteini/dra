@@ -13,12 +13,12 @@ pub struct Spinner {
 }
 
 impl Spinner {
-    pub fn new(message: String, end_message: String) -> Self {
+    pub fn new(message: String, end_message: String, template: &str) -> Self {
         let pb = ProgressBar::new_spinner();
         pb.set_style(
             ProgressStyle::default_spinner()
                 .tick_strings(TICKS)
-                .template("{spinner:.blue} {msg}"),
+                .template(template),
         );
         pb.set_message(message);
         Self { pb, end_message }
@@ -38,6 +38,14 @@ impl Spinner {
         println!("{}", message);
     }
 
+    pub fn set_max_progress(&self, progress: u64) {
+        self.pb.set_length(progress);
+    }
+
+    pub fn update_progress(&self, progress: u64) {
+        self.pb.set_position(progress);
+    }
+
     pub fn download(download_asset: &str, output_path: &Path) -> Spinner {
         Spinner::new(
             format!("Downloading {}", Color::new(download_asset).bold()),
@@ -45,6 +53,7 @@ impl Spinner {
                 "Saved to: {}",
                 Color::new(&format!("{}", output_path.display())).bold()
             ),
+            "{msg}\n{percent}% [{wide_bar}] {bytes}/{total_bytes} ({eta})",
         )
     }
 
@@ -52,10 +61,11 @@ impl Spinner {
         Spinner::new(
             "Installing".into(),
             format!("{}", Color::new("Installation completed!").green()),
+            "{spinner:.blue} {msg}",
         )
     }
 
     pub fn no_messages() -> Spinner {
-        Spinner::new(String::new(), String::new())
+        Spinner::new(String::new(), String::new(), "{spinner:.blue} {msg}")
     }
 }
