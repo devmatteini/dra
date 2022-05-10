@@ -6,6 +6,7 @@ use std::path::{Path, PathBuf};
 use crate::cli::get_env;
 use crate::cli::handlers::common::{check_has_assets, fetch_release_for};
 use crate::cli::handlers::{HandlerError, HandlerResult};
+use crate::cli::progress_bar::ProgressBar;
 use crate::cli::select;
 use crate::cli::spinner::Spinner;
 use crate::github::client::GithubClient;
@@ -107,11 +108,11 @@ impl DownloadHandler {
         selected_asset: &Asset,
         output_path: &Path,
     ) -> Result<(), HandlerError> {
-        let spinner = Spinner::download(&selected_asset.name, output_path);
-        spinner.start();
+        let progress_bar = ProgressBar::download(&selected_asset.name, output_path);
+        progress_bar.start();
         let (mut stream, content_length) =
             github::download_asset(client, selected_asset).map_err(Self::download_error)?;
-        spinner.set_max_progress(content_length);
+        progress_bar.set_max_progress(content_length);
         let mut destination = Self::create_file(output_path)?;
         let mut downloaded = 0;
         let mut buffer = [0; 1024];
@@ -123,9 +124,9 @@ impl DownloadHandler {
                 .write(&buffer[..bytes_read])
                 .map_err(|x| Self::write_err(&selected_asset.name, output_path, x))?;
             downloaded = cmp::min(downloaded + bytes_read as u64, content_length);
-            spinner.update_progress(downloaded);
+            progress_bar.update_progress(downloaded);
         }
-        spinner.stop();
+        progress_bar.stop();
         Ok(())
     }
 
