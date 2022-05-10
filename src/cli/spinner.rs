@@ -53,7 +53,7 @@ impl Spinner {
                 "Saved to: {}",
                 Color::new(&format!("{}", output_path.display())).bold()
             ),
-            "{msg}\n{percent}% [{wide_bar}] {bytes}/{total_bytes} ({eta})",
+            "{spinner:.blue} {msg} {percent}% ({eta})",
         )
     }
 
