@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Show download progress, by @orhun ([#17](https://github.com/devmatteini/dra/issues/17))
+
+### Updated dependencies
+
+- `clap_complete` from 3.1.3 to 3.1.4
+- `clap` from 3.1.14 to 3.1.17
+- `dialoguer` from 0.10.0 to 0.10.1
+
 ## [0.3.4] - 2022-05-07
 
 ### Added
