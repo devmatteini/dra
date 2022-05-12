@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.5] - 2022-05-12
+
 ### Added
 
 - Show download progress, by @orhun ([#17](https://github.com/devmatteini/dra/issues/17))
