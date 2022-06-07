@@ -1,5 +1,3 @@
-use predicates::Predicate;
-
 use crate::docker::ExecResult;
 
 pub fn assert_success(result: ExecResult) -> String {
@@ -22,7 +20,7 @@ pub fn assert_error(result: ExecResult) -> String {
 
 pub fn assert_contains(expected: &str, actual: &str) {
     assert!(
-        predicates::str::contains(expected).eval(actual),
+        actual.contains(expected),
         "actual '{}' does not contains '{}'",
         actual,
         expected
