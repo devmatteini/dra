@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.6] - 2022-06-07
+
+### Security
+
+[CVE-2022-24713](https://github.com/advisories/GHSA-m5pq-gvj9-9vr8) - Updated `regex` crate to 1.5.6 ([#23](https://github.com/devmatteini/dra/pull/23))
+
+### Updated dependencies
+
+- `clap` from 3.1.17 to 3.1.18
+
 ## [0.3.5] - 2022-05-12
 
 ### Added
