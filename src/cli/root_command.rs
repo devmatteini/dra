@@ -7,10 +7,10 @@ use crate::github::Repository;
 
 #[derive(Debug, Parser)]
 #[clap(
-name = "dra",
-version,
-about = "A command line tool to download release assets from GitHub",
-long_about = "A command line tool to download release assets from GitHub.
+    name = "dra",
+    version,
+    about = "A command line tool to download release assets from GitHub",
+    long_about = "A command line tool to download release assets from GitHub.
 
 EXAMPLES:
 Select and download an asset:
