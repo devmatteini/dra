@@ -11,7 +11,7 @@ pub mod tagged_asset;
 
 pub const GITHUB_TOKEN: &str = "GITHUB_TOKEN";
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct Repository {
     pub owner: String,
     pub repo: String,
