@@ -7,6 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.7] - 2022-07-09
+
+### Development
+- Fix clap deprecation warnings for upcoming v4 release ([e7d6997](https://github.com/devmatteini/dra/commit/e7d6997b0ba803aa1e5f5df6ef920bc2ea965135))
+- Add github action to auto merge dependabot pull requests of patch updates
+
+### Updated dependencies
+- `test-case` from 1.2.3 to 2.1.0
+- `uuid` from 0.8.2 to 1.1.2
+- `clap_complete` from 3.1.4 to 3.2.3
+- `serde` from 1.0.137 to 1.0.138
+- `clap` from 3.1.18 to 3.2.8
+
 ## [0.3.6] - 2022-06-07
 
 ### Security
