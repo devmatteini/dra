@@ -141,7 +141,7 @@ dependencies = [
 
 [[package]]
 name = "dra"
-version = "0.3.6"
+version = "0.3.7"
 dependencies = [
  "clap",
  "clap_complete",
