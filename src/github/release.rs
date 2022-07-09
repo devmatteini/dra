@@ -5,7 +5,7 @@ pub struct Tag(pub String);
 
 impl Tag {
     pub fn version(&self) -> String {
-        self.0.replace("v", "")
+        self.0.replace('v', "")
     }
 }
 
