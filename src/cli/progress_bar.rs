@@ -16,7 +16,8 @@ impl ProgressBar {
         pb.set_style(
             ProgressStyle::default_spinner()
                 .tick_strings(cli::spinner::TICKS)
-                .template("{spinner:.blue} {msg} {percent}% ({eta})"),
+                .template("{spinner:.blue} {msg} {percent}% ({eta})")
+                .unwrap(),
         );
         pb.set_message(message);
         Self { pb, end_message }

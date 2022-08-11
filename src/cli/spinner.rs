@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use indicatif::{ProgressBar, ProgressStyle};
 
 use crate::cli::color::Color;
@@ -5,7 +7,7 @@ use crate::cli::color::Color;
 // NOTE: spinner ticks and duration are from
 // https://github.com/sindresorhus/cli-spinners/blob/00de8fbeee16fa49502fa4f687449f70f2c8ca2c/spinners.json#L2-L16
 pub const TICKS: &[&str] = &["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-pub const TICK_DURATION: u64 = 80;
+pub const TICK_DURATION: Duration = Duration::from_millis(80);
 
 pub struct Spinner {
     pb: ProgressBar,
@@ -18,7 +20,8 @@ impl Spinner {
         pb.set_style(
             ProgressStyle::default_spinner()
                 .tick_strings(TICKS)
-                .template("{spinner:.blue} {msg}"),
+                .template("{spinner:.blue} {msg}")
+                .unwrap(),
         );
         pb.set_message(message);
         Self { pb, end_message }
