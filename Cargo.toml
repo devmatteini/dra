@@ -19,7 +19,7 @@ codegen-units = 1
 
 [dependencies]
 ureq = { version = "2.5.0", default-features = false, features = ["tls", "json"] }
-serde = { version = "1.0.142", features = ["derive"] }
+serde = { version = "1.0.143", features = ["derive"] }
 clap = { version = "3.2.16", features = ["derive"] }
 clap_complete = "3.2.4"
 dialoguer = "0.10.2"
