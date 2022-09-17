@@ -7,6 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.8] - 2022-09-17
+
+This is a maintenance release that updates our dependencies.
+
+### Updated dependencies
+
+- `serde` from 1.0.138 to 1.0.144
+- `ureq` from 2.4.0 to 2.5.0
+- `clap` from 3.2.8 to 3.2.20
+- `clap_complete` from 3.2.3 to 3.2.4
+- `indicatif` from 0.16.2 to 0.17.0
+- `dialoguer` from 0.10.1 to 0.10.2
+
 ## [0.3.7] - 2022-07-09
 
 ### Development
