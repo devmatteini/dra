@@ -25,6 +25,8 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 
 ## Installation
 
+`dra` is available only on Linux (Windows and macOS versions are work in progress).
+
 ### Recommended
 
 Download from the [latest release](https://github.com/devmatteini/dra/releases/latest).
@@ -35,7 +37,7 @@ Download the latest `.deb` package from the [release page](https://github.com/de
 install it via:
 
 ```bash
-sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number 
+sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number
 ```
 
 ### From AUR
