@@ -1,4 +1,5 @@
 use std::ffi::OsString;
+#[cfg(target_family = "unix")]
 use std::os::unix::prelude::PermissionsExt;
 use std::path::{Path, PathBuf};
 
@@ -46,11 +47,9 @@ impl ArchiveInstaller {
 
     fn is_executable(x: &walkdir::DirEntry) -> bool {
         let path = x.path();
-        let is_executable =
-            |metadata: std::fs::Metadata| (metadata.permissions().mode() & 0o111) != 0;
 
         path.metadata()
-            .map(|metadata| path.is_file() && is_executable(metadata))
+            .map(|metadata| path.is_file() && is_executable_file(path, metadata))
             .unwrap_or(false)
     }
 
@@ -72,6 +71,16 @@ impl ArchiveInstaller {
     fn cleanup(temp_dir: &Path) -> Result<(), String> {
         std::fs::remove_dir_all(temp_dir).map_err_with("Error deleting temp dir".into())
     }
+}
+
+#[cfg(target_family = "unix")]
+fn is_executable_file(_: &Path, metadata: std::fs::Metadata) -> bool {
+    metadata.permissions().mode() & 0o111 != 0
+}
+
+#[cfg(target_os = "windows")]
+fn is_executable_file(path: &Path, _: std::fs::Metadata) -> bool {
+    path.extension().map(|x| x == "exe").unwrap_or(false)
 }
 
 struct ExecutableFile {
