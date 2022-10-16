@@ -23,6 +23,29 @@ jobs:
         run: |
           echo "Version is: $DRA_VERSION"
 
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./scripts/create-github-release.sh "$DRA_VERSION"
+
+  build:
+    name: ${{ matrix.job.os }}
+    needs: [ create-release ]
+    runs-on: ${{ matrix.job.runner }}
+    strategy:
+      matrix:
+        job:
+          - { os: linux,    runner: ubuntu-latest }
+          - { os: macos,    runner: macos-latest }
+          - { os: windows,  runner: windows-latest }
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get the release version from the tag
+        run: |
+          echo "DRA_VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+
       - name: Install minimal stable rust
         uses: actions-rs/toolchain@v1
         with:
@@ -45,24 +68,25 @@ jobs:
 
       - name: Build archive
         id: build_archive
+        shell: bash
         run: |
-          asset=$(./scripts/create-release-archive.sh "$DRA_VERSION" linux)
+          asset=$(./scripts/create-release-archive.sh "$DRA_VERSION" "${{ matrix.job.os }}")
           echo "::set-output name=ARCHIVE::$asset"
 
-      - name: Build debian package
-        id: build_deb
-        run: |
-          cargo install cargo-deb
-          deb_file=$(./scripts/create-deb.sh)
-          echo "::set-output name=DEB_FILE::$deb_file"
-
-      - name: Create release
+      - name: Upload assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./scripts/create-github-release.sh "$DRA_VERSION"
-
           ./scripts/upload-github-release-assets.sh \
               "$DRA_VERSION" \
-              ${{ steps.build_archive.outputs.ARCHIVE }} \
-              ${{ steps.build_deb.outputs.DEB_FILE }}
+              ${{ steps.build_archive.outputs.ARCHIVE }}
+
+      - name: Build and upload debian package
+        if: matrix.job.os == 'linux'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cargo install cargo-deb
+          deb_file=$(./scripts/create-deb.sh)
+
+          ./scripts/upload-github-release-assets.sh "$DRA_VERSION" "$deb_file"
