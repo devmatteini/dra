@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
 function usage() {
-  echo "usage $(basename "$0") <version> <assets>..."
+  echo "usage $(basename "$0") <version>"
   echo
   echo "ARGS:"
   echo "    <version>    release version x.y.z (e.g 1.3.0)"
-  echo "    <assets>...  list of assets paths"
   exit 1
 }
 
@@ -31,5 +30,4 @@ echo "version $version"
 gh release create "$version" \
   --title "$version" \
   --notes "$release_message" \
-  --repo "$GITHUB_REPOSITORY" \
-  "${@:2}" # assets
+  --repo "$GITHUB_REPOSITORY"

@@ -60,7 +60,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./scripts/create-github-release.sh \
+          ./scripts/create-github-release.sh "$DRA_VERSION"
+
+          ./scripts/upload-github-release-assets.sh \
               "$DRA_VERSION" \
               ${{ steps.build_archive.outputs.ARCHIVE }} \
               ${{ steps.build_deb.outputs.DEB_FILE }}
