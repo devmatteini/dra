@@ -52,6 +52,7 @@ mkdir -p "$output"
 if [[ "$os" == "$WINDOWS" ]]; then
   cp target/release/dra.exe "$output"
 else
+  strip target/release/dra
   cp target/release/dra "$output"
 fi
 cp README.md "$output"
