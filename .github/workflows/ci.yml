@@ -17,6 +17,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  # NOTE: always set shell: bash, otherwise on Windows there might be problems!
   build:
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -45,19 +46,24 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build
+        shell: bash
         run: make build
 
       - name: Format check
+        shell: bash
         run: make format-check
 
       - name: Lint
+        shell: bash
         run: make lint
 
       - name: Tests
+        shell: bash
         run: make test
 
       - name: Integration tests
         if: startsWith(matrix.os, 'ubuntu')
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make integration-tests

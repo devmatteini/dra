@@ -28,7 +28,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./scripts/create-github-release.sh "$DRA_VERSION"
-
+  # NOTE: always set shell: bash, otherwise on Windows there might be problems!
   build:
     name: ${{ matrix.job.os }}
     needs: [ create-release ]
@@ -43,6 +43,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Get the release version from the tag
+        shell: bash
         run: |
           echo "DRA_VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
@@ -64,6 +65,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build release binary
+        shell: bash
         run: make release
 
       - name: Build archive
@@ -74,6 +76,7 @@ jobs:
           echo "::set-output name=ARCHIVE::$asset"
 
       - name: Upload assets
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -83,6 +86,7 @@ jobs:
 
       - name: Build and upload debian package
         if: matrix.job.os == 'linux'
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
