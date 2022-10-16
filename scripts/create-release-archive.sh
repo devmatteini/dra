@@ -23,20 +23,44 @@ function is_supported_os() {
   fi
 }
 
+function target_by_os() {
+  if [[ "$1" == "$LINUX" ]]; then
+    echo "x86_64-unknown-linux-gnu"
+  elif [[ "$1" == "$MACOS" ]]; then
+    echo "x86_64-apple-darwin"
+  elif [[ "$1" == "$WINDOWS" ]]; then
+    echo "x86_64-pc-windows-msvc"
+  else
+    echo "Error: cannot create target because no os was provided"
+    exit 1
+  fi
+}
+
 if [[ -z $1 || -z $2 ]]; then usage; fi
 if ! is_supported_os "$2"; then usage; fi
 
 version="$1"
 os="$2"
 
-output="dra-$version"
-archive="${output}.tar.gz"
+target=$(target_by_os "$os")
+output="dra-$version-$target"
+extension=$([[ "$os" == "$WINDOWS" ]] && echo "zip" || echo "tar.gz")
+archive="${output}.${extension}"
 
 mkdir -p "$output"
 
-cp target/release/dra "$output"
+if [[ "$os" == "$WINDOWS" ]]; then
+  cp target/release/dra.exe "$output"
+else
+  cp target/release/dra "$output"
+fi
 cp README.md "$output"
 cp LICENSE "$output"
 
-tar czf "$archive" "$output"
+if [[ "$os" == "$WINDOWS" ]]; then
+  zip -r "$archive" "$output"
+else
+  tar czf "$archive" "$output"
+fi
+
 echo "$archive"
