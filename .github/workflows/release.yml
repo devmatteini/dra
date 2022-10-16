@@ -46,7 +46,7 @@ jobs:
       - name: Build archive
         id: build_archive
         run: |
-          asset=$(./scripts/create-release-archive.sh "$DRA_VERSION")
+          asset=$(./scripts/create-release-archive.sh "$DRA_VERSION" linux)
           echo "::set-output name=ARCHIVE::$asset"
 
       - name: Build debian package
