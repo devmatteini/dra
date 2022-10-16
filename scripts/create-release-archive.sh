@@ -59,7 +59,7 @@ cp README.md "$output"
 cp LICENSE "$output"
 
 if [[ "$os" == "$WINDOWS" ]]; then
-  zip -r "$archive" "$output"
+  7z -y a "$archive" "$output" > /dev/null
 else
   tar czf "$archive" "$output"
 fi
