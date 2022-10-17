@@ -25,7 +25,7 @@ clap_complete = "4.0"
 dialoguer = "0.10.2"
 indicatif = "0.17.1"
 uuid = { version = "1.2.1", features = ["v4"] }
-ctrlc = "3.2.2"
+ctrlc = "3.2.3"
 walkdir = "2.3.2"
 
 [dev-dependencies]
