@@ -1,11 +1,8 @@
+use std::fs::File;
 use std::path::Path;
-use std::process::Command;
 
 use crate::installer::archive::ArchiveInstaller;
-use crate::installer::command::exec_command;
 use crate::installer::InstallerResult;
-
-const UNZIP: &str = "unzip";
 
 pub struct ZipArchiveInstaller;
 
@@ -15,9 +12,14 @@ impl ZipArchiveInstaller {
     }
 
     fn extract_archive(source: &Path, temp_dir: &Path) -> Result<(), String> {
-        exec_command(
-            UNZIP,
-            Command::new(UNZIP).arg(source).arg("-d").arg(temp_dir),
-        )
+        let zip_archive =
+            File::open(source).map_err(|x| format!("Error opening {}: {}", source.display(), x))?;
+
+        let mut archive = zip::ZipArchive::new(zip_archive)
+            .map_err(|x| format!("Error opening zip archive: {}", x))?;
+
+        archive
+            .extract(temp_dir)
+            .map_err(|x| format!("Error extracting the zip archive: {}", x))
     }
 }
