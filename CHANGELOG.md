@@ -7,6 +7,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+`dra` is now a cross-platform command line that works on Linux, macOS and Windows 🎉!
+
+### Changed
+
+The `install` feature for tar and zip archives no longer rely on `tar` and `unzip` command lines.
+This change was needed to ensure that it behaves the same on all supported platforms ([commits](https://github.com/devmatteini/dra/compare/3d0e189cf000b15d11c97760199012ed15f69ef4...38fef0b936931c33ddd3841b6862847131915cc5)).
+
+### Updated dependencies
+
+- `clap` migration to v4, by @tranzystorek-io
+- `ctrlc` from 3.2.2 to 3.2.3
+- `uuid` from 1.1.2 to 1.2.1
+- `dependabot/fetch-metadata` from 1.3.3 to 1.3.4
+- `test-case` from 2.2.1 to 2.2.2
+- `serde` from 1.0.144 to 1.0.145
+- `clap_complete` from 3.2.4 to 3.2.5
+- `indicatif` from 0.17.0 to 0.17.1
+
 ## [0.3.8] - 2022-09-17
 
 This is a maintenance release that updates our dependencies.
@@ -23,10 +41,12 @@ This is a maintenance release that updates our dependencies.
 ## [0.3.7] - 2022-07-09
 
 ### Development
+
 - Fix clap deprecation warnings for upcoming v4 release ([e7d6997](https://github.com/devmatteini/dra/commit/e7d6997b0ba803aa1e5f5df6ef920bc2ea965135))
 - Add github action to auto merge dependabot pull requests of patch updates
 
 ### Updated dependencies
+
 - `test-case` from 1.2.3 to 2.1.0
 - `uuid` from 0.8.2 to 1.1.2
 - `clap_complete` from 3.1.4 to 3.2.3
@@ -140,6 +160,7 @@ This change was needed in order to add subcommands/flags that didn't require `<R
 - Download and install some supported assets (`dra <repo> download --[i]nstall`).
 
   The supported assets are:
+
   - Debian packages (`.deb`)
   - Tar archive with executable inside (`.tar.[gz|bz2|xz]`)
   - Zip file with executable inside (`.zip`)
@@ -170,6 +191,7 @@ This release update some of our dependencies and migrates to clap v3 as args par
   If none is specified, the latest release is used.
 
   e.g: `dra <repo> download --tag <tag>`
+
 - Download assets from private repositories by exporting `GITHUB_TOKEN` environment variable
 
 ## [0.2.1] - 2022-01-06
