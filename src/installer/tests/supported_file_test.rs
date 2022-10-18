@@ -5,12 +5,12 @@ mod tests {
     use test_case::test_case;
 
     use crate::installer::error::InstallError;
-    use crate::installer::{is_supported, FileInfo, FileType, SupportedFileInfo};
+    use crate::installer::{is_supported, FileInfo, FileType, SupportedFileInfo, TarKind};
 
     #[test_case("deb", FileType::Debian)]
-    #[test_case("gz", FileType::TarArchive)]
-    #[test_case("bz2", FileType::TarArchive)]
-    #[test_case("xz", FileType::TarArchive)]
+    #[test_case("gz", FileType::TarArchive(TarKind::Gz))]
+    #[test_case("bz2", FileType::TarArchive(TarKind::Bz2))]
+    #[test_case("xz", FileType::TarArchive(TarKind::Xz))]
     #[test_case("zip", FileType::ZipArchive)]
     fn supported_file(file_extension: &str, expected_file_type: FileType) {
         let file_info = any_file_info(Some(file_extension));

@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 
 use crate::installer::debian::DebianInstaller;
 use crate::installer::error::InstallError;
-use crate::installer::tar_archive::TarArchiveInstaller;
+use crate::installer::tar_archive::{TarArchiveInstaller, TarKind};
 use crate::installer::zip_archive::ZipArchiveInstaller;
 
 mod archive;
@@ -31,7 +31,7 @@ type InstallerResult = Result<(), String>;
 #[derive(Debug, Eq, PartialEq)]
 enum FileType {
     Debian,
-    TarArchive,
+    TarArchive(TarKind),
     ZipArchive,
 }
 
@@ -74,8 +74,14 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     if extension == "deb" {
         return Some(FileType::Debian);
     }
-    if extension == "gz" || extension == "bz2" || extension == "xz" {
-        return Some(FileType::TarArchive);
+    if extension == "gz" {
+        return Some(FileType::TarArchive(TarKind::Gz));
+    }
+    if extension == "bz2" {
+        return Some(FileType::TarArchive(TarKind::Bz2));
+    }
+    if extension == "xz" {
+        return Some(FileType::TarArchive(TarKind::Xz));
     }
     if extension == "zip" {
         return Some(FileType::ZipArchive);
@@ -87,7 +93,9 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
 fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path) -> InstallerResult {
     match file_type {
         FileType::Debian => DebianInstaller::run,
-        FileType::TarArchive => TarArchiveInstaller::run,
+        FileType::TarArchive(TarKind::Gz) => TarArchiveInstaller::gz,
+        FileType::TarArchive(TarKind::Xz) => TarArchiveInstaller::xz,
+        FileType::TarArchive(TarKind::Bz2) => TarArchiveInstaller::bz2,
         FileType::ZipArchive => ZipArchiveInstaller::run,
     }
 }
