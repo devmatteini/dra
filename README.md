@@ -25,11 +25,11 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 
 ## Installation
 
-`dra` is available only on Linux (Windows and macOS versions are work in progress).
+`dra` is available on Linux, macOS and Windows.
 
 ### Recommended
 
-Download from the [latest release](https://github.com/devmatteini/dra/releases/latest).
+Download the prebuilt versions of `dra` for supported platforms from the [latest release](https://github.com/devmatteini/dra/releases/latest).
 
 ### Debian-based distributions
 
