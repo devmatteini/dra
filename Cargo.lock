@@ -190,7 +190,7 @@ dependencies = [
 
 [[package]]
 name = "dra"
-version = "0.3.8"
+version = "0.4.0"
 dependencies = [
  "bzip2",
  "clap",
