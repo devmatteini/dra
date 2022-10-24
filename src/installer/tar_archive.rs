@@ -39,34 +39,41 @@ impl TarArchiveInstaller {
     }
 
     fn extract_gz(source: &Path, temp_dir: &Path) -> Result<(), String> {
-        Self::extract_archive(TarKind::Gz, source, temp_dir)
+        Self::extract_archive(
+            |file| Box::new(flate2::read::GzDecoder::new(file)),
+            source,
+            temp_dir,
+        )
     }
 
     fn extract_xz(source: &Path, temp_dir: &Path) -> Result<(), String> {
-        Self::extract_archive(TarKind::Xz, source, temp_dir)
+        Self::extract_archive(
+            |file| Box::new(xz2::read::XzDecoder::new(file)),
+            source,
+            temp_dir,
+        )
     }
 
     fn extract_bz2(source: &Path, temp_dir: &Path) -> Result<(), String> {
-        Self::extract_archive(TarKind::Bz2, source, temp_dir)
+        Self::extract_archive(
+            |file| Box::new(bzip2::read::BzDecoder::new(file)),
+            source,
+            temp_dir,
+        )
     }
 
-    fn extract_archive(kind: TarKind, source: &Path, temp_dir: &Path) -> Result<(), String> {
+    fn extract_archive<D>(decode: D, source: &Path, temp_dir: &Path) -> Result<(), String>
+    where
+        D: FnOnce(File) -> Box<dyn Read>,
+    {
         let archive =
             File::open(source).map_err(|x| format!("Error opening {}: {}", source.display(), x))?;
 
-        let stream = Self::decode(&kind, archive);
+        let stream = decode(archive);
         let mut archive = tar::Archive::new(stream);
 
         archive
             .unpack(temp_dir)
-            .map_err(|x| format!("Error extracting the {kind} archive: {}", x))
-    }
-
-    fn decode(extension: &TarKind, file: File) -> Box<dyn Read> {
-        match extension {
-            TarKind::Gz => Box::new(flate2::read::GzDecoder::new(file)),
-            TarKind::Xz => Box::new(xz2::read::XzDecoder::new(file)),
-            TarKind::Bz2 => Box::new(bzip2::read::BzDecoder::new(file)),
-        }
+            .map_err(|x| format!("Error extracting the archive: {}", x))
     }
 }
