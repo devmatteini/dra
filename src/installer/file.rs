@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::{ffi::OsString, path::PathBuf};
 
 use crate::installer::error::InstallError;
@@ -14,7 +15,7 @@ pub enum FileType {
 pub struct FileInfo {
     pub path: PathBuf,
     pub name: String,
-    pub extension: Option<OsString>,
+    extension: Option<OsString>,
 }
 
 #[derive(Debug)]
@@ -51,6 +52,16 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     }
 
     None
+}
+
+impl FileInfo {
+    pub fn new(name: &str, path: &Path) -> Self {
+        FileInfo {
+            path: PathBuf::from(path),
+            name: String::from(name),
+            extension: Path::new(name).extension().map(OsString::from),
+        }
+    }
 }
 
 #[cfg(test)]
