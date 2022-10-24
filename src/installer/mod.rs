@@ -6,11 +6,14 @@ use crate::installer::error::InstallError;
 use crate::installer::tar_archive::{TarArchiveInstaller, TarKind};
 use crate::installer::zip_archive::ZipArchiveInstaller;
 
+use crate::installer::file::{is_supported, FileInfo, FileType};
+
 mod archive;
 pub mod cleanup;
 mod command;
 mod debian;
 pub mod error;
+mod file;
 mod tar_archive;
 mod tests;
 mod zip_archive;
@@ -28,26 +31,6 @@ pub fn install(
 
 type InstallerResult = Result<(), String>;
 
-#[derive(Debug, Eq, PartialEq)]
-enum FileType {
-    Debian,
-    TarArchive(TarKind),
-    ZipArchive,
-}
-
-#[derive(Debug)]
-pub struct FileInfo {
-    path: PathBuf,
-    name: String,
-    extension: Option<OsString>,
-}
-
-#[derive(Debug)]
-pub struct SupportedFileInfo {
-    path: PathBuf,
-    file_type: FileType,
-}
-
 fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
     if !path.is_file() {
         return Err(InstallError::not_a_file(path));
@@ -58,36 +41,6 @@ fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
         name: String::from(name),
         extension: Path::new(name).extension().map(OsString::from),
     })
-}
-
-pub fn is_supported(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
-    file.extension
-        .and_then(file_type_for)
-        .map(|file_type| SupportedFileInfo {
-            path: PathBuf::from(&file.path),
-            file_type,
-        })
-        .ok_or_else(|| InstallError::not_supported(&file.name))
-}
-
-fn file_type_for(extension: OsString) -> Option<FileType> {
-    if extension == "deb" {
-        return Some(FileType::Debian);
-    }
-    if extension == "gz" {
-        return Some(FileType::TarArchive(TarKind::Gz));
-    }
-    if extension == "bz2" {
-        return Some(FileType::TarArchive(TarKind::Bz2));
-    }
-    if extension == "xz" {
-        return Some(FileType::TarArchive(TarKind::Xz));
-    }
-    if extension == "zip" {
-        return Some(FileType::ZipArchive);
-    }
-
-    None
 }
 
 fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path) -> InstallerResult {

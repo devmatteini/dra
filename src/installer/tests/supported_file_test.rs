@@ -5,7 +5,8 @@ mod tests {
     use test_case::test_case;
 
     use crate::installer::error::InstallError;
-    use crate::installer::{is_supported, FileInfo, FileType, SupportedFileInfo, TarKind};
+    use crate::installer::file::{is_supported, FileInfo, FileType, SupportedFileInfo};
+    use crate::installer::TarKind;
 
     #[test_case("deb", FileType::Debian)]
     #[test_case("gz", FileType::TarArchive(TarKind::Gz))]
