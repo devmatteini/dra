@@ -15,7 +15,6 @@ mod debian;
 pub mod error;
 mod file;
 mod tar_archive;
-mod tests;
 mod zip_archive;
 
 pub fn install(
