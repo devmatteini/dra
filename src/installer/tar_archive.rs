@@ -1,27 +1,9 @@
-use std::fmt::{Display, Formatter};
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
 use crate::installer::archive::ArchiveInstaller;
 use crate::installer::InstallerResult;
-
-#[derive(Debug, Eq, PartialEq)]
-pub enum TarKind {
-    Gz,
-    Xz,
-    Bz2,
-}
-
-impl Display for TarKind {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            TarKind::Gz => f.write_str("gz"),
-            TarKind::Xz => f.write_str("xz"),
-            TarKind::Bz2 => f.write_str("bz2"),
-        }
-    }
-}
 
 pub struct TarArchiveInstaller;
 

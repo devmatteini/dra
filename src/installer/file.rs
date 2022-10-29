@@ -1,8 +1,15 @@
+use std::fmt::{Display, Formatter};
 use std::path::Path;
 use std::{ffi::OsString, path::PathBuf};
 
 use crate::installer::error::InstallError;
-use crate::installer::tar_archive::TarKind;
+
+#[derive(Debug, Eq, PartialEq)]
+pub enum TarKind {
+    Gz,
+    Xz,
+    Bz2,
+}
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum FileType {
@@ -54,6 +61,16 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     None
 }
 
+impl Display for TarKind {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match *self {
+            TarKind::Gz => f.write_str("gz"),
+            TarKind::Xz => f.write_str("xz"),
+            TarKind::Bz2 => f.write_str("bz2"),
+        }
+    }
+}
+
 impl FileInfo {
     pub fn new(name: &str, path: &Path) -> Self {
         FileInfo {
@@ -70,9 +87,8 @@ mod tests {
 
     use test_case::test_case;
 
-    use super::{is_supported, FileInfo, FileType, SupportedFileInfo};
+    use super::{is_supported, FileInfo, FileType, SupportedFileInfo, TarKind};
     use crate::installer::error::InstallError;
-    use crate::installer::TarKind;
 
     #[test_case("deb", FileType::Debian)]
     #[test_case("gz", FileType::TarArchive(TarKind::Gz))]

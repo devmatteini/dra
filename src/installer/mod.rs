@@ -2,10 +2,10 @@ use std::path::Path;
 
 use crate::installer::debian::DebianInstaller;
 use crate::installer::error::InstallError;
-use crate::installer::tar_archive::{TarArchiveInstaller, TarKind};
+use crate::installer::tar_archive::TarArchiveInstaller;
 use crate::installer::zip_archive::ZipArchiveInstaller;
 
-use crate::installer::file::{is_supported, FileInfo, FileType};
+use crate::installer::file::{is_supported, FileInfo, FileType, TarKind};
 
 mod archive;
 pub mod cleanup;
