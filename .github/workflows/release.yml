@@ -73,7 +73,7 @@ jobs:
         shell: bash
         run: |
           asset=$(./scripts/create-release-archive.sh "$DRA_VERSION" "${{ matrix.job.os }}")
-          echo "::set-output name=ARCHIVE::$asset"
+          echo "ARCHIVE=$asset" >> $GITHUB_OUTPUT
 
       - name: Upload assets
         shell: bash
