@@ -145,7 +145,7 @@ mod tests {
 
     #[test]
     fn executable_inside_nested_directory() {
-        let destination_dir = temp_dir("no_executable");
+        let destination_dir = temp_dir("executable_inside_nested_directory");
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
