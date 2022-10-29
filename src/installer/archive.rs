@@ -96,3 +96,123 @@ impl ExecutableFile {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[cfg(target_family = "unix")]
+    use std::os::unix::fs::PermissionsExt;
+    use std::path::{Path, PathBuf};
+
+    use crate::installer::InstallerResult;
+
+    use super::ArchiveInstaller;
+
+    #[test]
+    fn executable_found() {
+        let destination_dir = temp_dir("executable_found");
+
+        let result = ArchiveInstaller::run(
+            |_, temp_dir| {
+                create_file("README.md", temp_dir);
+                create_file("LICENSE", temp_dir);
+                create_executable_file("my-executable", temp_dir);
+                Ok(())
+            },
+            &any_directory_path(),
+            &destination_dir,
+        );
+
+        assert_ok(result);
+        // TODO: should we check if the executable has been moved to destination_dir?
+    }
+
+    #[test]
+    fn no_executable() {
+        let destination_dir = temp_dir("no_executable");
+
+        let result = ArchiveInstaller::run(
+            |_, temp_dir| {
+                create_file("README.md", temp_dir);
+                create_file("LICENSE", temp_dir);
+                Ok(())
+            },
+            &any_directory_path(),
+            &destination_dir,
+        );
+
+        assert_err_equal("No executable found", result);
+    }
+
+    #[test]
+    fn executable_inside_nested_directory() {
+        let destination_dir = temp_dir("no_executable");
+
+        let result = ArchiveInstaller::run(
+            |_, temp_dir| {
+                let nested_dir = create_dir("nested", temp_dir);
+                create_file("README.md", &nested_dir);
+                create_file("LICENSE", &nested_dir);
+                create_executable_file("my-executable", &nested_dir);
+
+                Ok(())
+            },
+            &any_directory_path(),
+            &destination_dir,
+        );
+
+        assert_ok(result);
+        // TODO: should we check if the executable has been moved to destination_dir?
+    }
+
+    #[cfg(target_family = "unix")]
+    fn create_executable_file(name_without_extension: &str, directory: &Path) -> PathBuf {
+        let path = PathBuf::from(directory).join(name_without_extension);
+        std::fs::File::create(&path).unwrap();
+        std::fs::set_permissions(&path, PermissionsExt::from_mode(0o755)).unwrap();
+        path
+    }
+
+    #[cfg(target_os = "windows")]
+    fn create_executable_file(name_without_extension: &str, directory: &Path) -> PathBuf {
+        let path = PathBuf::from(directory).join(format!("{}.exe", name_without_extension));
+        std::fs::File::create(&path).unwrap();
+        path
+    }
+
+    fn create_file(name: &str, directory: &Path) -> PathBuf {
+        let path = PathBuf::from(directory).join(name);
+        std::fs::File::create(&path).unwrap();
+        path
+    }
+
+    fn temp_dir(name: &str) -> PathBuf {
+        let path = std::env::temp_dir().join("dra-tests").join(name);
+        std::fs::create_dir_all(&path).unwrap();
+        path
+    }
+
+    fn create_dir(name: &str, parent: &Path) -> PathBuf {
+        let path = parent.join(name);
+        std::fs::create_dir_all(&path).unwrap();
+        path
+    }
+
+    fn any_directory_path() -> PathBuf {
+        std::env::temp_dir().join("dra-any")
+    }
+
+    fn assert_ok(result: InstallerResult) {
+        assert_eq!(Ok(()), result);
+    }
+
+    fn assert_err_equal(to_contain: &str, result: InstallerResult) {
+        match result {
+            Ok(_) => {
+                panic!("No installer error");
+            }
+            Err(e) => {
+                assert_eq!(e, to_contain);
+            }
+        }
+    }
+}
