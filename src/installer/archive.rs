@@ -123,7 +123,7 @@ mod tests {
         );
 
         assert_ok(result);
-        // TODO: should we check if the executable has been moved to destination_dir?
+        assert_file_exists(executable_path(&destination_dir, "my-executable"))
     }
 
     #[test]
@@ -161,12 +161,12 @@ mod tests {
         );
 
         assert_ok(result);
-        // TODO: should we check if the executable has been moved to destination_dir?
+        assert_file_exists(executable_path(&destination_dir, "my-executable"))
     }
 
     #[cfg(target_family = "unix")]
     fn create_executable_file(name_without_extension: &str, directory: &Path) -> PathBuf {
-        let path = PathBuf::from(directory).join(name_without_extension);
+        let path = executable_path(directory, name_without_extension);
         std::fs::File::create(&path).unwrap();
         std::fs::set_permissions(&path, PermissionsExt::from_mode(0o755)).unwrap();
         path
@@ -174,9 +174,17 @@ mod tests {
 
     #[cfg(target_os = "windows")]
     fn create_executable_file(name_without_extension: &str, directory: &Path) -> PathBuf {
-        let path = PathBuf::from(directory).join(format!("{}.exe", name_without_extension));
+        let path = executable_path(directory, name_without_extension);
         std::fs::File::create(&path).unwrap();
         path
+    }
+
+    fn executable_path(directory: &Path, name_without_extension: &str) -> PathBuf {
+        if cfg!(target_os = "windows") {
+            directory.join(format!("{}.exe", name_without_extension))
+        } else {
+            directory.join(name_without_extension)
+        }
     }
 
     fn create_file(name: &str, directory: &Path) -> PathBuf {
@@ -201,17 +209,29 @@ mod tests {
         std::env::temp_dir().join("dra-any")
     }
 
+    fn assert_file_exists(path: PathBuf) {
+        let exists = path.try_exists();
+        match exists {
+            Ok(does_exists) => {
+                assert!(does_exists, "File not exists: {}", path.display());
+            }
+            Err(e) => {
+                panic!("Error checking if file '{}' exists: {}", path.display(), e);
+            }
+        }
+    }
+
     fn assert_ok(result: InstallerResult) {
         assert_eq!(Ok(()), result);
     }
 
-    fn assert_err_equal(to_contain: &str, result: InstallerResult) {
+    fn assert_err_equal(expected: &str, result: InstallerResult) {
         match result {
             Ok(_) => {
                 panic!("No installer error");
             }
             Err(e) => {
-                assert_eq!(e, to_contain);
+                assert_eq!(expected, e);
             }
         }
     }
