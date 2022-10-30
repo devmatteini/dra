@@ -34,50 +34,64 @@ mod debian {
 }
 
 mod archives {
-    use crate::assertions::{assert_contains, assert_error, assert_success};
-    use crate::docker::{images, Docker, ExecArgs};
+    use std::path::PathBuf;
+    use std::process::Command;
     use test_case::test_case;
+
+    use assert_cmd::assert::OutputAssertExt;
+    use assert_cmd::prelude::CommandCargoExt;
 
     #[test_case("helloworld.tar.gz"; "tar gzip")]
     #[test_case("helloworld.tar.bz2"; "tar bzip2")]
     #[test_case("helloworld.tar.xz"; "tar xz")]
     #[test_case("helloworld.zip"; "zip")]
     fn installed_successfully(asset: &str) {
-        let container = Docker::run(images::UBUNTU);
+        let output_dir = path_to_string(any_temp_dir());
 
-        let result = container.exec(
-            &format!("dra download -s {} -i devmatteini/dra-tests", asset),
-            ExecArgs::Default,
-        );
+        let mut cmd = Command::cargo_bin("dra").unwrap();
 
-        let output = assert_success(result);
-        assert_contains("Installation completed", &output);
+        let result = cmd
+            .arg("download")
+            .args(&["-s", asset])
+            .args(&["-o", &output_dir])
+            .arg("-i")
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result
+            .success()
+            .stdout(predicates::str::contains("Installation completed"));
     }
 
     #[test]
     fn no_executable() {
-        let container = Docker::run(images::UBUNTU);
+        let output_dir = path_to_string(any_temp_dir());
 
-        let result = container.exec(
-            "dra download -s no_executable.tar.gz -i devmatteini/dra-tests",
-            ExecArgs::Default,
-        );
+        let mut cmd = Command::cargo_bin("dra").unwrap();
 
-        let output = assert_error(result);
-        assert_contains("No executable found", &output);
+        let result = cmd
+            .arg("download")
+            .args(&["-s", "no_executable.tar.gz"])
+            .args(&["-o", &output_dir])
+            .arg("-i")
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result
+            .failure()
+            .stderr(predicates::str::contains("No executable found"));
     }
 
-    #[test_case("no_root_directory.tar.gz"; "tar")]
-    #[test_case("no_root_directory.zip"; "zip")]
-    fn no_root_directory(asset: &str) {
-        let container = Docker::run(images::UBUNTU);
+    fn any_temp_dir() -> PathBuf {
+        let name = uuid::Uuid::new_v4().simple().to_string();
+        let path = std::env::temp_dir()
+            .join("dra-integration-tests")
+            .join(name);
+        std::fs::create_dir_all(&path).unwrap();
+        path
+    }
 
-        let result = container.exec(
-            &format!("dra download -s {} -i devmatteini/dra-tests", asset),
-            ExecArgs::Default,
-        );
-
-        let output = assert_success(result);
-        assert_contains("Installation completed", &output);
+    fn path_to_string(path: PathBuf) -> String {
+        path.to_str().unwrap().to_owned()
     }
 }
