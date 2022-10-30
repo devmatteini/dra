@@ -113,9 +113,9 @@ mod tests {
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
-                create_file("README.md", temp_dir);
-                create_file("LICENSE", temp_dir);
-                create_executable_file("my-executable", temp_dir);
+                create_file(temp_dir, "README.md");
+                create_file(temp_dir, "LICENSE");
+                create_executable_file(temp_dir, "my-executable");
                 Ok(())
             },
             &any_directory_path(),
@@ -132,8 +132,8 @@ mod tests {
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
-                create_file("README.md", temp_dir);
-                create_file("LICENSE", temp_dir);
+                create_file(temp_dir, "README.md");
+                create_file(temp_dir, "LICENSE");
                 Ok(())
             },
             &any_directory_path(),
@@ -149,10 +149,10 @@ mod tests {
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
-                let nested_dir = create_dir("nested", temp_dir);
-                create_file("README.md", &nested_dir);
-                create_file("LICENSE", &nested_dir);
-                create_executable_file("my-executable", &nested_dir);
+                let nested_dir = create_dir(temp_dir, "nested");
+                create_file(&nested_dir, "README.md");
+                create_file(&nested_dir, "LICENSE");
+                create_executable_file(&nested_dir, "my-executable");
 
                 Ok(())
             },
@@ -165,7 +165,7 @@ mod tests {
     }
 
     #[cfg(target_family = "unix")]
-    fn create_executable_file(name_without_extension: &str, directory: &Path) -> PathBuf {
+    fn create_executable_file(directory: &Path, name_without_extension: &str) -> PathBuf {
         let path = executable_path(directory, name_without_extension);
         std::fs::File::create(&path).unwrap();
         std::fs::set_permissions(&path, PermissionsExt::from_mode(0o755)).unwrap();
@@ -173,7 +173,7 @@ mod tests {
     }
 
     #[cfg(target_os = "windows")]
-    fn create_executable_file(name_without_extension: &str, directory: &Path) -> PathBuf {
+    fn create_executable_file(directory: &Path, name_without_extension: &str) -> PathBuf {
         let path = executable_path(directory, name_without_extension);
         std::fs::File::create(&path).unwrap();
         path
@@ -187,7 +187,7 @@ mod tests {
         }
     }
 
-    fn create_file(name: &str, directory: &Path) -> PathBuf {
+    fn create_file(directory: &Path, name: &str) -> PathBuf {
         let path = PathBuf::from(directory).join(name);
         std::fs::File::create(&path).unwrap();
         path
@@ -199,7 +199,7 @@ mod tests {
         path
     }
 
-    fn create_dir(name: &str, parent: &Path) -> PathBuf {
+    fn create_dir(parent: &Path, name: &str) -> PathBuf {
         let path = parent.join(name);
         std::fs::create_dir_all(&path).unwrap();
         path
@@ -210,8 +210,7 @@ mod tests {
     }
 
     fn assert_file_exists(path: PathBuf) {
-        let exists = path.try_exists();
-        match exists {
+        match path.try_exists() {
             Ok(does_exists) => {
                 assert!(does_exists, "File not exists: {}", path.display());
             }
