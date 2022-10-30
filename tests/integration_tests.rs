@@ -1,6 +1,7 @@
 mod assertions;
 mod docker;
 
+#[cfg(target_os = "linux")]
 mod debian {
     use crate::assertions::{assert_contains, assert_error, assert_success};
     use crate::docker::{images, users, Docker, ExecArgs};
