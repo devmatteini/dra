@@ -13,8 +13,8 @@ test:
 # only unit tests
 	cargo test --bins
 
-integration-tests: build-docker
-	cargo test --test '*'
+integration-tests:
+	cargo test --test integration_tests
 
 release:
 	cargo build --release
