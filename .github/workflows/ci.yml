@@ -45,13 +45,13 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Build
-        shell: bash
-        run: make build
-
       - name: Format check
         shell: bash
         run: make format-check
+
+      - name: Build
+        shell: bash
+        run: make build
 
       - name: Lint
         shell: bash
