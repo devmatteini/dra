@@ -62,8 +62,14 @@ jobs:
         run: make test
 
       - name: Integration tests
-        if: startsWith(matrix.os, 'ubuntu')
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make integration-tests
+
+      - name: Debian integration tests
+        if: startsWith(matrix.os, 'ubuntu')
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make debian-tests
