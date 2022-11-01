@@ -16,6 +16,10 @@ test:
 integration-tests:
 	cargo test --test integration_tests
 
+# NOTE: This only works on linux
+debian-tests: build-docker
+	cargo test --test debian
+
 release:
 	cargo build --release
 
@@ -31,4 +35,4 @@ lint:
 install-components:
 	rustup component add rustfmt clippy
 
-.PHONY: all build build-docker test-all test integration-tests release format format-check lint install-components
+.PHONY: all build build-docker test-all test integration-tests debian-tests release format format-check lint install-components
