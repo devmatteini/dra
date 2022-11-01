@@ -16,14 +16,14 @@ Welcome, we really appreciate if you're considering to contribute to `dra`!
 Other `make` targets:
 
 - `test`: run unit tests
-- `integration-tests`: run integration tests (requires `docker`). Read the [docs](./tests/README.md) for more info.
+- `integration-tests`: run integration tests. Read the [docs](./tests/README.md) for more info.
 - `format`: format code with `rustfmt`
 - `format-check`: check code is properly formatted
 - `lint`:  run `cargo-clippy`
 
 ### Code style
 
-- Always format the code with `make format`
+- Always format the code with `rustfmt`
 - Split your changes into separate atomic commits (where the build, tests and the system are
   all functioning).
 - Make sure your commits are rebased on the `main` branch.
