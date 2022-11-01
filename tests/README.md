@@ -1,12 +1,20 @@
 # Integration tests
 
-## Environment
+## Normal Tests
 
-An [ubuntu docker image](../devtools/Dockerfile.ubuntu) is used as test environment for `dra` executable.
+These are rust tests that can run on your machine that does not affect your system.
 
-Inside it's installed the `dra` executable that is used for the tests.
+Example: [integration_tests.rs](integration_tests.rs)
 
-## Test architecture
+## Sandbox Tests
+
+:warning: It currently only works on linux
+
+When your tests affect your system, like installing a `.deb` release asset, you should use a sandbox environment.
+
+An [ubuntu docker image](../devtools/Dockerfile.ubuntu) is provided as test environment with `dra` executable.
+
+### Test architecture
 
 Tests are written in rust. It's possible to interact with docker api through a custom wrapper called [Docker](docker/mod.rs).
 
@@ -16,7 +24,7 @@ Tests are written in rust. It's possible to interact with docker api through a c
 2. Execute `dra` command to be tested and wait for its result using `Docker::exec()`.
 
    You need to use [devmatteini/dra-tests](https://github.com/devmatteini/dra-tests) repository.
-4. Do assertions on command result (you can find helpers methods in [assertions](assertions/mod.rs) module)
+3. Do assertions on command result (you can find helpers methods in [assertions](assertions/mod.rs) module)
 
 **Note**: when the docker container started in step 1 goes out of scope, is then stopped in background.
 
