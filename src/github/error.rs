@@ -4,7 +4,6 @@ use std::fmt::Formatter;
 pub enum GithubError {
     Http(Box<ureq::Error>),
     JsonDeserialization(std::io::Error),
-    InvalidContentLength,
     RepositoryOrReleaseNotFound,
     RateLimitExceeded,
     Unauthorized,
@@ -28,9 +27,6 @@ impl std::fmt::Display for GithubError {
             GithubError::Http(e) => f.write_str(&e.to_string()),
             GithubError::JsonDeserialization(e) => {
                 f.write_str(&format!("Error deserializing response: {}", e))
-            }
-            GithubError::InvalidContentLength => {
-                f.write_str("Content-Length header is missing or invalid")
             }
             GithubError::RepositoryOrReleaseNotFound => {
                 f.write_str("Repository or release not found")

@@ -12,7 +12,7 @@ impl Tag {
 #[derive(Deserialize, Debug)]
 pub struct Asset {
     pub name: String,
-    #[serde(rename(deserialize = "url"))]
+    #[serde(rename(deserialize = "browser_download_url"))]
     pub download_url: String,
 }
 
@@ -20,5 +20,9 @@ pub struct Asset {
 pub struct Release {
     #[serde(rename(deserialize = "tag_name"))]
     pub tag: Tag,
+    #[serde(rename(deserialize = "tarball_url"))]
+    pub tarball: String,
+    #[serde(rename(deserialize = "zipball_url"))]
+    pub zipball: String,
     pub assets: Vec<Asset>,
 }

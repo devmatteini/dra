@@ -32,6 +32,15 @@ impl ProgressBar {
         println!("{}", &self.end_message);
     }
 
+    pub fn progress_unknown(&self) {
+        self.pb.set_style(
+            ProgressStyle::default_spinner()
+                .tick_strings(cli::spinner::TICKS)
+                .template("{spinner:.blue} {msg} {bytes}")
+                .unwrap(),
+        )
+    }
+
     pub fn set_max_progress(&self, progress: u64) {
         self.pb.set_length(progress);
     }

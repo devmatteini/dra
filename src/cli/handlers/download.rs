@@ -4,7 +4,7 @@ use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use crate::cli::get_env;
-use crate::cli::handlers::common::{check_has_assets, fetch_release_for};
+use crate::cli::handlers::common::fetch_release_for;
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::cli::progress_bar::ProgressBar;
 use crate::cli::select;
@@ -45,7 +45,6 @@ impl DownloadHandler {
     pub fn run(&self) -> HandlerResult {
         let client = GithubClient::new(get_env(GITHUB_TOKEN));
         let release = self.fetch_release(&client)?;
-        check_has_assets(&release)?;
         let selected_asset = self.autoselect_or_ask_asset(release)?;
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&client, &selected_asset, &output_path)?;
@@ -57,7 +56,22 @@ impl DownloadHandler {
         if let Some(untagged) = self.select.as_ref() {
             Self::autoselect_asset(release, untagged)
         } else {
-            Self::ask_select_asset(release.assets)
+            let base_name = format!("{}-{}", self.repository.repo, release.tag.version());
+            let tarball = Asset {
+                name: format!("{}.tar.gz", base_name),
+                download_url: release.tarball,
+            };
+            let zipball = Asset {
+                name: format!("{}.zip", base_name),
+                download_url: release.zipball,
+            };
+
+            let assets = release
+                .assets
+                .into_iter()
+                .chain([tarball, zipball])
+                .collect();
+            Self::ask_select_asset(assets)
         }
     }
 
@@ -108,11 +122,15 @@ impl DownloadHandler {
         selected_asset: &Asset,
         output_path: &Path,
     ) -> Result<(), HandlerError> {
-        let progress_bar = ProgressBar::download(&selected_asset.name, output_path);
-        progress_bar.start();
-        let (mut stream, content_length) =
+        let (mut stream, maybe_content_length) =
             github::download_asset(client, selected_asset).map_err(Self::download_error)?;
-        progress_bar.set_max_progress(content_length);
+        let progress_bar = ProgressBar::download(&selected_asset.name, output_path);
+        if let Some(cl) = maybe_content_length {
+            progress_bar.set_max_progress(cl);
+        } else {
+            progress_bar.progress_unknown();
+        }
+        progress_bar.start();
         let mut destination = Self::create_file(output_path)?;
         let mut downloaded = 0;
         let mut buffer = [0; 1024];
@@ -123,7 +141,11 @@ impl DownloadHandler {
             destination
                 .write(&buffer[..bytes_read])
                 .map_err(|x| Self::write_err(&selected_asset.name, output_path, x))?;
-            downloaded = cmp::min(downloaded + bytes_read as u64, content_length);
+            if let Some(cl) = maybe_content_length {
+                downloaded = cmp::min(downloaded + bytes_read as u64, cl);
+            } else {
+                downloaded += bytes_read as u64;
+            }
             progress_bar.update_progress(downloaded);
         }
         progress_bar.stop();
