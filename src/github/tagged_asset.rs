@@ -59,6 +59,7 @@ mod tests {
         Asset {
             name: name.to_string(),
             download_url: "ANY_DOWNLOAD_URL".to_string(),
+            display_name: None,
         }
     }
 }
