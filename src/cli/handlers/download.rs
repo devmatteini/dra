@@ -60,10 +60,12 @@ impl DownloadHandler {
             let tarball = Asset {
                 name: format!("{}.tar.gz", base_name),
                 download_url: release.tarball,
+                display_name: Some("Source code (tar.gz)".to_string()),
             };
             let zipball = Asset {
                 name: format!("{}.zip", base_name),
                 download_url: release.zipball,
+                display_name: Some("Source code (zip)".to_string()),
             };
 
             let assets = release

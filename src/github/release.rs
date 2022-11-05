@@ -14,6 +14,8 @@ pub struct Asset {
     pub name: String,
     #[serde(rename(deserialize = "browser_download_url"))]
     pub download_url: String,
+    #[serde(skip)]
+    pub display_name: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
