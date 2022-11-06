@@ -16,7 +16,7 @@ impl ProgressBar {
         pb.set_style(
             ProgressStyle::default_spinner()
                 .tick_strings(cli::spinner::TICKS)
-                .template("{spinner:.blue} {msg} {percent}% ({eta})")
+                .template("{spinner:.blue} {msg}")
                 .unwrap(),
         );
         pb.set_message(message);
@@ -42,6 +42,12 @@ impl ProgressBar {
     }
 
     pub fn set_max_progress(&self, progress: u64) {
+        self.pb.set_style(
+            ProgressStyle::default_spinner()
+                .tick_strings(cli::spinner::TICKS)
+                .template("{spinner:.blue} {msg} {percent}% ({eta})")
+                .unwrap(),
+        );
         self.pb.set_length(progress);
     }
 
