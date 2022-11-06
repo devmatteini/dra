@@ -38,7 +38,7 @@ impl From<Release> for ReleaseNew {
     fn from(release: Release) -> Self {
         let assets = release.assets.into_iter().map(AssetNew::from).collect();
         Self {
-            tag: TagNew(release.tag.0),
+            tag: TagNew(release.tag),
             tarball: release.tarball,
             zipball: release.zipball,
             assets,

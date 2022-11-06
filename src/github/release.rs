@@ -1,15 +1,6 @@
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
-pub struct Tag(pub String);
-
-impl Tag {
-    pub fn version(&self) -> String {
-        self.0.replace('v', "")
-    }
-}
-
-#[derive(Deserialize, Debug)]
 pub struct Asset {
     pub name: String,
     #[serde(rename(deserialize = "browser_download_url"))]
@@ -21,7 +12,7 @@ pub struct Asset {
 #[derive(Deserialize, Debug)]
 pub struct Release {
     #[serde(rename(deserialize = "tag_name"))]
-    pub tag: Tag,
+    pub tag: String,
     #[serde(rename(deserialize = "tarball_url"))]
     pub tarball: String,
     #[serde(rename(deserialize = "zipball_url"))]
