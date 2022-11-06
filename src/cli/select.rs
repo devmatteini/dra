@@ -1,4 +1,4 @@
-use crate::github::release::Asset;
+use crate::github::release_new::AssetNew;
 use crate::HandlerError;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Select;
@@ -8,9 +8,9 @@ pub struct Messages<'a> {
     pub quit_select: &'a str,
 }
 
-pub type AskSelectAssetResult = Result<Asset, HandlerError>;
+pub type AskSelectAssetResult = Result<AssetNew, HandlerError>;
 
-pub fn ask_select_asset(assets: Vec<Asset>, messages: Messages) -> AskSelectAssetResult {
+pub fn ask_select_asset(assets: Vec<AssetNew>, messages: Messages) -> AskSelectAssetResult {
     let items = assets_names(&assets);
     let index = Select::with_theme(&ColorfulTheme::default())
         .with_prompt(messages.select_prompt)
@@ -25,14 +25,14 @@ pub fn ask_select_asset(assets: Vec<Asset>, messages: Messages) -> AskSelectAsse
     Ok(find_asset_by_name(selected_name, assets))
 }
 
-fn assets_names(assets: &[Asset]) -> Vec<String> {
+fn assets_names(assets: &[AssetNew]) -> Vec<String> {
     assets
         .iter()
         .map(|x| x.display_name.clone().unwrap_or_else(|| x.name.clone()))
         .collect::<Vec<String>>()
 }
 
-fn find_asset_by_name(name: &str, assets: Vec<Asset>) -> Asset {
+fn find_asset_by_name(name: &str, assets: Vec<AssetNew>) -> AssetNew {
     assets
         .into_iter()
         .find(|x| x.display_name.as_deref().filter(|&n| n == name).is_some() || x.name == name)

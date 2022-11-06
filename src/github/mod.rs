@@ -1,5 +1,6 @@
 use crate::github::client::GithubClient;
-use crate::github::release::{Asset, Release, Tag};
+use crate::github::release::Release;
+use crate::github::release_new::{AssetNew, ReleaseNew, TagNew};
 use error::GithubError;
 use std::io::Read;
 use std::time::Duration;
@@ -7,6 +8,7 @@ use std::time::Duration;
 pub mod client;
 pub mod error;
 pub mod release;
+pub mod release_new;
 pub mod tagged_asset;
 
 pub const GITHUB_TOKEN: &str = "GITHUB_TOKEN";
@@ -20,8 +22,8 @@ pub struct Repository {
 pub fn get_release(
     client: &GithubClient,
     repository: &Repository,
-    tag: Option<&Tag>,
-) -> Result<Release, GithubError> {
+    tag: Option<&TagNew>,
+) -> Result<ReleaseNew, GithubError> {
     let url = format!(
         "https://api.github.com/repos/{owner}/{repo}/releases/{release}",
         owner = &repository.owner,
@@ -39,16 +41,17 @@ pub fn get_release(
         .and_then(deserialize)
 }
 
-fn deserialize(response: ureq::Response) -> Result<Release, GithubError> {
+fn deserialize(response: ureq::Response) -> Result<ReleaseNew, GithubError> {
     response
         .into_json::<Release>()
         .map_err(GithubError::JsonDeserialization)
+        .map(ReleaseNew::from)
 }
 
 // DOCS: https://docs.github.com/en/rest/reference/releases#get-a-release-asset
 pub fn download_asset(
     client: &GithubClient,
-    asset: &Asset,
+    asset: &AssetNew,
 ) -> Result<(impl Read + Send, Option<u64>), GithubError> {
     let response = client
         .get(&asset.download_url)

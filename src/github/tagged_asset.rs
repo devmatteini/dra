@@ -1,15 +1,15 @@
-use crate::github::release::{Asset, Tag};
+use crate::github::release_new::{AssetNew, TagNew};
 
 pub struct TaggedAsset;
 
 impl TaggedAsset {
     const PLACEHOLDER: &'static str = "{tag}";
 
-    pub fn tag(tag: &Tag, untagged: &str) -> String {
+    pub fn tag(tag: &TagNew, untagged: &str) -> String {
         untagged.replace(Self::PLACEHOLDER, &tag.version())
     }
 
-    pub fn untag(tag: &Tag, asset: &Asset) -> String {
+    pub fn untag(tag: &TagNew, asset: &AssetNew) -> String {
         asset.name.replace(&tag.version(), Self::PLACEHOLDER)
     }
 }
@@ -51,12 +51,12 @@ mod tests {
         assert_eq!("file-linux.deb".to_string(), result);
     }
 
-    fn tag_for(value: &str) -> Tag {
-        Tag(value.to_string())
+    fn tag_for(value: &str) -> TagNew {
+        TagNew(value.to_string())
     }
 
-    fn asset_for(name: &str) -> Asset {
-        Asset {
+    fn asset_for(name: &str) -> AssetNew {
+        AssetNew {
             name: name.to_string(),
             download_url: "ANY_DOWNLOAD_URL".to_string(),
             display_name: None,

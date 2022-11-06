@@ -3,7 +3,7 @@ use crate::cli::handlers::common::{check_has_assets, fetch_release_for};
 use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::cli::select;
 use crate::github::client::GithubClient;
-use crate::github::release::{Asset, Release};
+use crate::github::release_new::{AssetNew, ReleaseNew};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
 
@@ -29,11 +29,11 @@ impl UntagHandler {
     fn fetch_latest_release(
         client: &GithubClient,
         repository: &Repository,
-    ) -> Result<Release, HandlerError> {
+    ) -> Result<ReleaseNew, HandlerError> {
         fetch_release_for(client, repository, None)
     }
 
-    fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
+    fn ask_select_asset(assets: Vec<AssetNew>) -> select::AskSelectAssetResult {
         select::ask_select_asset(
             assets,
             select::Messages {
