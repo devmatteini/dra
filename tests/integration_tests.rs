@@ -18,8 +18,8 @@ mod archives {
 
         let result = cmd
             .arg("download")
-            .args(&["-s", asset])
-            .args(&["-o", &output_dir])
+            .args(["-s", asset])
+            .args(["-o", &output_dir])
             .arg("-i")
             .arg("devmatteini/dra-tests")
             .assert();
@@ -39,8 +39,8 @@ mod archives {
 
         let result = cmd
             .arg("download")
-            .args(&["-s", asset])
-            .args(&["-o", &output_dir])
+            .args(["-s", asset])
+            .args(["-o", &output_dir])
             .arg("-i")
             .arg("devmatteini/dra-tests")
             .assert();
@@ -58,8 +58,8 @@ mod archives {
 
         let result = cmd
             .arg("download")
-            .args(&["-s", "no_executable.tar.gz"])
-            .args(&["-o", &output_dir])
+            .args(["-s", "no_executable.tar.gz"])
+            .args(["-o", &output_dir])
             .arg("-i")
             .arg("devmatteini/dra-tests")
             .assert();
