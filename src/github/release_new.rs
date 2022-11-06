@@ -28,8 +28,8 @@ impl From<Asset> for AssetNew {
     fn from(asset: Asset) -> Self {
         Self {
             name: asset.name,
-            download_url: asset.download_url,
-            display_name: asset.display_name,
+            download_url: asset.browser_download_url,
+            display_name: None,
         }
     }
 }
@@ -38,9 +38,9 @@ impl From<Release> for ReleaseNew {
     fn from(release: Release) -> Self {
         let assets = release.assets.into_iter().map(AssetNew::from).collect();
         Self {
-            tag: TagNew(release.tag),
-            tarball: release.tarball,
-            zipball: release.zipball,
+            tag: TagNew(release.tag_name),
+            tarball: release.tarball_url,
+            zipball: release.zipball_url,
             assets,
         }
     }
