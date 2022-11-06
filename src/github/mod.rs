@@ -1,14 +1,14 @@
 use crate::github::client::GithubClient;
-use crate::github::release::Release;
 use crate::github::release_new::{AssetNew, ReleaseNew, TagNew};
+use crate::github::response::ReleaseResponse;
 use error::GithubError;
 use std::io::Read;
 use std::time::Duration;
 
 pub mod client;
 pub mod error;
-pub mod release;
 pub mod release_new;
+mod response;
 pub mod tagged_asset;
 
 pub const GITHUB_TOKEN: &str = "GITHUB_TOKEN";
@@ -43,7 +43,7 @@ pub fn get_release(
 
 fn deserialize(response: ureq::Response) -> Result<ReleaseNew, GithubError> {
     response
-        .into_json::<Release>()
+        .into_json::<ReleaseResponse>()
         .map_err(GithubError::JsonDeserialization)
         .map(ReleaseNew::from)
 }

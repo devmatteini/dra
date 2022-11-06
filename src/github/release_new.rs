@@ -1,4 +1,4 @@
-use crate::github::release::{Asset, Release};
+use crate::github::response::{AssetResponse, ReleaseResponse};
 
 #[derive(Debug)]
 pub struct TagNew(pub String);
@@ -24,8 +24,8 @@ pub struct AssetNew {
     pub download_url: String,
 }
 
-impl From<Asset> for AssetNew {
-    fn from(asset: Asset) -> Self {
+impl From<AssetResponse> for AssetNew {
+    fn from(asset: AssetResponse) -> Self {
         Self {
             name: asset.name,
             download_url: asset.browser_download_url,
@@ -34,8 +34,8 @@ impl From<Asset> for AssetNew {
     }
 }
 
-impl From<Release> for ReleaseNew {
-    fn from(release: Release) -> Self {
+impl From<ReleaseResponse> for ReleaseNew {
+    fn from(release: ReleaseResponse) -> Self {
         let assets = release.assets.into_iter().map(AssetNew::from).collect();
         Self {
             tag: TagNew(release.tag_name),
