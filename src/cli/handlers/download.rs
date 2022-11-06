@@ -11,7 +11,7 @@ use crate::cli::select;
 use crate::cli::spinner::Spinner;
 use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
-use crate::github::release_new::{AssetNew, ReleaseNew, TagNew};
+use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
 use crate::installer::cleanup::InstallCleanup;
@@ -20,7 +20,7 @@ use crate::{github, installer};
 pub struct DownloadHandler {
     repository: Repository,
     select: Option<String>,
-    tag: Option<TagNew>,
+    tag: Option<Tag>,
     output: Option<PathBuf>,
     install: bool,
 }
@@ -36,7 +36,7 @@ impl DownloadHandler {
         DownloadHandler {
             repository,
             select,
-            tag: tag.map(TagNew),
+            tag: tag.map(Tag),
             output,
             install,
         }
@@ -52,17 +52,17 @@ impl DownloadHandler {
         Ok(())
     }
 
-    fn autoselect_or_ask_asset(&self, release: ReleaseNew) -> Result<AssetNew, HandlerError> {
+    fn autoselect_or_ask_asset(&self, release: Release) -> Result<Asset, HandlerError> {
         if let Some(untagged) = self.select.as_ref() {
             Self::autoselect_asset(release, untagged)
         } else {
             let base_name = format!("{}-{}", self.repository.repo, release.tag.version());
-            let tarball = AssetNew {
+            let tarball = Asset {
                 name: format!("{}.tar.gz", base_name),
                 download_url: release.tarball,
                 display_name: Some("Source code (tar.gz)".to_string()),
             };
-            let zipball = AssetNew {
+            let zipball = Asset {
                 name: format!("{}.zip", base_name),
                 download_url: release.zipball,
                 display_name: Some("Source code (zip)".to_string()),
@@ -96,7 +96,7 @@ impl DownloadHandler {
             })
     }
 
-    fn autoselect_asset(release: ReleaseNew, untagged: &str) -> Result<AssetNew, HandlerError> {
+    fn autoselect_asset(release: Release, untagged: &str) -> Result<Asset, HandlerError> {
         let asset_name = TaggedAsset::tag(&release.tag, untagged);
         release
             .assets
@@ -105,11 +105,11 @@ impl DownloadHandler {
             .ok_or_else(|| HandlerError::new(format!("No asset found for {}", untagged)))
     }
 
-    fn fetch_release(&self, client: &GithubClient) -> Result<ReleaseNew, HandlerError> {
+    fn fetch_release(&self, client: &GithubClient) -> Result<Release, HandlerError> {
         fetch_release_for(client, &self.repository, self.tag.as_ref())
     }
 
-    fn ask_select_asset(assets: Vec<AssetNew>) -> select::AskSelectAssetResult {
+    fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
         select::ask_select_asset(
             assets,
             select::Messages {
@@ -121,7 +121,7 @@ impl DownloadHandler {
 
     fn download_asset(
         client: &GithubClient,
-        selected_asset: &AssetNew,
+        selected_asset: &Asset,
         output_path: &Path,
     ) -> Result<(), HandlerError> {
         let progress_bar = ProgressBar::download(&selected_asset.name, output_path);

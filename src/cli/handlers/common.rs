@@ -1,15 +1,15 @@
 use crate::cli::spinner::Spinner;
 use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
-use crate::github::release_new::{ReleaseNew, TagNew};
+use crate::github::release::{Release, Tag};
 use crate::github::Repository;
 use crate::{github, Color, HandlerError};
 
 pub fn fetch_release_for(
     client: &GithubClient,
     repository: &Repository,
-    tag: Option<&TagNew>,
-) -> Result<ReleaseNew, HandlerError> {
+    tag: Option<&Tag>,
+) -> Result<Release, HandlerError> {
     let spinner = Spinner::no_messages();
     spinner.start();
 
@@ -24,7 +24,7 @@ fn release_error(e: GithubError) -> HandlerError {
     HandlerError::new(format!("Error fetching the release: {}", e))
 }
 
-pub fn check_has_assets(release: &ReleaseNew) -> Result<(), HandlerError> {
+pub fn check_has_assets(release: &Release) -> Result<(), HandlerError> {
     if release.assets.is_empty() {
         Err(HandlerError::new("No assets found for this release".into()))
     } else {

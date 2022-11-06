@@ -1,30 +1,30 @@
 use crate::github::response::{AssetResponse, ReleaseResponse};
 
 #[derive(Debug)]
-pub struct TagNew(pub String);
+pub struct Tag(pub String);
 
-impl TagNew {
+impl Tag {
     pub fn version(&self) -> String {
         self.0.replace('v', "")
     }
 }
 
 #[derive(Debug)]
-pub struct ReleaseNew {
-    pub tag: TagNew,
+pub struct Release {
+    pub tag: Tag,
     pub tarball: String,
     pub zipball: String,
-    pub assets: Vec<AssetNew>,
+    pub assets: Vec<Asset>,
 }
 
 #[derive(Debug)]
-pub struct AssetNew {
+pub struct Asset {
     pub name: String,
     pub display_name: Option<String>,
     pub download_url: String,
 }
 
-impl From<AssetResponse> for AssetNew {
+impl From<AssetResponse> for Asset {
     fn from(asset: AssetResponse) -> Self {
         Self {
             name: asset.name,
@@ -34,11 +34,11 @@ impl From<AssetResponse> for AssetNew {
     }
 }
 
-impl From<ReleaseResponse> for ReleaseNew {
+impl From<ReleaseResponse> for Release {
     fn from(release: ReleaseResponse) -> Self {
-        let assets = release.assets.into_iter().map(AssetNew::from).collect();
+        let assets = release.assets.into_iter().map(Asset::from).collect();
         Self {
-            tag: TagNew(release.tag_name),
+            tag: Tag(release.tag_name),
             tarball: release.tarball_url,
             zipball: release.zipball_url,
             assets,
