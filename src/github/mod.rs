@@ -48,7 +48,7 @@ fn deserialize(response: ureq::Response) -> Result<Release, GithubError> {
         .map(Release::from)
 }
 
-// DOCS: https://docs.github.com/en/rest/reference/releases#get-a-release-asset
+// DOCS: https://docs.github.com/en/rest/releases/assets#get-a-release-asset
 pub fn download_asset(
     client: &GithubClient,
     asset: &Asset,
