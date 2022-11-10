@@ -19,6 +19,9 @@ pub struct Repository {
     pub repo: String,
 }
 
+// DOCS:
+// - https://docs.github.com/en/rest/releases/releases#get-the-latest-release
+// - https://docs.github.com/en/rest/releases/releases#get-a-release-by-tag-name
 pub fn get_release(
     client: &GithubClient,
     repository: &Repository,
