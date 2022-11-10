@@ -7,6 +7,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.1] - 2022-11-10
+
+### Added
+
+- Download release source code archives (interactive/non-interactive), by @tranzystorek-io ([#52](https://github.com/devmatteini/dra/issues/52))
+
+### Development
+
+After the cross-platform release (0.4.0), a lot of works was done to improve `dra` test suite to make sure all supported os works.
+We are now able to run integration tests on macOS and Windows as well!
+
+### Updated dependencies
+
+- `indicatif` from 0.17.1 to 0.17.2
+- `predicates` from 2.1.1 to 2.1.2
+- `serde` from 1.0.145 to 1.0.147
+- `clap` from 4.0.15 to 4.0.22
+- `clap_complete` from 4.0.2 to 4.0.5
+
 ## [0.4.0] - 2022-10-19
 
 `dra` is now a cross-platform command line that works on Linux, macOS and Windows 🎉!
