@@ -52,6 +52,20 @@ impl Release {
     }
 }
 
+impl Asset {
+    pub fn show_name(&self) -> &str {
+        self.display_name.as_ref().unwrap_or(&self.name)
+    }
+
+    pub fn is_same_name(&self, name: &str) -> bool {
+        self.display_name
+            .as_deref()
+            .filter(|&n| n == name)
+            .is_some()
+            || self.name == name
+    }
+}
+
 fn tarball_asset(url: String, base_name: &str) -> Asset {
     Asset {
         name: format!("{}.tar.gz", base_name),

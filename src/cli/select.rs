@@ -26,15 +26,9 @@ pub fn ask_select_asset(assets: Vec<Asset>, messages: Messages) -> AskSelectAsse
 }
 
 fn assets_names(assets: &[Asset]) -> Vec<String> {
-    assets
-        .iter()
-        .map(|x| x.display_name.clone().unwrap_or_else(|| x.name.clone()))
-        .collect::<Vec<String>>()
+    assets.iter().map(|x| x.show_name().to_string()).collect()
 }
 
 fn find_asset_by_name(name: &str, assets: Vec<Asset>) -> Asset {
-    assets
-        .into_iter()
-        .find(|x| x.display_name.as_deref().filter(|&n| n == name).is_some() || x.name == name)
-        .unwrap()
+    assets.into_iter().find(|x| x.is_same_name(name)).unwrap()
 }
