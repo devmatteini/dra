@@ -1,4 +1,5 @@
 use crate::github::response::{AssetResponse, ReleaseResponse};
+use crate::github::Repository;
 
 #[derive(Debug)]
 pub struct Tag(pub String);
@@ -12,8 +13,6 @@ impl Tag {
 #[derive(Debug)]
 pub struct Release {
     pub tag: Tag,
-    pub tarball: String,
-    pub zipball: String,
     pub assets: Vec<Asset>,
 }
 
@@ -34,14 +33,45 @@ impl From<AssetResponse> for Asset {
     }
 }
 
-impl From<ReleaseResponse> for Release {
-    fn from(release: ReleaseResponse) -> Self {
-        let assets = release.assets.into_iter().map(Asset::from).collect();
-        Self {
-            tag: Tag(release.tag_name),
-            tarball: release.tarball_url,
-            zipball: release.zipball_url,
-            assets,
-        }
+impl Release {
+    pub fn from_response(release: ReleaseResponse, repository: &Repository) -> Self {
+        let tag = Tag(release.tag_name);
+        let tarball =
+            tarball_to_asset(release.tarball_url, source_code(repository, &tag, "tar.gz"));
+        let zipball = zipball_to_asset(release.zipball_url, source_code(repository, &tag, "zip"));
+
+        let assets = release
+            .assets
+            .into_iter()
+            .map(Asset::from)
+            .chain([tarball, zipball])
+            .collect();
+
+        Self { tag, assets }
     }
+}
+
+fn tarball_to_asset(url: String, name: String) -> Asset {
+    Asset {
+        name,
+        download_url: url,
+        display_name: Some("Source code (tar.gz)".to_string()),
+    }
+}
+
+fn zipball_to_asset(url: String, name: String) -> Asset {
+    Asset {
+        name,
+        download_url: url,
+        display_name: Some("Source code (zip)".to_string()),
+    }
+}
+
+fn source_code(repository: &Repository, tag: &Tag, extension: &str) -> String {
+    format!(
+        "{}-{}-source-code.{}",
+        repository.repo,
+        tag.version(),
+        extension
+    )
 }

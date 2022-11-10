@@ -56,24 +56,7 @@ impl DownloadHandler {
         if let Some(untagged) = self.select.as_ref() {
             Self::autoselect_asset(release, untagged)
         } else {
-            let base_name = format!("{}-{}", self.repository.repo, release.tag.version());
-            let tarball = Asset {
-                name: format!("{}.tar.gz", base_name),
-                download_url: release.tarball,
-                display_name: Some("Source code (tar.gz)".to_string()),
-            };
-            let zipball = Asset {
-                name: format!("{}.zip", base_name),
-                download_url: release.zipball,
-                display_name: Some("Source code (zip)".to_string()),
-            };
-
-            let assets = release
-                .assets
-                .into_iter()
-                .chain([tarball, zipball])
-                .collect();
-            Self::ask_select_asset(assets)
+            Self::ask_select_asset(release.assets)
         }
     }
 

@@ -1,8 +1,10 @@
+mod fs;
+
 mod archives {
-    use std::path::PathBuf;
     use std::process::Command;
     use test_case::test_case;
 
+    use crate::fs::{any_temp_dir, path_to_string};
     use assert_cmd::assert::OutputAssertExt;
     use assert_cmd::prelude::CommandCargoExt;
 
@@ -68,17 +70,44 @@ mod archives {
             .failure()
             .stderr(predicates::str::contains("No executable found"));
     }
+}
 
-    fn any_temp_dir() -> PathBuf {
-        let name = uuid::Uuid::new_v4().simple().to_string();
-        let path = std::env::temp_dir()
-            .join("dra-integration-tests")
-            .join(name);
-        std::fs::create_dir_all(&path).unwrap();
-        path
+mod downloads {
+    use crate::fs::{any_temp_file, path_to_string};
+    use assert_cmd::Command;
+
+    #[test]
+    fn download_source_code_successfully() {
+        let output_file = path_to_string(any_temp_file("dra-tests-src"));
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-s", "dra-tests-{tag}-source-code.tar.gz"])
+            .args(["-o", &output_file])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        let expected = format!("Saved to: {}", &output_file);
+        result.success().stdout(predicates::str::contains(expected));
     }
 
-    fn path_to_string(path: PathBuf) -> String {
-        path.to_str().unwrap().to_owned()
+    #[test]
+    fn cannot_use_display_name_to_select_asset() {
+        let output_file = path_to_string(any_temp_file("dra-tests-any"));
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-s", "Source code (tar.gz)"])
+            .args(["-o", &output_file])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result.failure().stderr(predicates::str::contains(
+            "No asset found for Source code (tar.gz)",
+        ));
     }
 }
