@@ -37,6 +37,22 @@ pub fn get_release(
         .map(to_release(repository))
 }
 
+// DOCS: https://docs.github.com/en/rest/releases/assets#get-a-release-asset
+pub fn download_asset(
+    client: &GithubClient,
+    asset: &Asset,
+) -> Result<(impl Read + Send, Option<u64>), GithubError> {
+    let response = client
+        .get(&asset.download_url)
+        .set("Accept", "application/vnd.github.raw")
+        .call()
+        .map_err(GithubError::from)?;
+    let content_length = response
+        .header("Content-Length")
+        .and_then(|v| v.parse().ok());
+    Ok((response.into_reader(), content_length))
+}
+
 fn get_release_url(repository: &Repository, tag: Option<&Tag>) -> String {
     format!(
         "https://api.github.com/repos/{owner}/{repo}/releases/{release}",
@@ -56,20 +72,4 @@ fn deserialize(response: ureq::Response) -> Result<ReleaseResponse, GithubError>
 
 fn to_release(repository: &Repository) -> impl Fn(ReleaseResponse) -> Release + '_ {
     |response| Release::from_response(response, repository)
-}
-
-// DOCS: https://docs.github.com/en/rest/releases/assets#get-a-release-asset
-pub fn download_asset(
-    client: &GithubClient,
-    asset: &Asset,
-) -> Result<(impl Read + Send, Option<u64>), GithubError> {
-    let response = client
-        .get(&asset.download_url)
-        .set("Accept", "application/vnd.github.raw")
-        .call()
-        .map_err(GithubError::from)?;
-    let content_length = response
-        .header("Content-Length")
-        .and_then(|v| v.parse().ok());
-    Ok((response.into_reader(), content_length))
 }
