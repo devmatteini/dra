@@ -38,14 +38,18 @@ pub fn get_release(
         .timeout(Duration::from_secs(5))
         .call()
         .map_err(GithubError::from)
-        .and_then(|x| deserialize(x, repository))
+        .and_then(deserialize)
+        .map(to_release(repository))
 }
 
-fn deserialize(response: ureq::Response, repository: &Repository) -> Result<Release, GithubError> {
+fn deserialize(response: ureq::Response) -> Result<ReleaseResponse, GithubError> {
     response
         .into_json::<ReleaseResponse>()
         .map_err(GithubError::JsonDeserialization)
-        .map(|x| Release::from_response(x, repository))
+}
+
+fn to_release(repository: &Repository) -> impl Fn(ReleaseResponse) -> Release + '_ {
+    |response| Release::from_response(response, repository)
 }
 
 // DOCS: https://docs.github.com/en/rest/releases/assets#get-a-release-asset
