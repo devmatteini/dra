@@ -27,15 +27,7 @@ pub fn get_release(
     repository: &Repository,
     tag: Option<&Tag>,
 ) -> Result<Release, GithubError> {
-    let url = format!(
-        "https://api.github.com/repos/{owner}/{repo}/releases/{release}",
-        owner = &repository.owner,
-        repo = &repository.repo,
-        release = tag
-            .map(|t| format!("tags/{}", t.0))
-            .unwrap_or_else(|| String::from("latest"))
-    );
-
+    let url = get_release_url(repository, tag);
     client
         .get(&url)
         .timeout(Duration::from_secs(5))
@@ -43,6 +35,17 @@ pub fn get_release(
         .map_err(GithubError::from)
         .and_then(deserialize)
         .map(to_release(repository))
+}
+
+fn get_release_url(repository: &Repository, tag: Option<&Tag>) -> String {
+    format!(
+        "https://api.github.com/repos/{owner}/{repo}/releases/{release}",
+        owner = &repository.owner,
+        repo = &repository.repo,
+        release = tag
+            .map(|t| format!("tags/{}", t.0))
+            .unwrap_or_else(|| String::from("latest"))
+    )
 }
 
 fn deserialize(response: ureq::Response) -> Result<ReleaseResponse, GithubError> {
