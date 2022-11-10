@@ -86,6 +86,17 @@ Select and download an asset from a specific release
 $ dra download --tag 0.1.1 devmatteini/dra-tests
 ```
 
+Select and download source code archives
+
+```
+$ dra download devmatteini/dra-tests
+Release tag is 0.1.5
+? Pick the asset to download ›
+  helloworld_0.1.5.tar.gz
+❯ Source code (tar.gz)
+  Source code (zip)
+```
+
 ### Install assets
 
 Download and install an asset (on both interactive and non-interactive modes)
