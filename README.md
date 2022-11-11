@@ -40,14 +40,12 @@ install it via:
 sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number
 ```
 
-### From AUR
+### On Arch Linux
 
-Arch Linux users can
-install [dra](https://aur.archlinux.org/packages/?O=0&SeB=nd&K=download+assets+from+GitHub+release&outdated=&SB=n&SO=a&PP=50&do_Search=Go)
-from the AUR using an [AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers). For example:
+Arch Linux users can install `dra` from the [community repository](https://archlinux.org/packages/community/x86_64/dra/) using [pacman](https://wiki.archlinux.org/title/Pacman):
 
 ```bash
-paru -S dra
+pacman -S dra
 ```
 
 ### From source
