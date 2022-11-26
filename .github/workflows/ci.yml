@@ -19,11 +19,14 @@ env:
 jobs:
   # NOTE: always set shell: bash, otherwise on Windows there might be problems!
   build:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.job.os }}
+    runs-on: ${{ matrix.job.runner }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        job:
+          - { os: linux,    runner: ubuntu-latest }
+          - { os: macos,    runner: macos-latest }
+          - { os: windows,  runner: windows-latest }
     steps:
       - uses: actions/checkout@v3
 
@@ -68,7 +71,7 @@ jobs:
         run: make integration-tests
 
       - name: Debian integration tests
-        if: startsWith(matrix.os, 'ubuntu')
+        if: matrix.job.os == 'linux'
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
