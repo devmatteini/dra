@@ -60,7 +60,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ matrix.job.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Setup build tools
         if: matrix.job.use-cross == true
