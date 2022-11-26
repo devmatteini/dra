@@ -36,9 +36,22 @@ jobs:
     strategy:
       matrix:
         job:
-          - { os: linux,    runner: ubuntu-latest }
-          - { os: macos,    runner: macos-latest }
-          - { os: windows,  runner: windows-latest }
+          - os: linux
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            use-cross: false
+          - os: linux-armv6
+            runner: ubuntu-latest
+            target: arm-unknown-linux-gnueabihf
+            use-cross: true
+          - os: macos
+            runner: macos-latest
+            target: x86_64-apple-darwin
+            use-cross: false
+          - os: windows
+            runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            use-cross: false
     steps:
       - uses: actions/checkout@v3
 
@@ -47,10 +60,18 @@ jobs:
         run: |
           echo "DRA_VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
+      - name: Install prerequisites
+        shell: bash
+        run: |
+          case ${{ matrix.job.os }} in
+            linux-armv6) sudo apt-get -y update ; sudo apt-get -y install gcc-arm-linux-gnueabihf ;;
+          esac
+
       - name: Install minimal stable rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          target: ${{ matrix.job.target }}
           profile: minimal
           override: true
 
@@ -62,7 +83,15 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ matrix.job.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Setup build tools
+        if: matrix.job.use-cross == true
+        shell: bash
+        run: |
+          cargo install cross
+          echo "CARGO_BIN=cross" >>$GITHUB_ENV
+          echo "CARGO_TARGET=--target ${{ matrix.job.target }}" >>$GITHUB_ENV
 
       - name: Build release binary
         shell: bash
