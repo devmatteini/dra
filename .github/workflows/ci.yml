@@ -52,14 +52,6 @@ jobs:
           override: true
           components: rustfmt, clippy
 
-      - name: Setup build tools
-        if: matrix.job.use-cross == true
-        shell: bash
-        run: |
-          cargo install cross
-          echo "CARGO_BIN=cross" >>$GITHUB_ENV
-          echo "CARGO_TARGET=--target ${{ matrix.job.target }}" >>$GITHUB_ENV
-
       - uses: actions/cache@v3
         with:
           path: |
@@ -69,6 +61,14 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Setup build tools
+        if: matrix.job.use-cross == true
+        shell: bash
+        run: |
+          cargo install cross
+          echo "CARGO_BIN=cross" >>$GITHUB_ENV
+          echo "CARGO_TARGET=--target ${{ matrix.job.target }}" >>$GITHUB_ENV
 
       - name: Format check
         shell: bash
