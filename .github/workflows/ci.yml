@@ -24,9 +24,10 @@ jobs:
     strategy:
       matrix:
         job:
-          - { os: linux,    runner: ubuntu-latest }
-          - { os: macos,    runner: macos-latest }
-          - { os: windows,  runner: windows-latest }
+          - { os: linux,       runner: ubuntu-latest,  target: x86_64-unknown-linux-gnu,     use-cross: false }
+          - { os: linux-armv6, runner: ubuntu-latest,  target: arm-unknown-linux-gnueabihf,  use-cross: true }
+          - { os: macos,       runner: macos-latest,   target: x86_64-apple-darwin,          use-cross: false }
+          - { os: windows,     runner: windows-latest, target: x86_64-pc-windows-msvc,       use-cross: false }
     steps:
       - uses: actions/checkout@v3
 
@@ -34,9 +35,18 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          target: ${{ matrix.job.target }}
           profile: minimal
           override: true
           components: rustfmt, clippy
+
+      - name: Setup build tools
+        if: matrix.job.use-cross == true
+        shell: bash
+        run: |
+          cargo install cross
+          echo "CARGO_BIN=cross" >>$GITHUB_ENV
+          echo "CARGO_TARGET=--target ${{ matrix.job.target }}" >>$GITHUB_ENV
 
       - uses: actions/cache@v3
         with:
@@ -65,6 +75,7 @@ jobs:
         run: make test
 
       - name: Integration tests
+        if: matrix.job.use-cross == false
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
