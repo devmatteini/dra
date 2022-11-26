@@ -24,10 +24,22 @@ jobs:
     strategy:
       matrix:
         job:
-          - { os: linux,       runner: ubuntu-latest,  target: x86_64-unknown-linux-gnu,     use-cross: false }
-          - { os: linux-armv6, runner: ubuntu-latest,  target: arm-unknown-linux-gnueabihf,  use-cross: true }
-          - { os: macos,       runner: macos-latest,   target: x86_64-apple-darwin,          use-cross: false }
-          - { os: windows,     runner: windows-latest, target: x86_64-pc-windows-msvc,       use-cross: false }
+          - os: linux
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            use-cross: false
+          - os: linux-armv6
+            runner: ubuntu-latest
+            target: arm-unknown-linux-gnueabihf
+            use-cross: true
+          - os: macos
+            runner: macos-latest
+            target: x86_64-apple-darwin
+            use-cross: false
+          - os: windows
+            runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            use-cross: false
     steps:
       - uses: actions/checkout@v3
 
