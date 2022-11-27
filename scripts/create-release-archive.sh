@@ -4,6 +4,7 @@ set -eo pipefail
 
 LINUX="linux"
 LINUX_ARMV6="linux-armv6"
+LINUX_ARM64="linux-arm64"
 MACOS="macos"
 WINDOWS="windows"
 
@@ -13,13 +14,13 @@ function usage() {
   echo
   echo "ARGS:"
   echo "    <version>     version using format x.y.z"
-  echo "    <os>          supported os: $LINUX, $MACOS, $WINDOWS, $LINUX_ARMV6"
+  echo "    <os>          supported os: $LINUX, $MACOS, $WINDOWS, $LINUX_ARMV6, $LINUX_ARM64"
   echo "    <target>      build target name (https://doc.rust-lang.org/rustc/platform-support.html)"
   exit 1
 }
 
 function is_supported_os() {
-  if [[ "$1" != "$LINUX" && "$1" != "$MACOS" && "$1" != "$WINDOWS" && "$1" != "$LINUX_ARMV6" ]]; then
+  if [[ "$1" != "$LINUX" && "$1" != "$MACOS" && "$1" != "$WINDOWS" && "$1" != "$LINUX_ARMV6" && "$1" != "$LINUX_ARM64" ]]; then
     echo "Error: '$1' is not valid os"
     return 1
   fi
@@ -32,6 +33,8 @@ function strip_executable() {
     strip "$2"
   elif [[ "$1" == "$LINUX_ARMV6" ]]; then
     arm-linux-gnueabihf-strip "$2"
+  elif [[ "$1" == "$LINUX_ARM64" ]]; then
+    aarch64-linux-gnu-strip "$2"
   fi
 }
 

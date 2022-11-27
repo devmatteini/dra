@@ -44,6 +44,10 @@ jobs:
             runner: ubuntu-latest
             target: arm-unknown-linux-gnueabihf
             use-cross: true
+          - os: linux-arm64
+            runner: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            use-cross: true
           - os: macos
             runner: macos-latest
             target: x86_64-apple-darwin
@@ -65,6 +69,7 @@ jobs:
         run: |
           case ${{ matrix.job.os }} in
             linux-armv6) sudo apt-get -y update ; sudo apt-get -y install gcc-arm-linux-gnueabihf ;;
+            aarch64-unknown-linux-gnu) sudo apt-get -y update ; sudo apt-get -y install gcc-aarch64-linux-gnu ;;
           esac
 
       - name: Install minimal stable rust
