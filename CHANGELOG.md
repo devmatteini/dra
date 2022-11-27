@@ -7,6 +7,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.2] - 2022-11-27
+
+`dra` now provides releases for linux on armv6 and arm64!
+
+### Changed
+
+`dra` on Arch Linux has been moved to the community repository (thanks @orhun).
+You can now install it via `pacman -S dra`.
+
+### Updated dependencies
+
+- `uuid` from 1.2.1 to 1.2.2
+- `clap` from 4.0.22 to 4.0.26
+- `predicates` from 2.1.2 to 2.1.3
+
 ## [0.4.1] - 2022-11-10
 
 ### Added
