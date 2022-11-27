@@ -93,7 +93,10 @@ jobs:
             cargo install cross
           fi
           echo "CARGO_BIN=cross" >>$GITHUB_ENV
-          echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
+
+      - name: Export cargo target
+        shell: bash
+        run: echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
 
       - name: Build release binary
         shell: bash
@@ -103,7 +106,7 @@ jobs:
         id: build_archive
         shell: bash
         run: |
-          asset=$(./scripts/create-release-archive.sh "$DRA_VERSION" "${{ matrix.job.os }}")
+          asset=$(./scripts/create-release-archive.sh "$DRA_VERSION" "${{ matrix.job.os }}" "$CARGO_TARGET")
           echo "ARCHIVE=$asset" >> $GITHUB_OUTPUT
 
       - name: Upload assets
@@ -122,6 +125,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cargo install cargo-deb
-          deb_file=$(./scripts/create-deb.sh)
+          deb_file=$(./scripts/create-deb.sh "$CARGO_TARGET")
 
           ./scripts/upload-github-release-assets.sh "$DRA_VERSION" "$deb_file"
