@@ -70,7 +70,7 @@ jobs:
             cargo install cross
           fi
           echo "CARGO_BIN=cross" >>$GITHUB_ENV
-          echo "CARGO_TARGET=--target ${{ matrix.job.target }}" >>$GITHUB_ENV
+          echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
 
       - name: Format check
         shell: bash

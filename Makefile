@@ -1,11 +1,12 @@
 # from env variable or default value
 CARGO_BIN ?= cargo
 CARGO_TARGET ?=
+CARGO_TARGET_FLAG := $(if ${CARGO_TARGET},--target ${CARGO_TARGET},)
 
 all: format-check build lint test
 
 build:
-	${CARGO_BIN} build --tests ${CARGO_TARGET}
+	${CARGO_BIN} build --tests ${CARGO_TARGET_FLAG}
 
 build-docker: build
 # @ prevents to show github token in output
@@ -16,7 +17,7 @@ test-all: test integration-tests
 
 test:
 # only unit tests
-	${CARGO_BIN} test --bins ${CARGO_TARGET}
+	${CARGO_BIN} test --bins ${CARGO_TARGET_FLAG}
 
 # NOTE: we cannot run this tests with cross
 integration-tests:
@@ -27,7 +28,7 @@ debian-tests: build-docker
 	cargo test --test debian
 
 release:
-	${CARGO_BIN} build --release --frozen ${CARGO_TARGET}
+	${CARGO_BIN} build --release --frozen ${CARGO_TARGET_FLAG}
 
 format:
 	cargo fmt --all
