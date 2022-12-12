@@ -34,6 +34,7 @@ jobs:
     needs: [ create-release ]
     runs-on: ${{ matrix.job.runner }}
     strategy:
+      fail-fast: false
       matrix:
         job:
           - os: linux
