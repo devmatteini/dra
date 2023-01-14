@@ -12,9 +12,6 @@ build-docker: build
 # @ prevents to show github token in output
 	@docker build --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t dra-ubuntu -f ./devtools/Dockerfile.ubuntu .
 
-# TODO: remove this unused target
-test-all: test integration-tests
-
 test:
 # only unit tests
 	${CARGO_BIN} test --bins ${CARGO_TARGET_FLAG}
@@ -42,4 +39,4 @@ lint:
 install-components:
 	rustup component add rustfmt clippy
 
-.PHONY: all build build-docker test-all test integration-tests debian-tests release format format-check lint install-components
+.PHONY: all build build-docker test integration-tests debian-tests release format format-check lint install-components
