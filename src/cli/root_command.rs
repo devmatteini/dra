@@ -68,6 +68,10 @@ pub enum Command {
         /// Github repository using format {owner}/{repo}
         #[arg(value_parser = try_parse_repository)]
         repo: Repository,
+
+        /// Copy the untagged asset to clipboard
+        #[arg(short = 'c', long = "copy")]
+        copy: bool,
     },
 
     /// Generate shell completion
