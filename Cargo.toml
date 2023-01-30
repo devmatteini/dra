@@ -21,7 +21,7 @@ codegen-units = 1
 ureq = { version = "2.6.2", default-features = false, features = ["tls", "json"] }
 serde = { version = "1.0.152", features = ["derive"] }
 clap = { version = "4.1.1", features = ["derive"] }
-clap_complete = "4.1.0"
+clap_complete = "4.1.1"
 dialoguer = "0.10.3"
 indicatif = "0.17.3"
 uuid = { version = "1.2.2", features = ["v4"] }
