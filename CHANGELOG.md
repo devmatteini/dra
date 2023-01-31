@@ -7,6 +7,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.3] - 2023-01-31
+
+### Added
+
+- `dra untag` now has `--copy` flag to copy the untagged asset to clipboard (available on Linux Wayland & X11, macOS,
+  Windows) ([#90](https://github.com/devmatteini/dra/issues/90))
+
+### Development
+
+- `devmatteini/dra-ubuntu-base` docker image now uses ubuntu22.04 as base image
+
+### Updated dependencies
+
+- `ureq` from 2.5.0 to 2.6.2
+- `bumpalo` from 3.8.0 to 3.12.0
+- `clap_complete` from 4.0.5 to 4.1.1
+- `clap` from 4.0.26 to 4.1.4
+- `dialoguer` from 0.10.2 to 0.10.3
+- `indicatif` from 0.17.2 to 0.17.3
+- `serde` from 1.0.147 to 1.0.152
+- `predicates` from 2.1.3 to 2.1.5
+- `ctrlc` from 3.2.3 to 3.2.4
+- `flate2` from 1.0.24 to 1.0.25
+- `bzip2` from 0.4.3 to 0.4.4
+
 ## [0.4.2] - 2022-11-27
 
 `dra` now provides releases for linux on armv6 and arm64!
