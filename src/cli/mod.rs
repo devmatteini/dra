@@ -1,3 +1,4 @@
+pub mod clipboard;
 pub mod color;
 pub mod handlers;
 mod parse_repository;

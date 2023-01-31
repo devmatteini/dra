@@ -1,5 +1,4 @@
-use arboard::Clipboard;
-
+use crate::cli::clipboard;
 use crate::cli::get_env;
 use crate::cli::handlers::common::{check_has_assets, fetch_release_for};
 use crate::cli::handlers::{HandlerError, HandlerResult};
@@ -26,7 +25,7 @@ impl UntagHandler {
         let selected_asset = Self::ask_select_asset(release.assets)?;
         let untagged = TaggedAsset::untag(&release.tag, &selected_asset);
         println!("{}", &untagged);
-        self.copy_to_clipboard(&untagged)?;
+        self.copy_to_clipboard(&untagged);
         Ok(())
     }
 
@@ -47,15 +46,10 @@ impl UntagHandler {
         )
     }
 
-    fn copy_to_clipboard(&self, value: &str) -> Result<(), HandlerError> {
+    fn copy_to_clipboard(&self, value: &str) {
         if !self.copy {
-            return Ok(());
+            return;
         }
-
-        // TODO: should we fail the execution if cannot copy to clipboard?
-        let to_handler_error = |e: arboard::Error| HandlerError::new(format!("clipboard: {}", e));
-        let mut clipboard = Clipboard::new().map_err(to_handler_error)?;
-        clipboard.set_text(value).map_err(to_handler_error)?;
-        Ok(())
+        clipboard::set_text(value);
     }
 }
