@@ -120,6 +120,9 @@ First you need to generate an untagged asset name:
 ```
 $ dra untag devmatteini/dra-tests
 helloworld_{tag}.tar.gz
+
+# Or automatically copy untagged asset to clipboard (Linux Wayland & X11, macOS, Windows)
+$ dra untag --copy devmatteini/dra-tests
 ```
 
 Copy the output and run:
