@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.4] - 2023-02-04
+
+### Removed :warning: Breaking Changes :warning:
+
+The `--copy` flag of `dra-untag` added in the previous release has been removed for some issues on different linux desktop environments.
+There was no good solution that worked reliably everywhere, so it was decided to completely remove it since it's not worth the hassle for a "nice to
+have" feature like this ([055a4bc](https://github.com/devmatteini/dra/commit/055a4bcbbbf62d8953aa77679f842dcc0bbb4f55)).
+
 ## [0.4.3] - 2023-01-31
 
 ### Added
