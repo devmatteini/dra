@@ -29,11 +29,6 @@ impl<'a> Color<'a> {
             inner: self.inner.green(),
         }
     }
-    pub fn yellow(self) -> Self {
-        Color {
-            inner: self.inner.yellow(),
-        }
-    }
 }
 
 impl Display for Color<'_> {

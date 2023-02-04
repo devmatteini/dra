@@ -1,4 +1,3 @@
-use crate::cli::clipboard;
 use crate::cli::get_env;
 use crate::cli::handlers::common::{check_has_assets, fetch_release_for};
 use crate::cli::handlers::{HandlerError, HandlerResult};
@@ -10,12 +9,11 @@ use crate::github::{Repository, GITHUB_TOKEN};
 
 pub struct UntagHandler {
     repository: Repository,
-    copy: bool,
 }
 
 impl UntagHandler {
-    pub fn new(repository: Repository, copy: bool) -> Self {
-        UntagHandler { repository, copy }
+    pub fn new(repository: Repository) -> Self {
+        UntagHandler { repository }
     }
 
     pub fn run(&self) -> HandlerResult {
@@ -24,8 +22,7 @@ impl UntagHandler {
         check_has_assets(&release)?;
         let selected_asset = Self::ask_select_asset(release.assets)?;
         let untagged = TaggedAsset::untag(&release.tag, &selected_asset);
-        println!("{}", &untagged);
-        self.copy_to_clipboard(&untagged);
+        println!("{}", untagged);
         Ok(())
     }
 
@@ -44,12 +41,5 @@ impl UntagHandler {
                 quit_select: "No asset selected",
             },
         )
-    }
-
-    fn copy_to_clipboard(&self, value: &str) {
-        if !self.copy {
-            return;
-        }
-        clipboard::set_text(value);
     }
 }
