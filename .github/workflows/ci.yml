@@ -29,6 +29,10 @@ jobs:
             runner: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
             use-cross: false
+          - os: linux-musl
+            runner: ubuntu-22.04
+            target: x86_64-unknown-linux-musl
+            use-cross: true
           - os: linux-armv6
             runner: ubuntu-22.04
             target: arm-unknown-linux-gnueabihf
