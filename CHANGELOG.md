@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.5] - 2023-02-04
+
+### Added
+
+- `dra` now provides release for linux x86_64 musl ([#94](https://github.com/devmatteini/dra/issues/94))
+
 ## [0.4.4] - 2023-02-04
 
 ### Removed :warning: Breaking Changes :warning:
