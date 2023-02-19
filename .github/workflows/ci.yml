@@ -6,12 +6,12 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-      - 'assets/**'
+      - "**.md"
+      - "assets/**"
   pull_request:
     paths-ignore:
-      - '**.md'
-      - 'assets/**'
+      - "**.md"
+      - "assets/**"
 
 env:
   CARGO_TERM_COLOR: always
@@ -62,6 +62,7 @@ jobs:
           components: rustfmt, clippy
 
       - uses: actions/cache@v3
+        if: ${{ github.event_name == 'push' }}
         with:
           path: |
             ~/.cargo/bin/
