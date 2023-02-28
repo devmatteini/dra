@@ -59,7 +59,7 @@ jobs:
           components: "rustfmt, clippy"
 
       - uses: Swatinem/rust-cache@v2
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name != 'pull_request' }}
 
       - name: Setup build tools
         if: matrix.job.use-cross == true
