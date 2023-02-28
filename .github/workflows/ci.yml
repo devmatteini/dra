@@ -52,14 +52,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install minimal stable with clippy and rustfmt
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          target: ${{ matrix.job.target }}
-          profile: minimal
-          override: true
-          components: rustfmt, clippy
+          targets: "${{ matrix.job.target }}"
+          components: "rustfmt, clippy"
 
       - uses: actions/cache@v3
         if: ${{ github.event_name == 'push' }}

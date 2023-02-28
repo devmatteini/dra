@@ -77,13 +77,10 @@ jobs:
             linux-arm64) sudo apt-get -y update ; sudo apt-get -y install gcc-aarch64-linux-gnu ;;
           esac
 
-      - name: Install minimal stable rust
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          target: ${{ matrix.job.target }}
-          profile: minimal
-          override: true
+          targets: "${{ matrix.job.target }}"
 
       - uses: actions/cache@v3
         with:
