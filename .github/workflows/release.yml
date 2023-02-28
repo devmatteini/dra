@@ -84,16 +84,17 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
+      - uses: taiki-e/install-action@v2
+        if: matrix.job.use-cross == true
+        with:
+          tool: cross
+
       - name: Setup build tools
         if: matrix.job.use-cross == true
         shell: bash
         run: |
-          ./scripts/ci/build-tools.sh
           echo "CARGO_BIN=cross" >>$GITHUB_ENV
-
-      - name: Export cargo target
-        shell: bash
-        run: echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
+          echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
 
       - name: Build release binary
         shell: bash

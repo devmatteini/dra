@@ -61,11 +61,15 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         if: ${{ github.event_name != 'pull_request' }}
 
+      - uses: taiki-e/install-action@v2
+        if: matrix.job.use-cross == true
+        with:
+          tool: cross
+
       - name: Setup build tools
         if: matrix.job.use-cross == true
         shell: bash
         run: |
-          ./scripts/ci/build-tools.sh
           echo "CARGO_BIN=cross" >>$GITHUB_ENV
           echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
 
