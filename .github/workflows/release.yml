@@ -88,9 +88,7 @@ jobs:
         if: matrix.job.use-cross == true
         shell: bash
         run: |
-          if ! command -v cross >/dev/null; then
-            cargo install cross
-          fi
+          ./scripts/ci/build-tools.sh
           echo "CARGO_BIN=cross" >>$GITHUB_ENV
 
       - name: Export cargo target
