@@ -58,16 +58,8 @@ jobs:
           targets: "${{ matrix.job.target }}"
           components: "rustfmt, clippy"
 
-      - uses: actions/cache@v3
+      - uses: Swatinem/rust-cache@v2
         if: ${{ github.event_name == 'push' }}
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ matrix.job.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Setup build tools
         if: matrix.job.use-cross == true
