@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Development
+
+- Use `dtolnay/rust-toolchain` GitHub Actions instead of actions-rs/toolchain which is not maintained anymore 
+
 ## [0.4.5] - 2023-02-04
 
 ### Added
