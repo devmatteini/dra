@@ -108,7 +108,7 @@ $ dra download --install devmatteini/dra-tests
 Supported assets that can be installed are:
 
 - Debian packages (`.deb`)
-- Tar archive with executable (`.tar.[gz|bz2|xz]`)
+- Tar archive with executable (`.tar.[gz|bz2|xz]`, `.tzg`)
 - Zip file with executable (`.zip`)
 
 ### Non-Interactive
