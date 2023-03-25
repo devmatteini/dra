@@ -45,7 +45,7 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     if extension == "deb" {
         return Some(FileType::Debian);
     }
-    if extension == "gz" {
+    if extension == "gz" || extension == "tgz" {
         return Some(FileType::TarArchive(TarKind::Gz));
     }
     if extension == "bz2" {
@@ -92,6 +92,7 @@ mod tests {
 
     #[test_case("deb", FileType::Debian)]
     #[test_case("gz", FileType::TarArchive(TarKind::Gz))]
+    #[test_case("tgz", FileType::TarArchive(TarKind::Gz))]
     #[test_case("bz2", FileType::TarArchive(TarKind::Bz2))]
     #[test_case("xz", FileType::TarArchive(TarKind::Xz))]
     #[test_case("zip", FileType::ZipArchive)]

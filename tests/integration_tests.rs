@@ -10,6 +10,7 @@ mod archives {
 
     #[cfg(target_family = "unix")]
     #[test_case("helloworld.tar.gz"; "tar gzip")]
+    #[test_case("helloworld.tgz"; "tar tgz")]
     #[test_case("helloworld.tar.bz2"; "tar bzip2")]
     #[test_case("helloworld.tar.xz"; "tar xz")]
     #[test_case("helloworld.zip"; "zip")]
