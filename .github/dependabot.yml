@@ -4,7 +4,7 @@ updates:
   - package-ecosystem: cargo
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
       time: "11:00"
       timezone: Europe/Rome
     open-pull-requests-limit: 5
@@ -16,6 +16,6 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
       time: "11:00"
       timezone: Europe/Rome
