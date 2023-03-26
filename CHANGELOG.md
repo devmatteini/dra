@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.6] - 2023-03-26
+
 ### Added
 
 - Download and install `.tgz` assets.
@@ -14,6 +16,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Development
 
 - Use `dtolnay/rust-toolchain` GitHub Actions instead of actions-rs/toolchain which is not maintained anymore
+
+### Updated dependencies
+
+- bump `serde` from 1.0.152 to 1.0.158
+- bump `clap` from 4.1.4 to 4.1.11
+- bump `clap_complete` from 4.1.1 to 4.1.5
+- bump `walkdir` from 2.3.2 to 2.3.3
+- bump `uuid` from 1.2.2 to 1.3.0
+- bump `ctrlc` from 3.2.4 to 3.2.5
 
 ## [0.4.5] - 2023-02-04
 
