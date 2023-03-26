@@ -34,6 +34,25 @@ Other `make` targets:
     - [cli: add docs comment for --output option](https://github.com/devmatteini/dra/commit/8412dd1dcb16df3c489441d39a1774f7a8b2a495)
     - [ci: only run when something is pushed to main branch ](https://github.com/devmatteini/dra/commit/ad598100c73a2c2dd3a8195fb0364fe8b2bdeb35)
 
+### Cross compilation
+
+Install [cross](https://github.com/cross-rs/cross) to cross compile.
+
+Export these environment variables:
+
+```shell
+export CARGO_BIN=cross
+# Change CARGO_TARGET value with the desired target (https://doc.rust-lang.org/rustc/platform-support.html)
+export CARGO_TARGET=arm-unknown-linux-gnueabihf
+```
+
+Then you can build and test (only unit tests) by running:
+
+```shell
+make build
+make test
+```
+
 ## Create an issue
 
 Before submitting a new issue, please search the issues to make sure there isn't a similar issue that already exist.
