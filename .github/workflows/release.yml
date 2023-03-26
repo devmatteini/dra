@@ -94,7 +94,10 @@ jobs:
         shell: bash
         run: |
           echo "CARGO_BIN=cross" >>$GITHUB_ENV
-          echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
+
+      - name: Export cargo target
+        shell: bash
+        run: echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
 
       - name: Build release binary
         shell: bash
