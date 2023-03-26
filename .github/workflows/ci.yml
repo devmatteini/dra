@@ -17,9 +17,21 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  format-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: "rustfmt"
+      - name: Format check
+        run: make format-check
+
   # NOTE: always set shell: bash, otherwise on Windows there might be problems!
   build:
     name: ${{ matrix.job.os }}
+    needs: [ format-check ]
     runs-on: ${{ matrix.job.runner }}
     strategy:
       fail-fast: false
@@ -56,7 +68,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: "${{ matrix.job.target }}"
-          components: "rustfmt, clippy"
+          components: "clippy"
 
       - uses: Swatinem/rust-cache@v2
         if: ${{ github.event_name != 'pull_request' }}
@@ -72,10 +84,6 @@ jobs:
         run: |
           echo "CARGO_BIN=cross" >>$GITHUB_ENV
           echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
-
-      - name: Format check
-        shell: bash
-        run: make format-check
 
       - name: Build
         shell: bash
