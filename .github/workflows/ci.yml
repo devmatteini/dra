@@ -73,7 +73,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         if: ${{ github.event_name != 'pull_request' }}
 
-      - uses: taiki-e/install-action@v2
+      - name: Install cross
+        uses: taiki-e/install-action@v2
         if: matrix.job.use-cross == true
         with:
           tool: cross
