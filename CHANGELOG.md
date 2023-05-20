@@ -7,6 +7,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.7] - 2023-05-20
+
+### Fixed
+
+Install release asset when `tmp` directory is on a different file system ([#121](https://github.com/devmatteini/dra/issues/121))
+
+### Updated dependencies
+
+- bump `predicates` from 2.1.5 to 3.0.3
+- bump `test-case` from 2.2.2 to 3.1.0
+- bump `dependabot/fetch-metadata` from 1.3.6 to 1.4.0
+- bump `uuid` from 1.3.0 to 1.3.2
+- bump `dialoguer` from 0.10.3 to 0.10.4
+- bump `flate2` from 1.0.25 to 1.0.26
+- bump `clap` from 4.1.11 to 4.2.5
+- bump `clap_complete` from 4.1.5 to 4.2.1
+- bump `serde` from 1.0.158 to 1.0.160
+
 ## [0.4.6] - 2023-03-26
 
 ### Added
