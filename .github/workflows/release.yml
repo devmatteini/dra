@@ -13,7 +13,7 @@ jobs:
   create-release:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get the release version from the tag
         run: |
@@ -62,7 +62,7 @@ jobs:
             target: x86_64-pc-windows-msvc
             use-cross: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get the release version from the tag
         shell: bash
