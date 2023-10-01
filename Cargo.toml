@@ -23,7 +23,7 @@ serde = { version = "1.0.188", features = ["derive"] }
 clap = { version = "4.4.2", features = ["derive"] }
 clap_complete = "4.4.0"
 dialoguer = "0.10.4"
-indicatif = "0.17.6"
+indicatif = "0.17.7"
 uuid = { version = "1.4.1", features = ["v4"] }
 ctrlc = "3.4.0"
 walkdir = "2.3.3"
