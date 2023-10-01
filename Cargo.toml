@@ -36,7 +36,7 @@ bzip2 = "0.4.4"
 [dev-dependencies]
 test-case = "3.1.0"
 assert_cmd = "2.0.12"
-predicates = "3.0.3"
+predicates = "3.0.4"
 
 [package.metadata.deb]
 section = "utility"
