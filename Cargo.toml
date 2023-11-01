@@ -28,7 +28,7 @@ uuid = { version = "1.4.1", features = ["v4"] }
 ctrlc = "3.4.1"
 walkdir = "2.4.0"
 zip = { version = "0.6.6", default-features = false, features = ["deflate"] }
-flate2 = { version = "1.0.27", features = ["zlib"] }
+flate2 = { version = "1.0.28", features = ["zlib"] }
 tar = "0.4.40"
 xz2 = "0.1.7"
 bzip2 = "0.4.4"
