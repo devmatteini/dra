@@ -7,6 +7,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.8] - 2023-11-25
+
+This is a maintenance release that updates our dependencies.
+
+### Updated dependencies
+
+- bump `dialoguer` from 0.10.4 to 0.11.0
+- bump `walkdir` from 2.3.3 to 2.4.0
+- bump `test-case` from 3.1.0 to 3.3.1
+- bump `predicates` from 3.0.3 to 3.0.4
+- bump `flate2` from 1.0.26 to 1.0.28
+- bump `tar` from 0.4.38 to 0.4.40
+- bump `assert_cmd` from 2.0.5 to 2.0.12
+- bump `serde` from 1.0.160 to 1.0.190
+- bump `ureq` from 2.6.2 to 2.9.1
+- bump `indicatif` from 0.17.4 to 0.17.7
+- bump `clap_complete` from 4.2.1 to 4.4.4
+- bump `clap` from 4.2.5 to 4.4.7
+- bump `ctrlc` from 3.2.5 to 3.4.1
+- bump `zip` from 0.6.4 to 0.6.6
+- bump `uuid` from 1.3.2 to 1.6.1
+- bump `actions/checkout` from 3 to 4
+- bump `dependabot/fetch-metadata` from 1.4.0 to 1.6.0
+
 ## [0.4.7] - 2023-05-20
 
 ### Fixed
