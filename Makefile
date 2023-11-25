@@ -25,7 +25,7 @@ debian-tests: build-docker
 	cargo test --test debian
 
 release:
-	${CARGO_BIN} build --release --frozen ${CARGO_TARGET_FLAG}
+	${CARGO_BIN} build --release --locked ${CARGO_TARGET_FLAG}
 
 format:
 	cargo fmt --all
