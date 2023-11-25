@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/devmatteini/dra/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/devmatteini/dra/actions/workflows/ci.yml)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/devmatteini/dra)
+![GitHub downloads all releases](https://img.shields.io/github/downloads/devmatteini/dra/total)
 
 A command line tool to download release assets from GitHub.
 
