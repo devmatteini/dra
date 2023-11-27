@@ -1,4 +1,5 @@
 use std::cmp;
+use std::cmp::Ordering;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -222,10 +223,24 @@ fn is_same_arch(arch: &str, asset_name: &str) -> bool {
 }
 
 fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Asset> {
-    assets.into_iter().find(|asset| {
-        let asset_name = asset.name.to_lowercase();
-        is_same_os(os, &asset_name) && is_same_arch(arch, &asset_name)
-    })
+    let mut matches: Vec<_> = assets
+        .into_iter()
+        .filter(|asset| {
+            let asset_name = asset.name.to_lowercase();
+            is_same_os(os, &asset_name) && is_same_arch(arch, &asset_name)
+        })
+        .collect();
+
+    matches.sort_by(asset_priority);
+    matches.into_iter().nth(0)
+}
+
+fn asset_priority(a: &Asset, b: &Asset) -> Ordering {
+    if a.name.contains("musl") {
+        Ordering::Less
+    } else {
+        Ordering::Greater
+    }
 }
 
 #[cfg(test)]
@@ -327,6 +342,18 @@ mod tests {
         let result = find_asset_by_os_arch("linux", "x86_64", assets);
 
         assert_eq_asset("mypackage-X86_64-unknown-LiNuX-musl.tar.gz", result)
+    }
+
+    #[test]
+    fn linux_prefer_musl_on_multiple_matches() {
+        let assets = vec![
+            asset("mypackage-x86_64-unknown-linux-gnu.tar.gz"),
+            asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
+        ];
+
+        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+
+        assert_eq_asset("mypackage-x86_64-unknown-linux-musl.tar.gz", result)
     }
 
     fn assert_eq_asset(expected_name: &str, actual: Option<Asset>) {
