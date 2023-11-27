@@ -205,7 +205,7 @@ fn is_same_os(os: &str, asset_name: &str) -> bool {
         "macos" => vec!["darwin"],
         _ => return false,
     };
-    aliases.iter().any(|alias| asset_name.contains(alias))
+    aliases.into_iter().any(|alias| asset_name.contains(alias))
 }
 
 fn is_same_arch(arch: &str, asset_name: &str) -> bool {
@@ -214,14 +214,17 @@ fn is_same_arch(arch: &str, asset_name: &str) -> bool {
     }
     let aliases: Vec<&str> = match arch {
         "x86_64" => vec!["amd64"],
+        "aarch64" => vec!["arm64"],
+        "arm" => vec!["armv6", "armv7"],
         _ => return false,
     };
-    aliases.iter().any(|alias| asset_name.contains(alias))
+    aliases.into_iter().any(|alias| asset_name.contains(alias))
 }
 
 fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Asset> {
     assets.into_iter().find(|asset| {
-        is_same_os(os, &asset.name.to_lowercase()) && is_same_arch(arch, &asset.name.to_lowercase())
+        let asset_name = asset.name.to_lowercase();
+        is_same_os(os, &asset_name) && is_same_arch(arch, &asset_name)
     })
 }
 
