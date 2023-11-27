@@ -197,6 +197,34 @@ impl DownloadHandler {
     }
 }
 
+fn is_same_os(os: &str, asset_name: &str) -> bool {
+    if asset_name.contains(os) {
+        return true;
+    }
+    let aliases: Vec<&str> = match os {
+        "macos" => vec!["darwin"],
+        _ => return false,
+    };
+    aliases.iter().any(|alias| asset_name.contains(alias))
+}
+
+fn is_same_arch(arch: &str, asset_name: &str) -> bool {
+    if asset_name.contains(arch) {
+        return true;
+    }
+    let aliases: Vec<&str> = match arch {
+        "x86_64" => vec!["amd64"],
+        _ => return false,
+    };
+    aliases.iter().any(|alias| asset_name.contains(alias))
+}
+
+fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Asset> {
+    assets
+        .into_iter()
+        .find(|asset| is_same_os(os, &asset.name) && is_same_arch(arch, &asset.name))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -234,6 +262,73 @@ mod tests {
         let result = handler.choose_output_path("my_asset.deb");
 
         assert_eq!(PathBuf::from("my_asset.deb"), result)
+    }
+
+    #[test]
+    fn find_linux_x86_64() {
+        let assets = vec![
+            asset("mypackage-arm-unknown-linux-gnueabihf.tar.gz"),
+            asset("mypackage-x86_64-apple-darwin.tar.gz"),
+            asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
+        ];
+
+        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+
+        assert_eq_asset("mypackage-x86_64-unknown-linux-musl.tar.gz", result)
+    }
+
+    #[test]
+    fn find_os_alias() {
+        let assets = vec![
+            asset("mypackage-arm-unknown-linux-gnueabihf.tar.gz"),
+            asset("mypackage-x86_64-apple-darwin.tar.gz"),
+            asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
+        ];
+
+        let result = find_asset_by_os_arch("macos", "x86_64", assets);
+
+        assert_eq_asset("mypackage-x86_64-apple-darwin.tar.gz", result)
+    }
+
+    #[test]
+    fn find_arch_alias() {
+        let assets = vec![
+            asset("mypackage-x86_64-apple-darwin.tar.gz"),
+            asset("mypackage-linux-amd64.tar.gz"),
+        ];
+
+        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+
+        assert_eq_asset("mypackage-linux-amd64.tar.gz", result)
+    }
+
+    #[test]
+    fn no_matching_asset() {
+        let assets = vec![
+            asset("mypackage-x86_64-apple-darwin.tar.gz"),
+            asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
+        ];
+
+        let result = find_asset_by_os_arch("linux", "arm", assets);
+
+        assert!(result.is_none())
+    }
+
+    fn assert_eq_asset(expected_name: &str, actual: Option<Asset>) {
+        match actual {
+            None => {
+                panic!("Asset is None, expected {}", expected_name)
+            }
+            Some(asset) => assert_eq!(expected_name, asset.name),
+        }
+    }
+
+    fn asset(name: &str) -> Asset {
+        Asset {
+            name: name.into(),
+            display_name: None,
+            download_url: "ANY_DOWNLOAD_URL".into(),
+        }
     }
 
     fn handler_for(output: Option<PathBuf>, install: bool) -> DownloadHandler {
