@@ -220,9 +220,9 @@ fn is_same_arch(arch: &str, asset_name: &str) -> bool {
 }
 
 fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Asset> {
-    assets
-        .into_iter()
-        .find(|asset| is_same_os(os, &asset.name) && is_same_arch(arch, &asset.name))
+    assets.into_iter().find(|asset| {
+        is_same_os(os, &asset.name.to_lowercase()) && is_same_arch(arch, &asset.name.to_lowercase())
+    })
 }
 
 #[cfg(test)]
@@ -312,6 +312,18 @@ mod tests {
         let result = find_asset_by_os_arch("linux", "arm", assets);
 
         assert!(result.is_none())
+    }
+
+    #[test]
+    fn find_asset_case_insensitive() {
+        let assets = vec![
+            asset("mypackage-x86_64-apple-darwin.tar.gz"),
+            asset("mypackage-X86_64-unknown-LiNuX-musl.tar.gz"),
+        ];
+
+        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+
+        assert_eq_asset("mypackage-X86_64-unknown-LiNuX-musl.tar.gz", result)
     }
 
     fn assert_eq_asset(expected_name: &str, actual: Option<Asset>) {
