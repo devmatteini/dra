@@ -203,7 +203,8 @@ fn is_same_os(os: &str, asset_name: &str) -> bool {
         return true;
     }
     let aliases: Vec<&str> = match os {
-        "macos" => vec!["darwin"],
+        "macos" => vec!["darwin", "apple", "osx"],
+        "windows" => vec!["win64"],
         _ => return false,
     };
     aliases.into_iter().any(|alias| asset_name.contains(alias))
