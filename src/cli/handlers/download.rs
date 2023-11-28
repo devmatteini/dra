@@ -235,7 +235,7 @@ fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Ass
     matches.into_iter().nth(0)
 }
 
-fn asset_priority(a: &Asset, b: &Asset) -> Ordering {
+fn asset_priority(a: &Asset, _b: &Asset) -> Ordering {
     if a.name.contains("musl") {
         Ordering::Less
     } else {
@@ -282,8 +282,26 @@ mod tests {
         assert_eq!(PathBuf::from("my_asset.deb"), result)
     }
 
+    fn handler_for(output: Option<PathBuf>, install: bool) -> DownloadHandler {
+        DownloadHandler {
+            select: None,
+            output,
+            install,
+            tag: None,
+            repository: Repository {
+                owner: "ANY".into(),
+                repo: "ANY".into(),
+            },
+        }
+    }
+}
+
+#[cfg(test)]
+mod find_asset_by_os_arch_tests {
+    use super::*;
+
     #[test]
-    fn find_linux_x86_64() {
+    fn asset_found() {
         let assets = vec![
             asset("mypackage-arm-unknown-linux-gnueabihf.tar.gz"),
             asset("mypackage-x86_64-apple-darwin.tar.gz"),
@@ -296,7 +314,7 @@ mod tests {
     }
 
     #[test]
-    fn find_os_alias() {
+    fn found_by_os_alias() {
         let assets = vec![
             asset("mypackage-arm-unknown-linux-gnueabihf.tar.gz"),
             asset("mypackage-x86_64-apple-darwin.tar.gz"),
@@ -309,7 +327,7 @@ mod tests {
     }
 
     #[test]
-    fn find_arch_alias() {
+    fn found_by_arch_alias() {
         let assets = vec![
             asset("mypackage-x86_64-apple-darwin.tar.gz"),
             asset("mypackage-linux-amd64.tar.gz"),
@@ -370,19 +388,6 @@ mod tests {
             name: name.into(),
             display_name: None,
             download_url: "ANY_DOWNLOAD_URL".into(),
-        }
-    }
-
-    fn handler_for(output: Option<PathBuf>, install: bool) -> DownloadHandler {
-        DownloadHandler {
-            select: None,
-            output,
-            install,
-            tag: None,
-            repository: Repository {
-                owner: "ANY".into(),
-                repo: "ANY".into(),
-            },
         }
     }
 }
