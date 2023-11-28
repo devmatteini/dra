@@ -1,5 +1,4 @@
 use std::cmp;
-use std::cmp::Ordering;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -231,16 +230,21 @@ fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Ass
             is_same_os(os, &asset_name) && is_same_arch(arch, &asset_name)
         })
         .collect();
-
-    matches.sort_by(asset_priority);
-    matches.into_iter().nth(0)
+    matches.sort_by_key(asset_priority);
+    matches.into_iter().next()
 }
 
-fn asset_priority(a: &Asset, _b: &Asset) -> Ordering {
-    if a.name.contains("musl") {
-        Ordering::Less
+const ARCHIVES: [&str; 5] = [".gz", ".tgz", ".bz2", ".xz", ".zip"];
+
+fn asset_priority(a: &Asset) -> i32 {
+    if ARCHIVES.iter().any(|x| a.name.ends_with(x)) {
+        if a.name.contains("musl") {
+            1
+        } else {
+            2
+        }
     } else {
-        Ordering::Greater
+        3
     }
 }
 
@@ -364,15 +368,29 @@ mod find_asset_by_os_arch_tests {
     }
 
     #[test]
-    fn linux_prefer_musl_on_multiple_matches() {
-        let assets = vec![
-            asset("mypackage-x86_64-unknown-linux-gnu.tar.gz"),
-            asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
+    fn order_assets_by_priority() {
+        let mut assets = vec![
+            asset("mypackage-linux-amd64.deb"),
+            asset("mypackage-linux-gnu.zip"),
+            asset("mypackage-linux-x86_64.rpm"),
+            asset("mypackage-linux-musl.tar.gz"),
+            asset("mypackage-rand-linux-file-with-musl"),
         ];
 
-        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+        assets.sort_by_key(asset_priority);
 
-        assert_eq_asset("mypackage-x86_64-unknown-linux-musl.tar.gz", result)
+        let actual_names: Vec<_> = assets.into_iter().map(|x| x.name).collect();
+
+        assert_eq!(
+            vec![
+                "mypackage-linux-musl.tar.gz",
+                "mypackage-linux-gnu.zip",
+                "mypackage-linux-amd64.deb",
+                "mypackage-linux-x86_64.rpm",
+                "mypackage-rand-linux-file-with-musl"
+            ],
+            actual_names
+        )
     }
 
     fn assert_eq_asset(expected_name: &str, actual: Option<Asset>) {
