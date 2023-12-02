@@ -28,14 +28,15 @@ pub struct DownloadHandler {
 enum DownloadMode {
     Interactive,
     Selection(String),
+    Automatic,
 }
 
 impl DownloadMode {
-    fn new(select: Option<String>) -> Self {
-        if let Some(value) = select {
-            Self::Selection(value)
-        } else {
-            Self::Interactive
+    fn new(select: Option<String>, automatic: bool) -> Self {
+        match (select, automatic) {
+            (Some(x), _) => Self::Selection(x),
+            (_, true) => Self::Automatic,
+            (None, false) => Self::Interactive,
         }
     }
 }
@@ -44,13 +45,14 @@ impl DownloadHandler {
     pub fn new(
         repository: Repository,
         select: Option<String>,
+        automatic: bool,
         tag: Option<String>,
         output: Option<PathBuf>,
         install: bool,
     ) -> Self {
         DownloadHandler {
             repository,
-            mode: DownloadMode::new(select.clone()),
+            mode: DownloadMode::new(select.clone(), automatic),
             tag: tag.map(Tag),
             output,
             install,
@@ -71,6 +73,9 @@ impl DownloadHandler {
         match &self.mode {
             DownloadMode::Interactive => Self::ask_select_asset(release.assets),
             DownloadMode::Selection(untagged) => Self::autoselect_asset(release, untagged),
+            DownloadMode::Automatic => Err(HandlerError::new(
+                "automatic mode not implemented yet!".to_string(),
+            )),
         }
     }
 
