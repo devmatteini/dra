@@ -19,7 +19,6 @@ use crate::{github, installer};
 
 pub struct DownloadHandler {
     repository: Repository,
-    select: Option<String>,
     mode: DownloadMode,
     tag: Option<Tag>,
     output: Option<PathBuf>,
@@ -52,7 +51,6 @@ impl DownloadHandler {
         DownloadHandler {
             repository,
             mode: DownloadMode::new(select.clone()),
-            select,
             tag: tag.map(Tag),
             output,
             install,
@@ -305,7 +303,6 @@ mod tests {
 
     fn handler_for(output: Option<PathBuf>, install: bool) -> DownloadHandler {
         DownloadHandler {
-            select: None,
             mode: DownloadMode::Interactive,
             output,
             install,
