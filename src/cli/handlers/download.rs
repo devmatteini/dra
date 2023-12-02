@@ -271,12 +271,25 @@ fn is_same_arch(arch: &str, asset_name: &str) -> bool {
     aliases.into_iter().any(|alias| asset_name.contains(alias))
 }
 
+fn contains_extension(os: &str, asset_name: &str) -> bool {
+    let extensions: Vec<&str> = match os {
+        "linux" => vec![".appimage"],
+        "macos" => vec![".dmg"],
+        "windows" => vec![".exe"],
+        _ => return false,
+    };
+    extensions
+        .into_iter()
+        .any(|alias| asset_name.ends_with(alias))
+}
+
 fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Asset> {
     let mut matches: Vec<_> = assets
         .into_iter()
         .filter(|asset| {
             let asset_name = asset.name.to_lowercase();
-            is_same_os(os, &asset_name) && is_same_arch(arch, &asset_name)
+            let is_same_system = is_same_os(os, &asset_name) && is_same_arch(arch, &asset_name);
+            is_same_system || contains_extension(os, &asset_name)
         })
         .collect();
     matches.sort_by_key(asset_priority);
@@ -440,6 +453,15 @@ mod find_asset_by_os_arch_tests {
             ],
             actual_names
         )
+    }
+
+    #[test]
+    fn found_by_asset_extension() {
+        let assets = vec![asset("mypackage.dmg")];
+
+        let result = find_asset_by_os_arch("macos", "x86_64", assets);
+
+        assert_eq_asset("mypackage.dmg", result)
     }
 
     fn assert_eq_asset(expected_name: &str, actual: Option<Asset>) {
