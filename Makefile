@@ -16,6 +16,10 @@ test:
 # only unit tests
 	${CARGO_BIN} test --bins ${CARGO_TARGET_FLAG}
 
+test-w:
+# only unit tests
+	cargo watch -x "test --bins"
+
 # NOTE: we cannot run this tests with cross
 integration-tests:
 	cargo test --test integration_tests
@@ -35,6 +39,9 @@ format-check:
 
 lint:
 	cargo clippy --all-targets --all-features
+
+lint-w:
+	cargo watch -x clippy
 
 install-components:
 	rustup component add rustfmt clippy
