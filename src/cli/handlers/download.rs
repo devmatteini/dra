@@ -73,9 +73,16 @@ impl DownloadHandler {
         match &self.mode {
             DownloadMode::Interactive => Self::ask_select_asset(release.assets),
             DownloadMode::Selection(untagged) => Self::autoselect_asset(release, untagged),
-            DownloadMode::Automatic => Err(HandlerError::new(
-                "automatic mode not implemented yet!".to_string(),
-            )),
+            DownloadMode::Automatic => {
+                let os = std::env::consts::OS;
+                let arch = std::env::consts::ARCH;
+                find_asset_by_os_arch(os, arch, release.assets).ok_or_else(|| {
+                    HandlerError::new(format!(
+                        "Cannot find asset that matches your system: {} {}",
+                        os, arch
+                    ))
+                })
+            }
         }
     }
 
