@@ -70,10 +70,9 @@ impl DownloadHandler {
     }
 
     fn autoselect_or_ask_asset(&self, release: Release) -> Result<Asset, HandlerError> {
-        if let Some(untagged) = self.select.as_ref() {
-            Self::autoselect_asset(release, untagged)
-        } else {
-            Self::ask_select_asset(release.assets)
+        match &self.mode {
+            DownloadMode::Interactive => Self::ask_select_asset(release.assets),
+            DownloadMode::Selection(untagged) => Self::autoselect_asset(release, untagged),
         }
     }
 
