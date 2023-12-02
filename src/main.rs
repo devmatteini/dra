@@ -36,6 +36,7 @@ fn run(cli: Cli) -> HandlerResult {
         Command::Download {
             repo,
             select,
+            automatic,
             tag,
             output,
             install,
