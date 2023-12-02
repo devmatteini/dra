@@ -77,13 +77,36 @@ impl DownloadHandler {
                 let os = std::env::consts::OS;
                 let arch = std::env::consts::ARCH;
                 find_asset_by_os_arch(os, arch, release.assets).ok_or_else(|| {
-                    HandlerError::new(format!(
-                        "Cannot find asset that matches your system: {} {}",
-                        os, arch
-                    ))
+                    Self::automatic_download_error(&self.repository, &release.tag, os, arch)
                 })
             }
         }
+    }
+
+    fn automatic_download_error(
+        repository: &Repository,
+        release: &Tag,
+        os: &str,
+        arch: &str,
+    ) -> HandlerError {
+        let title = urlencoding::encode("Error: automatic download of asset");
+        let body = format!(
+            "## dra version\n{}\n## Bug report\nRepository: {}\nRelease: {}\nOS: {}\nARCH: {}",
+            env!("CARGO_PKG_VERSION"),
+            repository,
+            release.0,
+            os,
+            arch
+        );
+        let body = urlencoding::encode(&body);
+        let issue_url = format!(
+            "https://github.com/devmatteini/dra/issues/new?title={}&body={}",
+            title, body
+        );
+        HandlerError::new(format!(
+            "Cannot find asset that matches your system {} {}\nIf you think this is a bug, please report the issue: {}",
+            os, arch, issue_url
+        ))
     }
 
     fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
