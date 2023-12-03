@@ -73,8 +73,8 @@ mod archives {
     }
 }
 
-mod downloads {
-    use crate::fs::{any_temp_file, path_to_string};
+mod download {
+    use crate::fs::{any_temp_dir, any_temp_file, path_to_string};
     use assert_cmd::Command;
 
     #[test]
@@ -110,5 +110,37 @@ mod downloads {
         result.failure().stderr(predicates::str::contains(
             "No asset found for Source code (tar.gz)",
         ));
+    }
+
+    #[cfg(any(target_os = "linux", target_os = "windows", target_os = "macos"))]
+    #[test]
+    fn automatic_download() {
+        let temp_dir = any_temp_dir();
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        cmd.current_dir(&temp_dir)
+            .arg("download")
+            .arg("-a")
+            .arg("devmatteini/dra-tests")
+            .assert()
+            .success();
+
+        let expected_asset = if cfg!(target_os = "linux") {
+            "helloworld-x86_64-linux.tar.gz"
+        } else if cfg!(target_os = "windows") {
+            "helloworld-x86_64-windows.tar.gz"
+        } else if cfg!(target_os = "macos") {
+            "helloworld-x86_64-apple-darwin.tar.gz"
+        } else {
+            panic!("This test should only run on linux, macOS and windows")
+        };
+
+        assert!(
+            temp_dir.join(expected_asset).exists(),
+            "Expected asset '{}' not exists in {}",
+            expected_asset,
+            temp_dir.display()
+        );
     }
 }
