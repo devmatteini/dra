@@ -280,7 +280,7 @@ fn contains_extension(os: &str, asset_name: &str) -> bool {
     };
     extensions
         .into_iter()
-        .any(|alias| asset_name.ends_with(alias))
+        .any(|extension| asset_name.ends_with(extension))
 }
 
 fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Asset> {
@@ -288,8 +288,10 @@ fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Ass
         .into_iter()
         .filter(|asset| {
             let asset_name = asset.name.to_lowercase();
-            let is_same_system = is_same_os(os, &asset_name) && is_same_arch(arch, &asset_name);
-            is_same_system || contains_extension(os, &asset_name)
+            let same_arch = is_same_arch(arch, &asset_name);
+            let is_same_system = is_same_os(os, &asset_name) && same_arch;
+            let is_same_arch_and_extension = same_arch && contains_extension(os, &asset_name);
+            is_same_system || is_same_arch_and_extension
         })
         .collect();
     matches.sort_by_key(asset_priority);
@@ -456,12 +458,28 @@ mod find_asset_by_os_arch_tests {
     }
 
     #[test]
-    fn found_by_asset_extension() {
-        let assets = vec![asset("mypackage.dmg")];
+    fn found_by_asset_extension_and_arch() {
+        let assets = vec![
+            asset("mypackage-arm64.AppImage"),
+            asset("mypackage-amd64.AppImage"),
+        ];
 
-        let result = find_asset_by_os_arch("macos", "x86_64", assets);
+        let result = find_asset_by_os_arch("linux", "x86_64", assets);
 
-        assert_eq_asset("mypackage.dmg", result)
+        assert_eq_asset("mypackage-amd64.AppImage", result)
+    }
+
+    // TODO: this use case could be improved since most of the time when the arch is missing is implicit to be x86_64
+    #[test]
+    fn not_found_by_asset_extension_without_arch() {
+        let assets = vec![
+            asset("mypackage-arm64.AppImage"),
+            asset("mypackage.AppImage"),
+        ];
+
+        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+
+        assert!(result.is_none());
     }
 
     fn assert_eq_asset(expected_name: &str, actual: Option<Asset>) {
