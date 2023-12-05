@@ -301,12 +301,10 @@ fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Ass
 const ARCHIVES: [&str; 5] = [".gz", ".tgz", ".bz2", ".xz", ".zip"];
 
 fn asset_priority(a: &Asset) -> i32 {
-    if ARCHIVES.iter().any(|x| a.name.ends_with(x)) {
-        if a.name.contains("musl") {
-            1
-        } else {
-            2
-        }
+    if a.name.contains("musl") {
+        1
+    } else if ARCHIVES.iter().any(|x| a.name.ends_with(x)) {
+        2
     } else {
         3
     }
@@ -438,7 +436,7 @@ mod find_asset_by_os_arch_tests {
             asset("mypackage-linux-gnu.zip"),
             asset("mypackage-linux-x86_64.rpm"),
             asset("mypackage-linux-musl.tar.gz"),
-            asset("mypackage-rand-linux-file-with-musl"),
+            asset("mypackage-linux-musl"),
         ];
 
         assets.sort_by_key(asset_priority);
@@ -448,10 +446,10 @@ mod find_asset_by_os_arch_tests {
         assert_eq!(
             vec![
                 "mypackage-linux-musl.tar.gz",
+                "mypackage-linux-musl",
                 "mypackage-linux-gnu.zip",
                 "mypackage-linux-amd64.deb",
                 "mypackage-linux-x86_64.rpm",
-                "mypackage-rand-linux-file-with-musl"
             ],
             actual_names
         )
