@@ -59,13 +59,11 @@ make release
 
 ## Usage
 
-In order to download assets from private repositories (and avoid rate limit issues) export an environment variable `GITHUB_TOKEN=<token>`.
-
-Follow the official guide to create
-a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
-The minimum set of scopes needed is: `Full control of private repositories `.
-
-You can use `dra` in [interactive](#interactive) or [non-interactive](#non-interactive) mode.
+- [Download assets with interactive mode](#interactive)
+- [Download assets with non-interactive mode](#non-interactive)
+- [Install assets](#install-assets)
+- [Private repositories & rate limit](#private-repositories--rate-limit)
+- [Shell completion](#shell-completion)
 
 ### Interactive
 
@@ -146,6 +144,15 @@ Supported assets that can be installed are:
 - Debian packages (`.deb`)
 - Tar archive with executable (`.tar.[gz|bz2|xz]`, `.tgz`)
 - Zip file with executable (`.zip`)
+
+### Private repositories & rate limit
+
+In order to download assets from private repositories (and avoid rate limit issues) export an environment
+variable `GITHUB_TOKEN=<token>`.
+
+Follow the official guide to create
+a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+The minimum set of scopes needed is: `Full control of private repositories `.
 
 ### Shell completion
 
