@@ -120,7 +120,7 @@ dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
 
 #### Automatic
 
-Automatically download an asset based on your operating system and architecture
+Automatically select and download an asset based on your operating system and architecture
 
 ```shell
 # you can use -a or --automatic

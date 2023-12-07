@@ -41,7 +41,7 @@ pub enum Command {
         #[arg(short, long, group = "non-interactive")]
         select: Option<String>,
 
-        /// Automatically select which asset to download based on your operating system and architecture
+        /// Automatically select and download an asset based on your operating system and architecture
         #[arg(short, long, group = "non-interactive")]
         automatic: bool,
 
