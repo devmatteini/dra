@@ -45,7 +45,7 @@ sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number
 
 ### On Arch Linux
 
-Arch Linux users can install `dra` from the [community repository](https://archlinux.org/packages/community/x86_64/dra/) using [pacman](https://wiki.archlinux.org/title/Pacman):
+Arch Linux users can install `dra` from the [community repository](https://archlinux.org/packages/extra/x86_64/dra/) using [pacman](https://wiki.archlinux.org/title/Pacman):
 
 ```shell
 pacman -S dra
