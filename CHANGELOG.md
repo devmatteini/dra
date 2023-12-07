@@ -7,6 +7,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.0] - 2023-12-07
+
+### Added
+
+- Automatically select and download an asset based on your operating system and architecture
+  with `dra download -a <REPO>`
+
+### Updated dependencies
+
+- bump `serde` from 1.0.190 to 1.0.193
+- bump `clap` from 4.4.7 to 4.4.10
+
 ## [0.4.8] - 2023-11-25
 
 This is a maintenance release that updates our dependencies.
