@@ -62,14 +62,14 @@ impl DownloadHandler {
     pub fn run(&self) -> HandlerResult {
         let client = GithubClient::new(get_env(GITHUB_TOKEN));
         let release = self.fetch_release(&client)?;
-        let selected_asset = self.autoselect_or_ask_asset(release)?;
+        let selected_asset = self.select_asset(release)?;
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&client, &selected_asset, &output_path)?;
         self.maybe_install(&selected_asset.name, &output_path)?;
         Ok(())
     }
 
-    fn autoselect_or_ask_asset(&self, release: Release) -> Result<Asset, HandlerError> {
+    fn select_asset(&self, release: Release) -> Result<Asset, HandlerError> {
         match &self.mode {
             DownloadMode::Interactive => Self::ask_select_asset(release.assets),
             DownloadMode::Selection(untagged) => Self::autoselect_asset(release, untagged),
