@@ -39,7 +39,7 @@ Download the prebuilt versions of `dra` for supported platforms from the [latest
 Download the latest `.deb` package from the [release page](https://github.com/devmatteini/dra/releases/latest) and
 install it via:
 
-```bash
+```shell
 sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number
 ```
 
@@ -47,13 +47,13 @@ sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number
 
 Arch Linux users can install `dra` from the [community repository](https://archlinux.org/packages/community/x86_64/dra/) using [pacman](https://wiki.archlinux.org/title/Pacman):
 
-```bash
+```shell
 pacman -S dra
 ```
 
 ### From source
 
-```bash
+```shell
 git clone https://github.com/devmatteini/dra && cd dra
 make release
 ./target/release/dra --version
@@ -71,26 +71,26 @@ The minimum set of scopes needed is: `Full control of private repositories `.
 
 Select and download an asset from a repository
 
-```
-$ dra download devmatteini/dra-tests
+```shell
+dra download devmatteini/dra-tests
 ```
 
 Select and download an asset to custom path
 
-```
-$ dra download --output /tmp/dra-example devmatteini/dra-tests
+```shell
+dra download --output /tmp/dra-example devmatteini/dra-tests
 ```
 
 Select and download an asset from a specific release
 
-```
-$ dra download --tag 0.1.1 devmatteini/dra-tests
+```shell
+dra download --tag 0.1.1 devmatteini/dra-tests
 ```
 
 Select and download source code archives
 
-```
-$ dra download devmatteini/dra-tests
+```shell
+dra download devmatteini/dra-tests
 Release tag is 0.1.5
 ? Pick the asset to download ›
   helloworld_0.1.5.tar.gz
@@ -108,16 +108,16 @@ There are two non-interactive mode to download assets: [selection](#selection) a
 
 First you need to generate an untagged asset name:
 
-```
-$ dra untag devmatteini/dra-tests
-helloworld_{tag}.tar.gz
+```shell
+dra untag devmatteini/dra-tests
+# output: helloworld_{tag}.tar.gz
 ```
 
 Copy the output and run:
 
 ```shell
 # use this command in your scripts
-$ dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
+dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
 ```
 
 #### Automatic
@@ -137,8 +137,8 @@ dra download -a devmatteini/dra-tests
 
 Download and install an asset (on both interactive and non-interactive modes)
 
-```
-$ dra download --install devmatteini/dra-tests
+```shell
+dra download --install devmatteini/dra-tests
 ```
 
 Supported assets that can be installed are:
@@ -151,9 +151,9 @@ Supported assets that can be installed are:
 
 Generate shell completion
 
-```
-$ dra completion bash > dra-completion
-$ source dra-completion
+```shell
+dra completion bash > dra-completion
+source dra-completion
 ```
 
 See all supported shell with `dra completion -h`
@@ -162,9 +162,9 @@ See all supported shell with `dra completion -h`
 
 For more information on args/flags/options/commands run:
 
-```bash
-$ dra --help
-$ dra <command> --help
+```shell
+dra --help
+dra <command> --help
 ```
 
 ## Contributing
