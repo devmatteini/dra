@@ -98,6 +98,41 @@ Release tag is 0.1.5
   Source code (zip)
 ```
 
+### Non-Interactive
+
+This mode is useful to be used in automated scripts.
+
+There are two non-interactive mode to download assets: [selection](#selection) and [automatic](#automatic).
+
+#### Selection
+
+First you need to generate an untagged asset name:
+
+```
+$ dra untag devmatteini/dra-tests
+helloworld_{tag}.tar.gz
+```
+
+Copy the output and run:
+
+```shell
+# use this command in your scripts
+$ dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
+```
+
+#### Automatic
+
+Automatically download an asset based on your operating system and architecture
+
+```shell
+# you can use -a or --automatic
+dra download -a devmatteini/dra-tests
+```
+
+> [!IMPORTANT]
+> Since there is no naming convention for release assets,
+> be aware that this mode may fail if no asset matches your system based on `dra` rules for recognizing an asset.
+
 ### Install assets
 
 Download and install an asset (on both interactive and non-interactive modes)
@@ -111,25 +146,6 @@ Supported assets that can be installed are:
 - Debian packages (`.deb`)
 - Tar archive with executable (`.tar.[gz|bz2|xz]`, `.tgz`)
 - Zip file with executable (`.zip`)
-
-### Non-Interactive
-
-This mode is useful to be used in automated scripts.
-
-First you need to generate an untagged asset name:
-
-```
-$ dra untag devmatteini/dra-tests
-helloworld_{tag}.tar.gz
-```
-
-Copy the output and run:
-
-```
-$ dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
-```
-
-This last command can be used in automated scripts without human interaction.
 
 ### Shell completion
 
