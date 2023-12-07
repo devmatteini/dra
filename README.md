@@ -65,6 +65,8 @@ Follow the official guide to create
 a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 The minimum set of scopes needed is: `Full control of private repositories `.
 
+You can use `dra` in [interactive](#interactive) or [non-interactive](#non-interactive) mode.
+
 ### Interactive
 
 Select and download an asset from a repository
@@ -100,7 +102,7 @@ Release tag is 0.1.5
 
 This mode is useful to be used in automated scripts.
 
-There are two non-interactive mode to download assets: [selection](#selection) and [automatic](#automatic).
+There are two modes to download assets: [selection](#selection) and [automatic](#automatic).
 
 #### Selection
 
