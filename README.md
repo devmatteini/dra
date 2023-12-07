@@ -59,13 +59,13 @@ make release
 
 ## Usage
 
-- [Download assets with interactive mode](#interactive)
-- [Download assets with non-interactive mode](#non-interactive)
+- [Download assets with interactive mode](#interactive-download)
+- [Download assets with non-interactive mode](#non-interactive-download)
 - [Install assets](#install-assets)
 - [Private repositories & rate limit](#private-repositories--rate-limit)
 - [Shell completion](#shell-completion)
 
-### Interactive
+### Interactive download
 
 Select and download an asset from a repository
 
@@ -96,7 +96,7 @@ Release tag is 0.1.5
   Source code (zip)
 ```
 
-### Non-Interactive
+### Non-Interactive download
 
 This mode is useful to be used in automated scripts.
 
