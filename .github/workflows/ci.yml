@@ -16,6 +16,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+# NOTE: always set shell: bash, otherwise on Windows there might be problems!
 jobs:
   format-check:
     runs-on: ubuntu-22.04
@@ -28,8 +29,7 @@ jobs:
       - name: Format check
         run: make format-check
 
-  # NOTE: always set shell: bash, otherwise on Windows there might be problems!
-  build:
+  build-and-test:
     name: ${{ matrix.job.os }}
     needs: [ format-check ]
     runs-on: ${{ matrix.job.runner }}
@@ -39,52 +39,20 @@ jobs:
         job:
           - os: linux
             runner: ubuntu-22.04
-            target: x86_64-unknown-linux-gnu
-            use-cross: false
-          - os: linux-musl
-            runner: ubuntu-22.04
-            target: x86_64-unknown-linux-musl
-            use-cross: true
-          - os: linux-armv6
-            runner: ubuntu-22.04
-            target: arm-unknown-linux-gnueabihf
-            use-cross: true
-          - os: linux-arm64
-            runner: ubuntu-22.04
-            target: aarch64-unknown-linux-gnu
-            use-cross: true
           - os: macos
             runner: macos-latest
-            target: x86_64-apple-darwin
-            use-cross: false
           - os: windows
             runner: windows-latest
-            target: x86_64-pc-windows-msvc
-            use-cross: false
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: "${{ matrix.job.target }}"
           components: "clippy"
 
       - uses: Swatinem/rust-cache@v2
         if: ${{ github.event_name != 'pull_request' }}
-
-      - name: Install cross
-        uses: taiki-e/install-action@v2
-        if: matrix.job.use-cross == true
-        with:
-          tool: cross
-
-      - name: Setup build tools
-        if: matrix.job.use-cross == true
-        shell: bash
-        run: |
-          echo "CARGO_BIN=cross" >>$GITHUB_ENV
-          echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
 
       - name: Build
         shell: bash
@@ -99,7 +67,6 @@ jobs:
         run: make test
 
       - name: Integration tests
-        if: matrix.job.use-cross == false
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -111,3 +78,50 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make debian-tests
+
+  check-other-targets:
+    name: ${{ matrix.job.os }}
+    needs: [ format-check ]
+    runs-on: ${{ matrix.job.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - os: linux-musl
+            runner: ubuntu-22.04
+            target: x86_64-unknown-linux-musl
+            use-cross: true
+          - os: linux-armv6
+            runner: ubuntu-22.04
+            target: arm-unknown-linux-gnueabihf
+            use-cross: true
+          - os: linux-arm64
+            runner: ubuntu-22.04
+            target: aarch64-unknown-linux-gnu
+            use-cross: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: "${{ matrix.job.target }}"
+          components: "clippy"
+
+      - uses: taiki-e/install-action@v2
+        if: matrix.job.use-cross == true
+        with:
+          tool: cross
+
+      - name: Setup build tools
+        if: matrix.job.use-cross == true
+        shell: bash
+        run: echo "CARGO_BIN=cross" >>$GITHUB_ENV
+
+      - name: Export cargo target
+        shell: bash
+        run: echo "CARGO_TARGET=${{ matrix.job.target }}" >>$GITHUB_ENV
+
+      - name: Build
+        shell: bash
+        run: make build
