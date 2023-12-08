@@ -82,8 +82,6 @@ jobs:
         with:
           targets: "${{ matrix.job.target }}"
 
-      - uses: Swatinem/rust-cache@v2
-
       - uses: taiki-e/install-action@v2
         if: matrix.job.use-cross == true
         with:
