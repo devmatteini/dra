@@ -6,7 +6,7 @@ CARGO_TARGET_FLAG := $(if ${CARGO_TARGET},--target ${CARGO_TARGET},)
 all: format-check build lint test
 
 build:
-	${CARGO_BIN} build --tests ${CARGO_TARGET_FLAG}
+	${CARGO_BIN} build ${CARGO_TARGET_FLAG}
 
 build-docker: build
 # @ prevents to show github token in output
