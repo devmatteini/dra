@@ -20,7 +20,7 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 `dra` helps you download release assets more easily:
 
 - no authentication for public repository (you cannot use `gh` without authentication)
-- [Built-in generation of pattern](#non-interactive) to select an asset to download
+- [Built-in generation of pattern](#non-interactive-download) to select an asset to download
   (with `gh` you need to provide [glob pattern](https://cli.github.com/manual/gh_release_download) that you need to
   create manually).
 
