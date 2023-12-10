@@ -26,7 +26,7 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 
 ## Installation
 
-`dra` is available on Linux (x86_64, armv6, arm64), macOS and Windows.
+`dra` is available on Linux (x86_64, armv6, arm64), macOS (x86_64, arm64) and Windows.
 
 ### Recommended
 
