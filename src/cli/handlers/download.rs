@@ -201,14 +201,7 @@ impl DownloadHandler {
     }
 
     pub fn choose_output_path(&self, asset_name: &str) -> PathBuf {
-        if self.install {
-            return crate::cli::temp_file::temp_file();
-        }
-
-        self.output
-            .as_ref()
-            .map(PathBuf::from)
-            .unwrap_or_else(|| PathBuf::from(asset_name))
+        choose_output_path_from(self.output.as_ref(), self.install, asset_name)
     }
 
     fn create_file(path: &Path) -> Result<File, HandlerError> {
@@ -244,6 +237,16 @@ impl DownloadHandler {
     fn download_error(e: GithubError) -> HandlerError {
         HandlerError::new(format!("Error downloading asset: {}", e))
     }
+}
+
+fn choose_output_path_from(output: Option<&PathBuf>, install: bool, asset_name: &str) -> PathBuf {
+    if install {
+        return crate::cli::temp_file::temp_file();
+    }
+
+    output
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from(asset_name))
 }
 
 fn is_same_os(os: &str, asset_name: &str) -> bool {
@@ -320,9 +323,8 @@ mod tests {
     #[test]
     fn temp_output_when_installing() {
         let output = PathBuf::from("/some/path");
-        let handler = handler_for(Some(output), INSTALL);
 
-        let result = handler.choose_output_path("ANY");
+        let result = choose_output_path_from(Some(&output), INSTALL, "ANY");
 
         assert!(result
             .to_str()
@@ -333,33 +335,17 @@ mod tests {
     #[test]
     fn selected_output() {
         let output = PathBuf::from("/some/path");
-        let handler = handler_for(Some(output.clone()), NO_INSTALL);
 
-        let result = handler.choose_output_path("ANY");
+        let result = choose_output_path_from(Some(&output), NO_INSTALL, "ANY");
 
         assert_eq!(output, result)
     }
 
     #[test]
     fn no_output() {
-        let handler = handler_for(None, NO_INSTALL);
-
-        let result = handler.choose_output_path("my_asset.deb");
+        let result = choose_output_path_from(None, NO_INSTALL, "my_asset.deb");
 
         assert_eq!(PathBuf::from("my_asset.deb"), result)
-    }
-
-    fn handler_for(output: Option<PathBuf>, install: bool) -> DownloadHandler {
-        DownloadHandler {
-            mode: DownloadMode::Interactive,
-            output,
-            install,
-            tag: None,
-            repository: Repository {
-                owner: "ANY".into(),
-                repo: "ANY".into(),
-            },
-        }
     }
 }
 
