@@ -77,6 +77,9 @@ Select and download an asset to custom path
 
 ```shell
 dra download --output /tmp/dra-example devmatteini/dra-tests
+
+# or save to custom directory path
+dra download --output ~/Downloads devmatteini/dra-tests
 ```
 
 Select and download an asset from a specific release
