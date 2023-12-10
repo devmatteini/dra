@@ -51,7 +51,7 @@ pub enum Command {
         #[arg(short, long)]
         tag: Option<String>,
 
-        /// Save asset to custom path
+        /// Save asset to custom path (file or directory)
         ///
         /// Default path is current working directory and the name of the asset.
         ///

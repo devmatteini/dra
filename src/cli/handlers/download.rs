@@ -201,7 +201,7 @@ impl DownloadHandler {
     }
 
     pub fn choose_output_path(&self, asset_name: &str) -> PathBuf {
-        choose_output_path_from(self.output.as_ref(), self.install, asset_name)
+        choose_output_path_from(self.output.as_ref(), self.install, asset_name, Path::is_dir)
     }
 
     fn create_file(path: &Path) -> Result<File, HandlerError> {
@@ -239,13 +239,27 @@ impl DownloadHandler {
     }
 }
 
-fn choose_output_path_from(output: Option<&PathBuf>, install: bool, asset_name: &str) -> PathBuf {
+fn choose_output_path_from<IsDir>(
+    output: Option<&PathBuf>,
+    install: bool,
+    asset_name: &str,
+    is_dir: IsDir,
+) -> PathBuf
+where
+    IsDir: FnOnce(&Path) -> bool,
+{
     if install {
         return crate::cli::temp_file::temp_file();
     }
 
     output
-        .map(PathBuf::from)
+        .map(|path| {
+            if is_dir(path) {
+                path.join(asset_name)
+            } else {
+                path.to_path_buf()
+            }
+        })
         .unwrap_or_else(|| PathBuf::from(asset_name))
 }
 
@@ -315,17 +329,20 @@ fn asset_priority(a: &Asset) -> i32 {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use test_case::test_case;
+
+    use super::*;
 
     const INSTALL: bool = true;
     const NO_INSTALL: bool = false;
     const ANY_ASSET_NAME: &str = "ANY_ASSET_NAME";
 
+    /// CLI command:
+    /// dra download -i -o /some/path <REPO> or dra download -i <REPO>
     #[test_case(Some(PathBuf::from("/some/path")); "any_custom_output")]
     #[test_case(None; "no_output")]
     fn choose_output_install(output: Option<PathBuf>) {
-        let result = choose_output_path_from(output.as_ref(), INSTALL, ANY_ASSET_NAME);
+        let result = choose_output_path_from(output.as_ref(), INSTALL, ANY_ASSET_NAME, not_dir);
 
         assert!(result
             .to_str()
@@ -333,20 +350,48 @@ mod tests {
             .contains("dra-"))
     }
 
+    /// CLI command:
+    /// dra download -s my_asset.deb <REPO>
+    /// output: $PWD/my_asset.deb
     #[test]
     fn choose_output_nothing_chosen() {
-        let result = choose_output_path_from(None, NO_INSTALL, "my_asset.deb");
+        let result = choose_output_path_from(None, NO_INSTALL, "my_asset.deb", not_dir);
 
         assert_eq!(PathBuf::from("my_asset.deb"), result)
     }
 
+    /// CLI command:
+    /// dra download -o /some/path.zip <REPO>
+    /// output: /some/path.zip
     #[test]
     fn choose_output_custom_file_path() {
         let output = PathBuf::from("/some/path.zip");
 
-        let result = choose_output_path_from(Some(&output), NO_INSTALL, ANY_ASSET_NAME);
+        let result = choose_output_path_from(Some(&output), NO_INSTALL, ANY_ASSET_NAME, not_dir);
 
         assert_eq!(output, result)
+    }
+
+    /// CLI command:
+    /// dra download -s my_asset.tar.gz -o /my/custom-dir/ <REPO>
+    /// output: /my/custom-dir/my_asset.tar.gz
+    #[test]
+    fn choose_output_custom_directory_path() {
+        let output = PathBuf::from("/my/custom-dir/");
+        let asset_name = "my_asset.tar.gz";
+
+        let result = choose_output_path_from(Some(&output), NO_INSTALL, asset_name, is_dir);
+
+        let expected = output.join(asset_name);
+        assert_eq!(expected, result);
+    }
+
+    fn is_dir(_: &Path) -> bool {
+        true
+    }
+
+    fn not_dir(_: &Path) -> bool {
+        false
     }
 }
 
