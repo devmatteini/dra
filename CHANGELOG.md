@@ -7,6 +7,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.1] - 2023-12-10
+
+### Added
+
+- `dra` now provides release asset for macOS arm64
+
+### Changed
+
+- `dra-download` option `--output <OUTPUT>` now also support directory paths.
+  ```shell
+  dra download -s helloworld.tar.gz --output ~/Downloads devmatteini/dra-tests
+  # output: ~/Downloads/helloworld.tar.gz
+  ```
+
 ## [0.5.0] - 2023-12-07
 
 ### Added
