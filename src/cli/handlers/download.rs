@@ -316,15 +316,16 @@ fn asset_priority(a: &Asset) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test_case::test_case;
 
     const INSTALL: bool = true;
     const NO_INSTALL: bool = false;
+    const ANY_ASSET_NAME: &str = "ANY_ASSET_NAME";
 
-    #[test]
-    fn temp_output_when_installing() {
-        let output = PathBuf::from("/some/path");
-
-        let result = choose_output_path_from(Some(&output), INSTALL, "ANY");
+    #[test_case(Some(PathBuf::from("/some/path")); "any_custom_output")]
+    #[test_case(None; "no_output")]
+    fn choose_output_install(output: Option<PathBuf>) {
+        let result = choose_output_path_from(output.as_ref(), INSTALL, ANY_ASSET_NAME);
 
         assert!(result
             .to_str()
@@ -333,19 +334,19 @@ mod tests {
     }
 
     #[test]
-    fn selected_output() {
-        let output = PathBuf::from("/some/path");
-
-        let result = choose_output_path_from(Some(&output), NO_INSTALL, "ANY");
-
-        assert_eq!(output, result)
-    }
-
-    #[test]
-    fn no_output() {
+    fn choose_output_nothing_chosen() {
         let result = choose_output_path_from(None, NO_INSTALL, "my_asset.deb");
 
         assert_eq!(PathBuf::from("my_asset.deb"), result)
+    }
+
+    #[test]
+    fn choose_output_custom_file_path() {
+        let output = PathBuf::from("/some/path.zip");
+
+        let result = choose_output_path_from(Some(&output), NO_INSTALL, ANY_ASSET_NAME);
+
+        assert_eq!(output, result)
     }
 }
 
