@@ -7,6 +7,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.2] - 2023-12-21
+
+### Added
+
+- `dra` now supports proxy environment variables
+  like `all_proxy` ([#171](https://github.com/devmatteini/dra/issues/171))
+
+### Fixed
+
+- update `sct` from `0.7.0` to `0.7.1` to improve support for RISCV64
+  architecture by @Xunop ([#172](https://github.com/devmatteini/dra/pull/172))
+
 ## [0.5.1] - 2023-12-10
 
 ### Added
