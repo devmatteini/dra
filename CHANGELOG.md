@@ -258,7 +258,7 @@ This is a maintenance release that updates our dependencies.
 
 ### Fixed
 
-Previously when installing a tar/zip archive without a root directory it would result in an error.
+Previously, when installing a tar/zip archive without a root directory it would result in an error.
 
 Now this type of structures inside tar/zip archives are supported.
 

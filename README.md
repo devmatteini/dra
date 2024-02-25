@@ -108,7 +108,7 @@ There are two modes to download assets: [selection](#selection) and [automatic](
 
 #### Selection
 
-First you need to generate an untagged asset name:
+First, you need to generate an untagged asset name:
 
 ```shell
 dra untag devmatteini/dra-tests
