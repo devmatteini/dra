@@ -2,7 +2,7 @@
 
 ## Normal Tests
 
-These are rust tests that can run on your machine that does not affect your system.
+These are rust tests that can run on your machine that do not affect your system.
 
 Example: [integration_tests.rs](integration_tests.rs)
 
