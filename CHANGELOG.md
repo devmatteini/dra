@@ -7,6 +7,29 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.3] - 2024-03-12
+
+This is a maintenance release that updates our dependencies.
+
+### Documentation
+
+- Add missing commas, correction of spelling errors by
+  @patsevanton ([#184](https://github.com/devmatteini/dra/pull/184))
+- Add more usage examples to `dra --help`
+
+### Updated dependencies
+
+- bump `walkdir` from 2.4.0 to 2.5.0
+- bump `ureq` from 2.9.1 to 2.9.6
+- bump `indicatif` from 0.17.7 to 0.17.8
+- bump `predicates` from 3.0.4 to 3.1.0
+- bump `serde` from 1.0.193 to 1.0.197
+- bump `uuid` from 1.6.1 to 1.7.0
+- bump `assert_cmd` from 2.0.12 to 2.0.14
+- bump `ctrlc` from 3.4.1 to 3.4.4
+- bump `clap` from 4.4.10 to 4.5.2
+- bump `clap_complete` from 4.4.4 to 4.5.1
+
 ## [0.5.2] - 2023-12-21
 
 ### Added
@@ -73,7 +96,8 @@ This is a maintenance release that updates our dependencies.
 
 ### Fixed
 
-Install release asset when `tmp` directory is on a different file system ([#121](https://github.com/devmatteini/dra/issues/121))
+Install release asset when `tmp` directory is on a different file
+system ([#121](https://github.com/devmatteini/dra/issues/121))
 
 ### Updated dependencies
 
@@ -116,8 +140,10 @@ Install release asset when `tmp` directory is on a different file system ([#121]
 
 ### Removed :warning: Breaking Changes :warning:
 
-The `--copy` flag of `dra-untag` added in the previous release has been removed for some issues on different linux desktop environments.
-There was no good solution that worked reliably everywhere, so it was decided to completely remove it since it's not worth the hassle for a "nice to
+The `--copy` flag of `dra-untag` added in the previous release has been removed for some issues on different linux
+desktop environments.
+There was no good solution that worked reliably everywhere, so it was decided to completely remove it since it's not
+worth the hassle for a "nice to
 have" feature like this ([055a4bc](https://github.com/devmatteini/dra/commit/055a4bcbbbf62d8953aa77679f842dcc0bbb4f55)).
 
 ## [0.4.3] - 2023-01-31
@@ -164,11 +190,13 @@ You can now install it via `pacman -S dra`.
 
 ### Added
 
-- Download release source code archives (interactive/non-interactive), by @tranzystorek-io ([#52](https://github.com/devmatteini/dra/issues/52))
+- Download release source code archives (interactive/non-interactive), by
+  @tranzystorek-io ([#52](https://github.com/devmatteini/dra/issues/52))
 
 ### Development
 
-After the cross-platform release (0.4.0), a lot of works was done to improve `dra` test suite to make sure all supported os works.
+After the cross-platform release (0.4.0), a lot of works was done to improve `dra` test suite to make sure all supported
+os works.
 We are now able to run integration tests on macOS and Windows as well!
 
 ### Updated dependencies
@@ -186,7 +214,8 @@ We are now able to run integration tests on macOS and Windows as well!
 ### Changed
 
 The `install` feature for tar and zip archives no longer rely on `tar` and `unzip` command lines.
-This change was needed to ensure that it behaves the same on all supported platforms ([commits](https://github.com/devmatteini/dra/compare/3d0e189cf000b15d11c97760199012ed15f69ef4...38fef0b936931c33ddd3841b6862847131915cc5)).
+This change was needed to ensure that it behaves the same on all supported
+platforms ([commits](https://github.com/devmatteini/dra/compare/3d0e189cf000b15d11c97760199012ed15f69ef4...38fef0b936931c33ddd3841b6862847131915cc5)).
 
 ### Updated dependencies
 
@@ -216,7 +245,8 @@ This is a maintenance release that updates our dependencies.
 
 ### Development
 
-- Fix clap deprecation warnings for upcoming v4 release ([e7d6997](https://github.com/devmatteini/dra/commit/e7d6997b0ba803aa1e5f5df6ef920bc2ea965135))
+- Fix clap deprecation warnings for upcoming v4
+  release ([e7d6997](https://github.com/devmatteini/dra/commit/e7d6997b0ba803aa1e5f5df6ef920bc2ea965135))
 - Add github action to auto merge dependabot pull requests of patch updates
 
 ### Updated dependencies
@@ -231,7 +261,8 @@ This is a maintenance release that updates our dependencies.
 
 ### Security
 
-[CVE-2022-24713](https://github.com/advisories/GHSA-m5pq-gvj9-9vr8) - Updated `regex` crate to 1.5.6 ([#23](https://github.com/devmatteini/dra/pull/23))
+[CVE-2022-24713](https://github.com/advisories/GHSA-m5pq-gvj9-9vr8) - Updated `regex` crate to
+1.5.6 ([#23](https://github.com/devmatteini/dra/pull/23))
 
 ### Updated dependencies
 
@@ -267,7 +298,8 @@ More info on commit [5f73077](https://github.com/devmatteini/dra/commit/5f730775
 ### Development
 
 In order to speed up integration tests on CI it was created a custom docker image with all
-runtime dependencies already installed ([devmatteini/dra-ubuntu-base](https://hub.docker.com/r/devmatteini/dra-ubuntu-base)).
+runtime dependencies already
+installed ([devmatteini/dra-ubuntu-base](https://hub.docker.com/r/devmatteini/dra-ubuntu-base)).
 
 ### Updated dependencies
 
@@ -279,13 +311,15 @@ runtime dependencies already installed ([devmatteini/dra-ubuntu-base](https://hu
 
 ### Changed
 
-- The [release workflow](./.github/workflows/release.yml) is now using [github cli](https://cli.github.com/) to create github release and upload
+- The [release workflow](./.github/workflows/release.yml) is now using [github cli](https://cli.github.com/) to create
+  github release and upload
   assets, since `actions/create-release` and `actions/upload-release-asset` are not maintained anymore.
 
 ### Development
 
 - [Dependabot](https://github.com/dependabot) is now used to weekly update cargo crates and github actions
-- Integration tests are now faster to run on both host machine and CI (see 1f36ffc12e4bb2da07be3106bc982d76419c7bf0 for more details)
+- Integration tests are now faster to run on both host machine and CI (see 1f36ffc12e4bb2da07be3106bc982d76419c7bf0 for
+  more details)
 
 ### Updated dependencies
 
@@ -301,9 +335,11 @@ runtime dependencies already installed ([devmatteini/dra-ubuntu-base](https://hu
 
 The command line interface has changed to `dra <SUBCOMMAND>`.
 
-The `<REPO>` positional argument must be passed after choosing `download` or `untag` subcommand (e.g `dra download <REPO>`)
+The `<REPO>` positional argument must be passed after choosing `download` or `untag` subcommand (
+e.g `dra download <REPO>`)
 
-This change was needed in order to add subcommands/flags that didn't require `<REPO>`, like the newly added `completion`.
+This change was needed in order to add subcommands/flags that didn't require `<REPO>`, like the newly
+added `completion`.
 
 ### Added
 
@@ -323,9 +359,11 @@ This change was needed in order to add subcommands/flags that didn't require `<R
 ### Fixed
 
 - GitHub releases with no assets are now handled properly
-- If CTRL+C was pressed during the asset selection the cursor would not be restored (in both `dra-download` and `dra-untag` sub commands).
+- If CTRL+C was pressed during the asset selection the cursor would not be restored (in both `dra-download`
+  and `dra-untag` sub commands).
 
-  The issue and solution that we implemented is described here [mitsuhiko/dialoguer/issues/77](https://github.com/mitsuhiko/dialoguer/issues/77).
+  The issue and solution that we implemented is described
+  here [mitsuhiko/dialoguer/issues/77](https://github.com/mitsuhiko/dialoguer/issues/77).
 
 ## [0.3.0] - 2022-03-15
 
@@ -335,9 +373,9 @@ This change was needed in order to add subcommands/flags that didn't require `<R
 
   The supported assets are:
 
-  - Debian packages (`.deb`)
-  - Tar archive with executable inside (`.tar.[gz|bz2|xz]`)
-  - Zip file with executable inside (`.zip`)
+    - Debian packages (`.deb`)
+    - Tar archive with executable inside (`.tar.[gz|bz2|xz]`)
+    - Zip file with executable inside (`.zip`)
 
 ### Internals
 
