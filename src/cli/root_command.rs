@@ -16,6 +16,9 @@ use crate::github::Repository;
 /// helloworld_{tag}.tar.gz
 /// $ dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
 ///
+/// Automatically select and download an asset based on your operating system and architecture:
+/// $ dra download -a devmatteini/dra-tests
+///
 /// Download and install an asset:
 /// $ dra download --install devmatteini/dra-tests
 ///
