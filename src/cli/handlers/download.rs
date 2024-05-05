@@ -162,19 +162,19 @@ impl DownloadHandler {
         progress_bar.set_length(maybe_content_length);
 
         let mut destination = Self::create_file(output_path)?;
-        let mut downloaded = 0;
+        let mut total_bytes = 0;
         let mut buffer = [0; 1024];
-        while let Ok(bytes_read) = stream.read(&mut buffer) {
-            if bytes_read == 0 {
+        while let Ok(bytes) = stream.read(&mut buffer) {
+            if bytes == 0 {
                 break;
             }
 
             destination
-                .write(&buffer[..bytes_read])
+                .write(&buffer[..bytes])
                 .map_err(|x| Self::write_err(&selected_asset.name, output_path, x))?;
 
-            downloaded += bytes_read as u64;
-            progress_bar.update_progress(downloaded);
+            total_bytes += bytes as u64;
+            progress_bar.update_progress(total_bytes);
         }
         progress_bar.finish();
         Ok(())
