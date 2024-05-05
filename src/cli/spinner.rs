@@ -48,7 +48,7 @@ impl Spinner {
         )
     }
 
-    pub fn no_messages() -> Spinner {
+    pub fn empty_layout() -> Spinner {
         Spinner::new(String::new(), String::new())
     }
 }

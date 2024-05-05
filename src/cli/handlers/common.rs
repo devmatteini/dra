@@ -10,7 +10,7 @@ pub fn fetch_release_for(
     repository: &Repository,
     tag: Option<&Tag>,
 ) -> Result<Release, HandlerError> {
-    let spinner = Spinner::no_messages();
+    let spinner = Spinner::empty_layout();
     spinner.start();
 
     let release = github::get_release(client, repository, tag).map_err(release_error)?;
