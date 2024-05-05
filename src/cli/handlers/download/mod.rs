@@ -112,11 +112,12 @@ impl DownloadHandler {
     }
 
     fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
-        if self.install {
-            let destination_dir = self.output_dir_or_cwd()?;
-            return Self::install_asset(String::from(asset_name), path, &destination_dir);
+        if !self.install {
+            return Ok(());
         }
-        Ok(())
+
+        let destination_dir = self.output_dir_or_cwd()?;
+        Self::install_asset(asset_name.to_string(), path, &destination_dir)
     }
 
     fn output_dir_or_cwd(&self) -> Result<PathBuf, HandlerError> {
