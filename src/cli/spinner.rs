@@ -41,7 +41,7 @@ impl Spinner {
         println!("{}", message);
     }
 
-    pub fn install() -> Spinner {
+    pub fn install_layout() -> Spinner {
         Spinner::new(
             "Installing".into(),
             format!("{}", Color::new("Installation completed!").green()),
