@@ -192,11 +192,11 @@ impl DownloadHandler {
         destination_dir: &Path,
     ) -> Result<(), HandlerError> {
         let spinner = Spinner::install_layout();
-        spinner.start();
+        spinner.show();
         installer::install(asset_name, asset_path, destination_dir)
             .cleanup(asset_path)
             .map_err(|x| HandlerError::new(x.to_string()))?;
-        spinner.stop();
+        spinner.finish();
         Ok(())
     }
 

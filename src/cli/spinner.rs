@@ -27,16 +27,16 @@ impl Spinner {
         Self { pb, end_message }
     }
 
-    pub fn start(&self) {
+    pub fn show(&self) {
         self.pb.enable_steady_tick(TICK_DURATION);
     }
 
-    pub fn stop(&self) {
+    pub fn finish(&self) {
         self.pb.finish_and_clear();
         println!("{}", &self.end_message);
     }
 
-    pub fn stop_with_message(&self, message: &str) {
+    pub fn finish_with_message(&self, message: &str) {
         self.pb.finish_and_clear();
         println!("{}", message);
     }

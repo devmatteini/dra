@@ -11,12 +11,12 @@ pub fn fetch_release_for(
     tag: Option<&Tag>,
 ) -> Result<Release, HandlerError> {
     let spinner = Spinner::empty_layout();
-    spinner.start();
+    spinner.show();
 
     let release = github::get_release(client, repository, tag).map_err(release_error)?;
 
     let message = format!("Release tag is {}", Color::new(&release.tag.0).bold());
-    spinner.stop_with_message(&message);
+    spinner.finish_with_message(&message);
     Ok(release)
 }
 
