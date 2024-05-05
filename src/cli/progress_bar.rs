@@ -32,7 +32,15 @@ impl ProgressBar {
         println!("{}", &self.end_message);
     }
 
-    pub fn progress_unknown(&self) {
+    pub fn set_progress(&self, max_progress: Option<u64>) {
+        if let Some(progress) = max_progress {
+            self.set_max_progress(progress);
+        } else {
+            self.progress_unknown();
+        }
+    }
+
+    fn progress_unknown(&self) {
         self.pb.set_style(
             ProgressStyle::default_spinner()
                 .tick_strings(cli::spinner::TICKS)
@@ -41,7 +49,7 @@ impl ProgressBar {
         )
     }
 
-    pub fn set_max_progress(&self, progress: u64) {
+    fn set_max_progress(&self, progress: u64) {
         self.pb.set_style(
             ProgressStyle::default_spinner()
                 .tick_strings(cli::spinner::TICKS)
