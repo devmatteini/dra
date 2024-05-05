@@ -131,7 +131,7 @@ mod download {
         } else if cfg!(target_os = "windows") {
             "helloworld-x86_64-windows.tar.gz"
         } else if cfg!(target_os = "macos") {
-            "helloworld-x86_64-apple-darwin.tar.gz"
+            "helloworld-aarch64-apple-darwin.tar.gz"
         } else {
             panic!("This test should only run on linux, macOS and windows")
         };
