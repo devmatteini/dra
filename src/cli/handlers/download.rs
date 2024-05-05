@@ -156,7 +156,7 @@ impl DownloadHandler {
         selected_asset: &Asset,
         output_path: &Path,
     ) -> Result<(), HandlerError> {
-        let progress_bar = ProgressBar::download(&selected_asset.name, output_path);
+        let progress_bar = ProgressBar::download_layout(&selected_asset.name, output_path);
         progress_bar.start();
         let (mut stream, maybe_content_length) =
             github::download_asset(client, selected_asset).map_err(Self::download_error)?;

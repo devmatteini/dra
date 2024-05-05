@@ -55,7 +55,7 @@ impl ProgressBar {
         self.pb.set_position(progress);
     }
 
-    pub fn download(download_asset: &str, output_path: &Path) -> ProgressBar {
+    pub fn download_layout(download_asset: &str, output_path: &Path) -> ProgressBar {
         ProgressBar::new(
             format!("Downloading {}", Color::new(download_asset).bold()),
             format!(
