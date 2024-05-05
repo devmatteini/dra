@@ -1,4 +1,3 @@
-use std::cmp;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -169,14 +168,12 @@ impl DownloadHandler {
             if bytes_read == 0 {
                 break;
             }
+
             destination
                 .write(&buffer[..bytes_read])
                 .map_err(|x| Self::write_err(&selected_asset.name, output_path, x))?;
-            if let Some(cl) = maybe_content_length {
-                downloaded = cmp::min(downloaded + bytes_read as u64, cl);
-            } else {
-                downloaded += bytes_read as u64;
-            }
+
+            downloaded += bytes_read as u64;
             progress_bar.update_progress(downloaded);
         }
         progress_bar.finish();
