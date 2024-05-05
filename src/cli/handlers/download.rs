@@ -160,7 +160,7 @@ impl DownloadHandler {
         progress_bar.show();
         let (mut stream, maybe_content_length) =
             github::download_asset(client, selected_asset).map_err(Self::download_error)?;
-        progress_bar.set_progress(maybe_content_length);
+        progress_bar.set_length(maybe_content_length);
 
         let mut destination = Self::create_file(output_path)?;
         let mut downloaded = 0;
