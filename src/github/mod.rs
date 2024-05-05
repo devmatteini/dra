@@ -45,7 +45,7 @@ pub fn get_release(
 }
 
 // DOCS: https://docs.github.com/en/rest/releases/assets#get-a-release-asset
-pub fn download_asset(
+pub fn download_asset_stream(
     client: &GithubClient,
     asset: &Asset,
 ) -> Result<(impl Read + Send, Option<u64>), GithubError> {
