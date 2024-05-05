@@ -23,11 +23,11 @@ impl ProgressBar {
         Self { pb, end_message }
     }
 
-    pub fn start(&self) {
+    pub fn show(&self) {
         self.pb.enable_steady_tick(cli::spinner::TICK_DURATION);
     }
 
-    pub fn stop(&self) {
+    pub fn finish(&self) {
         self.pb.finish_and_clear();
         println!("{}", &self.end_message);
     }
