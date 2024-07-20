@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Download and install assets from `.tbz` and `.txz` archives.
+
 ## [0.5.3] - 2024-03-12
 
 This is a maintenance release that updates our dependencies.
@@ -373,9 +377,9 @@ added `completion`.
 
   The supported assets are:
 
-    - Debian packages (`.deb`)
-    - Tar archive with executable inside (`.tar.[gz|bz2|xz]`)
-    - Zip file with executable inside (`.zip`)
+  - Debian packages (`.deb`)
+  - Tar archive with executable inside (`.tar.[gz|bz2|xz]`)
+  - Zip file with executable inside (`.zip`)
 
 ### Internals
 
