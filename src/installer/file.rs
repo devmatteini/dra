@@ -51,7 +51,7 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     if extension == "bz2" || extension == "tbz" {
         return Some(FileType::TarArchive(TarKind::Bz2));
     }
-    if extension == "xz" {
+    if extension == "xz" || extension == "txz" {
         return Some(FileType::TarArchive(TarKind::Xz));
     }
     if extension == "zip" {
@@ -96,6 +96,7 @@ mod tests {
     #[test_case("bz2", FileType::TarArchive(TarKind::Bz2))]
     #[test_case("tbz", FileType::TarArchive(TarKind::Bz2))]
     #[test_case("xz", FileType::TarArchive(TarKind::Xz))]
+    #[test_case("txz", FileType::TarArchive(TarKind::Xz))]
     #[test_case("zip", FileType::ZipArchive)]
     fn supported_file(file_extension: &str, expected_file_type: FileType) {
         let file_info = any_file_info(Some(file_extension));
