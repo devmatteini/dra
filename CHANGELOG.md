@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.4] - 2024-07-20
+
 ### Added
 
 - Download and install assets from `.tbz` and `.txz` archives
@@ -14,6 +16,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Ignore some assets when using automatic download (for example, sha256sum files)
+
+### Updated dependencies
+
+- bump `uuid` from 1.7.0 to 1.9.1
+- bump `ureq` from 2.9.6 to 2.9.7
+- bump `serde` from 1.0.197 to 1.0.203
+- bump `rustls` from 0.22.2 to 0.22.4
+- bump `flate2` from 1.0.28 to 1.0.30
+- bump `clap` from 4.5.2 to 4.5.8
+- bump `clap_complete` from 4.5.1 to 4.5.3
 
 ## [0.5.3] - 2024-03-12
 
