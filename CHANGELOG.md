@@ -9,7 +9,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Download and install assets from `.tbz` and `.txz` archives.
+- Download and install assets from `.tbz` and `.txz` archives
+
+### Fixed
+
+- Ignore some assets when using automatic download (for example, sha256sum files)
 
 ## [0.5.3] - 2024-03-12
 
