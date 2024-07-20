@@ -3,6 +3,7 @@ use crate::github::release::Asset;
 pub fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Asset> {
     let mut matches: Vec<_> = assets
         .into_iter()
+        .filter(skip_ignored_asset)
         .filter(|asset| {
             let asset_name = asset.name.to_lowercase();
             let same_arch = is_same_arch(arch, &asset_name);
@@ -13,6 +14,14 @@ pub fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option
         .collect();
     matches.sort_by_key(asset_priority);
     matches.into_iter().next()
+}
+
+const IGNORED_ASSETS: [&str; 3] = ["sha256", "sha512", "checksums"];
+
+fn skip_ignored_asset(asset: &Asset) -> bool {
+    !IGNORED_ASSETS
+        .iter()
+        .any(|ignored| asset.name.contains(ignored))
 }
 
 fn is_same_os(os: &str, asset_name: &str) -> bool {
@@ -67,6 +76,7 @@ fn asset_priority(a: &Asset) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test_case::test_case;
 
     #[test]
     fn asset_found() {
@@ -179,6 +189,22 @@ mod tests {
         let result = find_asset_by_os_arch("linux", "x86_64", assets);
 
         assert!(result.is_none());
+    }
+
+    #[test_case("mypackage-x86_64-linux-musl.sha256sum")]
+    #[test_case("mypackage-x86_64-linux-musl.sha256")]
+    #[test_case("mypackage-x86_64-linux-musl.sha512")]
+    #[test_case("mypackage_checksums.txt")]
+    #[test_case("sha256sum.txt")]
+    fn skip_ignored_file(ignored_file: &str) {
+        let assets = vec![
+            asset(ignored_file),
+            asset("mypackage-x86_64-linux-musl.tar.gz"),
+        ];
+
+        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+
+        assert_eq_asset("mypackage-x86_64-linux-musl.tar.gz", result)
     }
 
     fn assert_eq_asset(expected_name: &str, actual: Option<Asset>) {
