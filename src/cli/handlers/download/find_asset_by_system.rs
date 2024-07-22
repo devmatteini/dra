@@ -1,6 +1,6 @@
 use crate::github::release::Asset;
 
-pub fn find_asset_by_os_arch(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Asset> {
+pub fn find_asset_by_system(os: &str, arch: &str, assets: Vec<Asset>) -> Option<Asset> {
     let mut matches: Vec<_> = assets
         .into_iter()
         .filter(skip_ignored_asset)
@@ -86,7 +86,7 @@ mod tests {
             asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
         ];
 
-        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+        let result = find_asset_by_system("linux", "x86_64", assets);
 
         assert_eq_asset("mypackage-x86_64-unknown-linux-musl.tar.gz", result)
     }
@@ -99,7 +99,7 @@ mod tests {
             asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
         ];
 
-        let result = find_asset_by_os_arch("macos", "x86_64", assets);
+        let result = find_asset_by_system("macos", "x86_64", assets);
 
         assert_eq_asset("mypackage-x86_64-apple-darwin.tar.gz", result)
     }
@@ -111,7 +111,7 @@ mod tests {
             asset("mypackage-linux-amd64.tar.gz"),
         ];
 
-        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+        let result = find_asset_by_system("linux", "x86_64", assets);
 
         assert_eq_asset("mypackage-linux-amd64.tar.gz", result)
     }
@@ -123,7 +123,7 @@ mod tests {
             asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
         ];
 
-        let result = find_asset_by_os_arch("linux", "arm", assets);
+        let result = find_asset_by_system("linux", "arm", assets);
 
         assert!(result.is_none())
     }
@@ -135,7 +135,7 @@ mod tests {
             asset("mypackage-X86_64-unknown-LiNuX-musl.tar.gz"),
         ];
 
-        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+        let result = find_asset_by_system("linux", "x86_64", assets);
 
         assert_eq_asset("mypackage-X86_64-unknown-LiNuX-musl.tar.gz", result)
     }
@@ -173,7 +173,7 @@ mod tests {
             asset("mypackage-amd64.AppImage"),
         ];
 
-        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+        let result = find_asset_by_system("linux", "x86_64", assets);
 
         assert_eq_asset("mypackage-amd64.AppImage", result)
     }
@@ -186,7 +186,7 @@ mod tests {
             asset("mypackage.AppImage"),
         ];
 
-        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+        let result = find_asset_by_system("linux", "x86_64", assets);
 
         assert!(result.is_none());
     }
@@ -202,7 +202,7 @@ mod tests {
             asset("mypackage-x86_64-linux-musl.tar.gz"),
         ];
 
-        let result = find_asset_by_os_arch("linux", "x86_64", assets);
+        let result = find_asset_by_system("linux", "x86_64", assets);
 
         assert_eq_asset("mypackage-x86_64-linux-musl.tar.gz", result)
     }
