@@ -5,7 +5,7 @@ use crate::installer::error::InstallError;
 use crate::installer::tar_archive::TarArchiveInstaller;
 use crate::installer::zip_archive::ZipArchiveInstaller;
 
-use crate::installer::file::{is_supported, FileInfo, FileType, TarKind};
+use crate::installer::file::{validate_file, FileInfo, FileType, TarKind};
 
 mod archive;
 pub mod cleanup;
@@ -21,7 +21,7 @@ pub fn install(
     source: &Path,
     destination_dir: &Path,
 ) -> Result<(), InstallError> {
-    let file_info = file_info_from(&asset_name, source).and_then(is_supported)?;
+    let file_info = file_info_from(&asset_name, source).and_then(validate_file)?;
     let installer = find_installer_for(&file_info.file_type);
 
     installer(&file_info.path, destination_dir).map_err(InstallError::Fatal)

@@ -31,7 +31,7 @@ pub struct SupportedFileInfo {
     pub file_type: FileType,
 }
 
-pub fn is_supported(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
+pub fn validate_file(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
     file.extension
         .and_then(file_type_for)
         .map(|file_type| SupportedFileInfo {
@@ -87,7 +87,7 @@ mod tests {
 
     use test_case::test_case;
 
-    use super::{is_supported, FileInfo, FileType, SupportedFileInfo, TarKind};
+    use super::{validate_file, FileInfo, FileType, SupportedFileInfo, TarKind};
     use crate::installer::error::InstallError;
 
     #[test_case("deb", FileType::Debian)]
@@ -100,7 +100,7 @@ mod tests {
     #[test_case("zip", FileType::ZipArchive)]
     fn supported_file(file_extension: &str, expected_file_type: FileType) {
         let file_info = any_file_info(Some(file_extension));
-        let result = is_supported(file_info);
+        let result = validate_file(file_info);
 
         assert_ok_equal(expected_file_type, result);
     }
@@ -108,7 +108,7 @@ mod tests {
     #[test_case("txt")]
     fn not_supported(file_extension: &str) {
         let file_info = any_file_info(Some(file_extension));
-        let result = is_supported(file_info);
+        let result = validate_file(file_info);
 
         assert_not_supported(result);
     }
@@ -116,7 +116,7 @@ mod tests {
     #[test]
     fn no_file_extension() {
         let file_info = any_file_info(None);
-        let result = is_supported(file_info);
+        let result = validate_file(file_info);
 
         assert_not_supported(result);
     }
