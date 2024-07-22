@@ -61,7 +61,7 @@ fn contains_extension(os: &str, asset_name: &str) -> bool {
         .any(|extension| asset_name.ends_with(extension))
 }
 
-const ARCHIVES: [&str; 5] = [".gz", ".tgz", ".bz2", ".xz", ".zip"];
+const ARCHIVES: [&str; 7] = [".gz", ".tgz", ".bz2", ".tbz", ".xz", ".txz", ".zip"];
 
 fn asset_priority(a: &Asset) -> i32 {
     if a.name.contains("musl") {
