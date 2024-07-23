@@ -20,11 +20,12 @@ pub fn install(
     asset_name: String,
     source: &Path,
     destination_dir: &Path,
+    executable_name: &str,
 ) -> Result<(), InstallError> {
     let file_info = file_info_from(&asset_name, source).and_then(validate_file)?;
     let installer = find_installer_for(&file_info.file_type);
 
-    installer(&file_info.path, destination_dir).map_err(InstallError::Fatal)
+    installer(&file_info.path, destination_dir, executable_name).map_err(InstallError::Fatal)
 }
 
 type InstallerResult = Result<(), String>;
@@ -36,7 +37,7 @@ fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
     Ok(FileInfo::new(name, path))
 }
 
-fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path) -> InstallerResult {
+fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path, &str) -> InstallerResult {
     match file_type {
         FileType::Debian => DebianInstaller::run,
         FileType::TarArchive(TarKind::Gz) => TarArchiveInstaller::gz,

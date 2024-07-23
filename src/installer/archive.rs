@@ -11,7 +11,12 @@ use crate::installer::InstallerResult;
 pub struct ArchiveInstaller;
 
 impl ArchiveInstaller {
-    pub fn run<F>(extract_files: F, source: &Path, destination_dir: &Path) -> InstallerResult
+    pub fn run<F>(
+        extract_files: F,
+        source: &Path,
+        destination_dir: &Path,
+        executable_name: &str,
+    ) -> InstallerResult
     where
         F: FnOnce(&Path, &Path) -> Result<(), String>,
     {
@@ -120,6 +125,7 @@ mod tests {
             },
             &any_directory_path(),
             &destination_dir,
+            ANY_EXECUTABLE_NAME,
         );
 
         assert_ok(result);
@@ -138,6 +144,7 @@ mod tests {
             },
             &any_directory_path(),
             &destination_dir,
+            ANY_EXECUTABLE_NAME,
         );
 
         assert_err_equal("No executable found", result);
@@ -158,11 +165,14 @@ mod tests {
             },
             &any_directory_path(),
             &destination_dir,
+            ANY_EXECUTABLE_NAME,
         );
 
         assert_ok(result);
         assert_file_exists(executable_path(&destination_dir, "my-executable"))
     }
+
+    const ANY_EXECUTABLE_NAME: &str = "ANY_EXECUTABLE_NAME";
 
     #[cfg(target_family = "unix")]
     fn create_executable_file(directory: &Path, name_without_extension: &str) -> PathBuf {

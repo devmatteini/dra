@@ -117,7 +117,7 @@ impl DownloadHandler {
         }
 
         let destination_dir = self.output_dir_or_cwd()?;
-        Self::install_asset(asset_name.to_string(), path, &destination_dir)
+        self.install_asset(asset_name.to_string(), path, &destination_dir)
     }
 
     fn output_dir_or_cwd(&self) -> Result<PathBuf, HandlerError> {
@@ -185,13 +185,20 @@ impl DownloadHandler {
     }
 
     fn install_asset(
+        &self,
         asset_name: String,
         asset_path: &Path,
         destination_dir: &Path,
     ) -> Result<(), HandlerError> {
         let spinner = Spinner::install_layout();
         spinner.show();
-        installer::install(asset_name, asset_path, destination_dir)
+
+        // TODO: transform --install flag to option --install <executable>
+        // in order to select an asset when the name is not the
+        // same as the repo or there are multiple executable inside the archive
+        let executable_name = &self.repository.repo;
+
+        installer::install(asset_name, asset_path, destination_dir, executable_name)
             .cleanup(asset_path)
             .map_err(|x| HandlerError::new(x.to_string()))?;
         spinner.finish();

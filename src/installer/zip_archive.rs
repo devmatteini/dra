@@ -7,8 +7,13 @@ use crate::installer::InstallerResult;
 pub struct ZipArchiveInstaller;
 
 impl ZipArchiveInstaller {
-    pub fn run(source: &Path, destination_dir: &Path) -> InstallerResult {
-        ArchiveInstaller::run(Self::extract_archive, source, destination_dir)
+    pub fn run(source: &Path, destination_dir: &Path, executable_name: &str) -> InstallerResult {
+        ArchiveInstaller::run(
+            Self::extract_archive,
+            source,
+            destination_dir,
+            executable_name,
+        )
     }
 
     fn extract_archive(source: &Path, temp_dir: &Path) -> Result<(), String> {
