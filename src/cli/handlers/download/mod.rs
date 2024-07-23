@@ -25,6 +25,7 @@ pub struct DownloadHandler {
     tag: Option<Tag>,
     output: Option<PathBuf>,
     install: bool,
+    install_new: Install,
 }
 
 enum DownloadMode {
@@ -43,6 +44,29 @@ impl DownloadMode {
     }
 }
 
+enum Install {
+    No,
+    Yes(String),
+}
+
+impl Install {
+    fn new(install: Option<Option<String>>, repository: &Repository) -> Self {
+        match install {
+            Some(executable_name) => {
+                Self::Yes(executable_name.unwrap_or_else(|| repository.repo.clone()))
+            }
+            _ => Self::No,
+        }
+    }
+
+    fn as_bool(&self) -> bool {
+        match self {
+            Self::No => false,
+            Self::Yes(_) => true,
+        }
+    }
+}
+
 impl DownloadHandler {
     pub fn new(
         repository: Repository,
@@ -50,14 +74,16 @@ impl DownloadHandler {
         automatic: bool,
         tag: Option<String>,
         output: Option<PathBuf>,
-        install: bool,
+        install: Option<Option<String>>,
     ) -> Self {
+        let install_new = Install::new(install, &repository);
         DownloadHandler {
             repository,
             mode: DownloadMode::new(select.clone(), automatic),
             tag: tag.map(Tag),
             output,
-            install,
+            install: install_new.as_bool(),
+            install_new,
         }
     }
 
