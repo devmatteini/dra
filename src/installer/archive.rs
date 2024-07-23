@@ -47,7 +47,7 @@ impl ArchiveInstaller {
         let ignore_error = |result: walkdir::Result<walkdir::DirEntry>| result.ok();
 
         let executables: Vec<_> = WalkDir::new(directory)
-            .max_depth(2)
+            .max_depth(3)
             .into_iter()
             .filter_map(ignore_error)
             .filter(Self::is_executable)
