@@ -25,10 +25,10 @@ pub fn install(
     let file_info = file_info_from(&asset_name, source).and_then(validate_file)?;
     let installer = find_installer_for(&file_info.file_type);
 
-    installer(&file_info.path, destination_dir, executable_name).map_err(InstallError::Fatal)
+    installer(&file_info.path, destination_dir, executable_name)
 }
 
-type InstallerResult = Result<(), String>;
+type InstallerResult = Result<(), InstallError>;
 
 fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
     if !path.is_file() {

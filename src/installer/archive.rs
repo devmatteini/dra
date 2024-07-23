@@ -8,6 +8,8 @@ use walkdir::WalkDir;
 use crate::installer::error::MapErrWithMessage;
 use crate::installer::InstallerResult;
 
+use super::error::InstallError;
+
 pub struct ArchiveInstaller;
 
 impl ArchiveInstaller {
@@ -18,7 +20,7 @@ impl ArchiveInstaller {
         executable_name: &str,
     ) -> InstallerResult
     where
-        F: FnOnce(&Path, &Path) -> Result<(), String>,
+        F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
     {
         let temp_dir = Self::create_temp_dir()?;
         extract_files(source, &temp_dir)?;
@@ -31,14 +33,17 @@ impl ArchiveInstaller {
         Ok(())
     }
 
-    fn create_temp_dir() -> Result<PathBuf, String> {
+    fn create_temp_dir() -> Result<PathBuf, InstallError> {
         let temp_dir = crate::cli::temp_file::temp_dir();
         std::fs::create_dir(&temp_dir)
             .map(|_| temp_dir)
-            .map_err_with("Error creating temp dir".into())
+            .map_fatal_err("Error creating temp dir".into())
     }
 
-    fn find_executable(directory: &Path, executable_name: &str) -> Result<ExecutableFile, String> {
+    fn find_executable(
+        directory: &Path,
+        executable_name: &str,
+    ) -> Result<ExecutableFile, InstallError> {
         let ignore_error = |result: walkdir::Result<walkdir::DirEntry>| result.ok();
 
         let executables: Vec<_> = WalkDir::new(directory)
@@ -55,9 +60,9 @@ impl ArchiveInstaller {
         }
 
         match executables.as_slice() {
-            [] => Err(String::from("No executable found")),
+            [] => Err(InstallError::fatal("No executable found")),
             [x] => Ok(x.clone()),
-            _ => Err(String::from("Many executable candidates found")),
+            _ => Err(InstallError::fatal("Many executable candidates found")),
         }
     }
 
@@ -72,20 +77,20 @@ impl ArchiveInstaller {
     fn copy_executable_to_destination_dir(
         executable: ExecutableFile,
         destination_dir: &Path,
-    ) -> Result<(), String> {
+    ) -> Result<(), InstallError> {
         let mut to = PathBuf::from(destination_dir);
         to.push(executable.name);
         std::fs::copy(&executable.path, &to)
             .map(|_| ())
-            .map_err_with(format!(
+            .map_fatal_err(format!(
                 "Error copying {} to {}",
                 &executable.path.display(),
                 to.display(),
             ))
     }
 
-    fn cleanup(temp_dir: &Path) -> Result<(), String> {
-        std::fs::remove_dir_all(temp_dir).map_err_with("Error deleting temp dir".into())
+    fn cleanup(temp_dir: &Path) -> Result<(), InstallError> {
+        std::fs::remove_dir_all(temp_dir).map_fatal_err("Error deleting temp dir".into())
     }
 }
 
@@ -120,7 +125,7 @@ mod tests {
     use std::os::unix::fs::PermissionsExt;
     use std::path::{Path, PathBuf};
 
-    use crate::installer::InstallerResult;
+    use crate::installer::{error::InstallError, InstallerResult};
 
     use super::ArchiveInstaller;
 
@@ -159,7 +164,7 @@ mod tests {
             ANY_EXECUTABLE_NAME,
         );
 
-        assert_err_equal("No executable found", result);
+        assert_fatal_err_equal("No executable found", result);
     }
 
     #[test]
@@ -226,7 +231,7 @@ mod tests {
             ANY_EXECUTABLE_NAME,
         );
 
-        assert_err_equal("Many executable candidates found", result);
+        assert_fatal_err_equal("Many executable candidates found", result);
     }
 
     const ANY_EXECUTABLE_NAME: &str = "ANY_EXECUTABLE_NAME";
@@ -288,17 +293,22 @@ mod tests {
     }
 
     fn assert_ok(result: InstallerResult) {
-        assert_eq!(Ok(()), result);
+        assert!(result.is_ok(), "Result is Err: {:?}", result);
     }
 
-    fn assert_err_equal(expected: &str, result: InstallerResult) {
+    fn assert_fatal_err_equal(expected: &str, result: InstallerResult) {
         match result {
             Ok(_) => {
                 panic!("No installer error");
             }
-            Err(e) => {
-                assert_eq!(expected, e);
-            }
+            Err(e) => match e {
+                InstallError::Fatal(msg) => {
+                    assert_eq!(expected, msg);
+                }
+                _ => {
+                    panic!("Installer error is not fatal: {:?}", e);
+                }
+            },
         }
     }
 }
