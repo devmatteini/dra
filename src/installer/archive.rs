@@ -124,8 +124,8 @@ mod tests {
     use super::ArchiveInstaller;
 
     #[test]
-    fn executable_found() {
-        let destination_dir = temp_dir("executable_found");
+    fn single_executable() {
+        let destination_dir = temp_dir("single_executable");
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
