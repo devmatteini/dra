@@ -24,7 +24,7 @@ pub struct DownloadHandler {
     mode: DownloadMode,
     tag: Option<Tag>,
     output: Option<PathBuf>,
-    install_new: Install,
+    install: Install,
 }
 
 enum DownloadMode {
@@ -75,13 +75,13 @@ impl DownloadHandler {
         output: Option<PathBuf>,
         install: Option<Option<String>>,
     ) -> Self {
-        let install_new = Install::new(install, &repository);
+        let install = Install::new(install, &repository);
         DownloadHandler {
             repository,
             mode: DownloadMode::new(select.clone(), automatic),
             tag: tag.map(Tag),
             output,
-            install_new,
+            install,
         }
     }
 
@@ -136,7 +136,7 @@ impl DownloadHandler {
     }
 
     fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
-        match &self.install_new {
+        match &self.install {
             Install::No => Ok(()),
             Install::Yes(executable_name) => {
                 let destination_dir = self.output_dir_or_cwd()?;
@@ -225,7 +225,7 @@ impl DownloadHandler {
     pub fn choose_output_path(&self, asset_name: &str) -> PathBuf {
         choose_output_path_from(
             self.output.as_ref(),
-            self.install_new.as_bool(),
+            self.install.as_bool(),
             asset_name,
             Path::is_dir,
         )
