@@ -62,7 +62,7 @@ impl ArchiveInstaller {
         match executables.as_slice() {
             [] => Err(InstallError::NoExecutable),
             [x] => Ok(x.clone()),
-            candidates => Err(too_many_executable_candidates(candidates)),
+            candidates => Err(too_many_executable_candidates(candidates, directory)),
         }
     }
 
@@ -119,12 +119,16 @@ impl ExecutableFile {
     }
 }
 
-fn too_many_executable_candidates(candidates: &[ExecutableFile]) -> InstallError {
+fn too_many_executable_candidates(
+    candidates: &[ExecutableFile],
+    base_directory: &Path,
+) -> InstallError {
     let errors: Vec<_> = candidates
         .iter()
         .map(|x| {
             let name = x.name.to_str().unwrap_or("Unknown candidate name");
-            format!("{} ({})", name, x.path.display())
+            let file_path = x.path.strip_prefix(base_directory).unwrap_or(&x.path);
+            format!("{} ({})", name, file_path.display())
         })
         .collect();
 
