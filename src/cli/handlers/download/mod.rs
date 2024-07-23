@@ -138,12 +138,26 @@ impl DownloadHandler {
     }
 
     fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
-        if !self.install {
-            return Ok(());
-        }
+        match &self.install_new {
+            Install::No => Ok(()),
+            Install::Yes(executable_name) => {
+                let destination_dir = self.output_dir_or_cwd()?;
+                let spinner = Spinner::install_layout();
+                spinner.show();
 
-        let destination_dir = self.output_dir_or_cwd()?;
-        self.install_asset(asset_name.to_string(), path, &destination_dir)
+                installer::install(
+                    asset_name.to_string(),
+                    path,
+                    &destination_dir,
+                    &executable_name,
+                )
+                .cleanup(path)
+                .map_err(|x| HandlerError::new(x.to_string()))?;
+
+                spinner.finish();
+                Ok(())
+            }
+        }
     }
 
     fn output_dir_or_cwd(&self) -> Result<PathBuf, HandlerError> {
@@ -207,27 +221,6 @@ impl DownloadHandler {
             progress_bar.update_progress(total_bytes);
         }
         progress_bar.finish();
-        Ok(())
-    }
-
-    fn install_asset(
-        &self,
-        asset_name: String,
-        asset_path: &Path,
-        destination_dir: &Path,
-    ) -> Result<(), HandlerError> {
-        let spinner = Spinner::install_layout();
-        spinner.show();
-
-        // TODO: transform --install flag to option --install <executable>
-        // in order to select an asset when the name is not the
-        // same as the repo or there are multiple executable inside the archive
-        let executable_name = &self.repository.repo;
-
-        installer::install(asset_name, asset_path, destination_dir, executable_name)
-            .cleanup(asset_path)
-            .map_err(|x| HandlerError::new(x.to_string()))?;
-        spinner.finish();
         Ok(())
     }
 
