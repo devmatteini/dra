@@ -6,6 +6,8 @@ pub enum InstallError {
     NotAFile(String),
     NotSupported(String),
     Fatal(String),
+    NoExecutable,
+    TooManyExecutableCandidates(Vec<String>),
 }
 
 impl InstallError {
@@ -28,6 +30,14 @@ impl std::fmt::Display for InstallError {
             InstallError::NotAFile(msg) => f.write_str(msg),
             InstallError::NotSupported(msg) => f.write_str(msg),
             InstallError::Fatal(msg) => f.write_str(msg),
+            InstallError::NoExecutable => f.write_str("No executable found"),
+            InstallError::TooManyExecutableCandidates(candidates) => {
+                f.write_str("Many executable candidates found, you must select one")?;
+                for candidate in candidates {
+                    f.write_str(candidate)?;
+                }
+                Ok(())
+            }
         }
     }
 }
