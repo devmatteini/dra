@@ -55,8 +55,9 @@ impl ArchiveInstaller {
         }
 
         match executables.as_slice() {
+            [] => Err(String::from("No executable found")),
             [x] => Ok(x.clone()),
-            _ => Err(String::from("No executable found")),
+            _ => Err(String::from("Many executable candidates found")),
         }
     }
 
@@ -205,6 +206,27 @@ mod tests {
 
         assert_ok(result);
         assert_file_exists(executable_path(&destination_dir, executable_name))
+    }
+
+    #[test]
+    fn many_executable_no_matches() {
+        let destination_dir = temp_dir("many_executable_no_matches");
+
+        let result = ArchiveInstaller::run(
+            |_, temp_dir| {
+                create_file(temp_dir, "README.md");
+                create_file(temp_dir, "LICENSE");
+                create_executable_file(temp_dir, "some-random-script");
+                create_executable_file(temp_dir, "mytool");
+                create_executable_file(temp_dir, "install.sh");
+                Ok(())
+            },
+            &any_directory_path(),
+            &destination_dir,
+            ANY_EXECUTABLE_NAME,
+        );
+
+        assert_err_equal("Many executable candidates found", result);
     }
 
     const ANY_EXECUTABLE_NAME: &str = "ANY_EXECUTABLE_NAME";
