@@ -9,7 +9,7 @@ fn installed_successfully() {
     let container = Docker::run(images::UBUNTU);
 
     let result = container.exec(
-        "dra download -s helloworld.deb -i devmatteini/dra-tests",
+        "dra download -i -s helloworld.deb devmatteini/dra-tests",
         ExecArgs::Default,
     );
 
@@ -22,7 +22,7 @@ fn wrong_privileges() {
     let container = Docker::run(images::UBUNTU);
 
     let result = container.exec(
-        "dra download -s helloworld.deb -i devmatteini/dra-tests",
+        "dra download -i -s helloworld.deb devmatteini/dra-tests",
         ExecArgs::User(users::TESTER.into()),
     );
 

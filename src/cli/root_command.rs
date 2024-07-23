@@ -65,9 +65,10 @@ pub enum Command {
         /// Install downloaded asset
         ///
         /// If the downloaded asset is a supported file, it will try to install it.
-        /// By default is not used.
+        ///
+        /// For archives, if many executables are found, you can specify which one to install (default value is repository name)
         #[arg(short, long)]
-        install: bool,
+        install: Option<Option<String>>,
     },
 
     /// Select an asset and generate an untagged version of it
