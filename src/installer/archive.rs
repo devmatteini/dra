@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 use walkdir::WalkDir;
 
-use crate::installer::error::MapErrWithMessage;
+use crate::installer::error::InstallErrorMapErr;
 use crate::installer::InstallerResult;
 
 use super::error::InstallError;

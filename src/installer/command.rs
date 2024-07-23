@@ -1,4 +1,4 @@
-use crate::installer::error::MapErrWithMessage;
+use crate::installer::error::InstallErrorMapErr;
 use std::process::{Command, Output};
 
 use super::error::InstallError;

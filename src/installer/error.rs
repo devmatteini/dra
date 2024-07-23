@@ -18,10 +18,6 @@ impl InstallError {
     pub fn not_supported(name: &str) -> InstallError {
         InstallError::NotSupported(format!("{} is not supported", name,))
     }
-
-    pub fn fatal(message: &str) -> InstallError {
-        InstallError::Fatal(message.to_string())
-    }
 }
 
 impl std::fmt::Display for InstallError {
@@ -43,15 +39,11 @@ impl std::fmt::Display for InstallError {
     }
 }
 
-pub trait MapErrWithMessage<T> {
-    fn map_err_with(self, message: String) -> Result<T, String>;
+pub trait InstallErrorMapErr<T> {
     fn map_fatal_err(self, message: String) -> Result<T, InstallError>;
 }
 
-impl<T> MapErrWithMessage<T> for std::io::Result<T> {
-    fn map_err_with(self, message: String) -> Result<T, String> {
-        self.map_err(|e| format!("{}:\n  {}", &message, e))
-    }
+impl<T> InstallErrorMapErr<T> for std::io::Result<T> {
     fn map_fatal_err(self, message: String) -> Result<T, InstallError> {
         self.map_err(|e| InstallError::Fatal(format!("{}:\n  {}", &message, e)))
     }
