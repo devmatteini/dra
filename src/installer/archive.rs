@@ -60,9 +60,9 @@ impl ArchiveInstaller {
         }
 
         match executables.as_slice() {
-            [] => Err(InstallError::fatal("No executable found")),
+            [] => Err(InstallError::NoExecutable),
             [x] => Ok(x.clone()),
-            _ => Err(InstallError::fatal("Many executable candidates found")),
+            candidates => Err(too_many_executable_candidates(candidates)),
         }
     }
 
@@ -119,6 +119,18 @@ impl ExecutableFile {
     }
 }
 
+fn too_many_executable_candidates(candidates: &[ExecutableFile]) -> InstallError {
+    let errors: Vec<_> = candidates
+        .iter()
+        .map(|x| {
+            let name = x.name.to_str().unwrap_or("Unknown candidate name");
+            format!("{} ({})", name, x.path.display())
+        })
+        .collect();
+
+    InstallError::TooManyExecutableCandidates(errors)
+}
+
 #[cfg(test)]
 mod tests {
     #[cfg(target_family = "unix")]
@@ -164,7 +176,7 @@ mod tests {
             ANY_EXECUTABLE_NAME,
         );
 
-        assert_fatal_err_equal("No executable found", result);
+        assert_no_executable(result);
     }
 
     #[test]
@@ -231,7 +243,7 @@ mod tests {
             ANY_EXECUTABLE_NAME,
         );
 
-        assert_fatal_err_equal("Many executable candidates found", result);
+        assert_too_many_candidates(vec!["some-random-script", "mytool", "install.sh"], result)
     }
 
     const ANY_EXECUTABLE_NAME: &str = "ANY_EXECUTABLE_NAME";
@@ -296,17 +308,43 @@ mod tests {
         assert!(result.is_ok(), "Result is Err: {:?}", result);
     }
 
-    fn assert_fatal_err_equal(expected: &str, result: InstallerResult) {
+    fn assert_no_executable(result: InstallerResult) {
         match result {
             Ok(_) => {
                 panic!("No installer error");
             }
             Err(e) => match e {
-                InstallError::Fatal(msg) => {
-                    assert_eq!(expected, msg);
+                InstallError::NoExecutable => {}
+                _ => {
+                    panic!("Installer error is not NoExecutable: {:?}", e);
+                }
+            },
+        }
+    }
+
+    fn assert_too_many_candidates(expected_candidates: Vec<&str>, result: InstallerResult) {
+        match result {
+            Ok(_) => {
+                panic!("No installer error");
+            }
+            Err(e) => match e {
+                InstallError::TooManyExecutableCandidates(candidates) => {
+                    let contains_all_candidates = expected_candidates.iter().all(|expected| {
+                        candidates
+                            .iter()
+                            .any(|candidate| candidate.contains(expected))
+                    });
+                    assert!(
+                        contains_all_candidates,
+                        "Not all expected candidates found: {:?}",
+                        candidates
+                    );
                 }
                 _ => {
-                    panic!("Installer error is not fatal: {:?}", e);
+                    panic!(
+                        "Installer error is not TooManyExecutableCandidates: {:?}",
+                        e
+                    );
                 }
             },
         }

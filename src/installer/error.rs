@@ -1,7 +1,7 @@
 use std::fmt::Formatter;
 use std::path::Path;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum InstallError {
     NotAFile(String),
     NotSupported(String),
@@ -32,9 +32,10 @@ impl std::fmt::Display for InstallError {
             InstallError::Fatal(msg) => f.write_str(msg),
             InstallError::NoExecutable => f.write_str("No executable found"),
             InstallError::TooManyExecutableCandidates(candidates) => {
-                f.write_str("Many executable candidates found, you must select one")?;
+                f.write_str("Many executable candidates found, you must select one:\n")?;
                 for candidate in candidates {
-                    f.write_str(candidate)?;
+                    let message = format!("- {}\n", candidate);
+                    f.write_str(&message)?;
                 }
                 Ok(())
             }
