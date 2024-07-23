@@ -54,10 +54,10 @@ impl ArchiveInstaller {
             return Ok(executable.clone());
         }
 
-        executables
-            .into_iter()
-            .next()
-            .ok_or_else(|| String::from("No executable found"))
+        match executables.as_slice() {
+            [x] => Ok(x.clone()),
+            _ => Err(String::from("No executable found")),
+        }
     }
 
     fn is_executable(x: &walkdir::DirEntry) -> bool {
