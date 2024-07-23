@@ -24,7 +24,6 @@ pub struct DownloadHandler {
     mode: DownloadMode,
     tag: Option<Tag>,
     output: Option<PathBuf>,
-    install: bool,
     install_new: Install,
 }
 
@@ -82,7 +81,6 @@ impl DownloadHandler {
             mode: DownloadMode::new(select.clone(), automatic),
             tag: tag.map(Tag),
             output,
-            install: install_new.as_bool(),
             install_new,
         }
     }
@@ -225,7 +223,12 @@ impl DownloadHandler {
     }
 
     pub fn choose_output_path(&self, asset_name: &str) -> PathBuf {
-        choose_output_path_from(self.output.as_ref(), self.install, asset_name, Path::is_dir)
+        choose_output_path_from(
+            self.output.as_ref(),
+            self.install_new.as_bool(),
+            asset_name,
+            Path::is_dir,
+        )
     }
 
     fn create_file(path: &Path) -> Result<File, HandlerError> {
