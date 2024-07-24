@@ -4,7 +4,7 @@ use std::path::Path;
 
 use crate::installer::InstallerResult;
 
-use super::error::InstallError;
+use super::error::{InstallError, InstallErrorMapErr};
 
 pub struct CompressedFileInstaller;
 
@@ -45,20 +45,14 @@ impl CompressedFileInstaller {
     where
         D: FnOnce(File) -> Box<dyn Read>,
     {
-        let compressed_file = File::open(source).map_err(|x| {
-            InstallError::Fatal(format!("Error opening {}: {}", source.display(), x))
-        })?;
+        let compressed_file =
+            File::open(source).map_fatal_err(format!("Error opening {}", source.display()))?;
 
         let mut stream = decode(compressed_file);
 
         let executable_path = destination_dir.join(executable_name);
-        let mut destination_file = File::create(&executable_path).map_err(|x| {
-            InstallError::Fatal(format!(
-                "Error creating {}: {}",
-                executable_path.display(),
-                x
-            ))
-        })?;
+        let mut destination_file = File::create(&executable_path)
+            .map_fatal_err(format!("Error creating {}", executable_path.display()))?;
 
         let mut buffer = [0; 1024];
         while let Ok(bytes) = stream.read(&mut buffer) {
@@ -66,9 +60,9 @@ impl CompressedFileInstaller {
                 break;
             }
 
-            destination_file.write(&buffer[..bytes]).map_err(|e| {
-                InstallError::Fatal(format!("Error saving {}: {}", executable_path.display(), e))
-            })?;
+            destination_file
+                .write(&buffer[..bytes])
+                .map_fatal_err(format!("Error saving {}", executable_path.display()))?;
         }
 
         set_executable_permissions(&executable_path)?;
@@ -81,13 +75,10 @@ impl CompressedFileInstaller {
 fn set_executable_permissions(path: &Path) -> Result<(), InstallError> {
     use std::os::unix::fs::PermissionsExt;
 
-    std::fs::set_permissions(&path, PermissionsExt::from_mode(0o755)).map_err(|e| {
-        InstallError::Fatal(format!(
-            "Cannot set executable permissions on {}: {}",
-            path.display(),
-            e
-        ))
-    })
+    std::fs::set_permissions(&path, PermissionsExt::from_mode(0o755)).map_fatal_err(format!(
+        "Cannot set executable permissions on {}",
+        path.display(),
+    ))
 }
 
 #[cfg(target_os = "windows")]
