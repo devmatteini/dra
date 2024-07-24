@@ -44,5 +44,8 @@ fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path, &str) -> Install
         FileType::TarArchive(Compression::Xz) => TarArchiveInstaller::xz,
         FileType::TarArchive(Compression::Bz2) => TarArchiveInstaller::bz2,
         FileType::ZipArchive => ZipArchiveInstaller::run,
+        FileType::CompressedFile(Compression::Gz) => todo!(),
+        FileType::CompressedFile(Compression::Xz) => todo!(),
+        FileType::CompressedFile(Compression::Bz2) => todo!(),
     }
 }

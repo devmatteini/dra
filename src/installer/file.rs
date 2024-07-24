@@ -16,6 +16,7 @@ pub enum FileType {
     Debian,
     TarArchive(Compression),
     ZipArchive,
+    CompressedFile(Compression),
 }
 
 #[derive(Debug)]
