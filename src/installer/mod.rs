@@ -5,7 +5,7 @@ use crate::installer::error::InstallError;
 use crate::installer::tar_archive::TarArchiveInstaller;
 use crate::installer::zip_archive::ZipArchiveInstaller;
 
-use crate::installer::file::{validate_file, FileInfo, FileType, TarKind};
+use crate::installer::file::{validate_file, Compression, FileInfo, FileType};
 
 mod archive;
 pub mod cleanup;
@@ -40,9 +40,9 @@ fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
 fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path, &str) -> InstallerResult {
     match file_type {
         FileType::Debian => DebianInstaller::run,
-        FileType::TarArchive(TarKind::Gz) => TarArchiveInstaller::gz,
-        FileType::TarArchive(TarKind::Xz) => TarArchiveInstaller::xz,
-        FileType::TarArchive(TarKind::Bz2) => TarArchiveInstaller::bz2,
+        FileType::TarArchive(Compression::Gz) => TarArchiveInstaller::gz,
+        FileType::TarArchive(Compression::Xz) => TarArchiveInstaller::xz,
+        FileType::TarArchive(Compression::Bz2) => TarArchiveInstaller::bz2,
         FileType::ZipArchive => ZipArchiveInstaller::run,
     }
 }

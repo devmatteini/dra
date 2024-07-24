@@ -5,7 +5,7 @@ use std::{ffi::OsString, path::PathBuf};
 use crate::installer::error::InstallError;
 
 #[derive(Debug, Eq, PartialEq)]
-pub enum TarKind {
+pub enum Compression {
     Gz,
     Xz,
     Bz2,
@@ -14,7 +14,7 @@ pub enum TarKind {
 #[derive(Debug, Eq, PartialEq)]
 pub enum FileType {
     Debian,
-    TarArchive(TarKind),
+    TarArchive(Compression),
     ZipArchive,
 }
 
@@ -46,13 +46,13 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
         return Some(FileType::Debian);
     }
     if extension == "gz" || extension == "tgz" {
-        return Some(FileType::TarArchive(TarKind::Gz));
+        return Some(FileType::TarArchive(Compression::Gz));
     }
     if extension == "bz2" || extension == "tbz" {
-        return Some(FileType::TarArchive(TarKind::Bz2));
+        return Some(FileType::TarArchive(Compression::Bz2));
     }
     if extension == "xz" || extension == "txz" {
-        return Some(FileType::TarArchive(TarKind::Xz));
+        return Some(FileType::TarArchive(Compression::Xz));
     }
     if extension == "zip" {
         return Some(FileType::ZipArchive);
@@ -61,12 +61,12 @@ fn file_type_for(extension: OsString) -> Option<FileType> {
     None
 }
 
-impl Display for TarKind {
+impl Display for Compression {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match *self {
-            TarKind::Gz => f.write_str("gz"),
-            TarKind::Xz => f.write_str("xz"),
-            TarKind::Bz2 => f.write_str("bz2"),
+            Compression::Gz => f.write_str("gz"),
+            Compression::Xz => f.write_str("xz"),
+            Compression::Bz2 => f.write_str("bz2"),
         }
     }
 }
@@ -87,16 +87,16 @@ mod tests {
 
     use test_case::test_case;
 
-    use super::{validate_file, FileInfo, FileType, SupportedFileInfo, TarKind};
+    use super::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
     use crate::installer::error::InstallError;
 
     #[test_case("deb", FileType::Debian)]
-    #[test_case("gz", FileType::TarArchive(TarKind::Gz))]
-    #[test_case("tgz", FileType::TarArchive(TarKind::Gz))]
-    #[test_case("bz2", FileType::TarArchive(TarKind::Bz2))]
-    #[test_case("tbz", FileType::TarArchive(TarKind::Bz2))]
-    #[test_case("xz", FileType::TarArchive(TarKind::Xz))]
-    #[test_case("txz", FileType::TarArchive(TarKind::Xz))]
+    #[test_case("gz", FileType::TarArchive(Compression::Gz))]
+    #[test_case("tgz", FileType::TarArchive(Compression::Gz))]
+    #[test_case("bz2", FileType::TarArchive(Compression::Bz2))]
+    #[test_case("tbz", FileType::TarArchive(Compression::Bz2))]
+    #[test_case("xz", FileType::TarArchive(Compression::Xz))]
+    #[test_case("txz", FileType::TarArchive(Compression::Xz))]
     #[test_case("zip", FileType::ZipArchive)]
     fn supported_file(file_extension: &str, expected_file_type: FileType) {
         let file_info = any_file_info(Some(file_extension));
