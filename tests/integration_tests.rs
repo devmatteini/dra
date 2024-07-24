@@ -14,6 +14,9 @@ mod archives {
     #[test_case("helloworld.tar.bz2"; "tar bzip2")]
     #[test_case("helloworld.tar.xz"; "tar xz")]
     #[test_case("helloworld.zip"; "zip")]
+    #[test_case("helloworld-compressed-unix.gz"; "gzip")]
+    #[test_case("helloworld-compressed-unix.bz2"; "bzip2")]
+    #[test_case("helloworld-compressed-unix.xz"; "xz")]
     fn installed_successfully(asset: &str) {
         let output_dir = path_to_string(any_temp_dir());
 
@@ -35,6 +38,9 @@ mod archives {
     #[cfg(target_os = "windows")]
     #[test_case("helloworld-windows.tar.gz"; "tar gzip")]
     #[test_case("helloworld-windows.zip"; "zip")]
+    #[test_case("helloworld-compressed-windows.gz"; "gzip")]
+    #[test_case("helloworld-compressed-windows.bz2"; "bzip2")]
+    #[test_case("helloworld-compressed-windows.xz"; "xz")]
     fn installed_successfully(asset: &str) {
         let output_dir = path_to_string(any_temp_dir());
 
