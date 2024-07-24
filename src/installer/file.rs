@@ -47,14 +47,23 @@ fn file_type_for(file: &FileInfo) -> Option<FileType> {
     if file_name.ends_with(".deb") {
         return Some(FileType::Debian);
     }
-    if file_name.ends_with(".gz") || file_name.ends_with(".tgz") {
+    if file_name.ends_with(".tar.gz") || file_name.ends_with(".tgz") {
         return Some(FileType::TarArchive(Compression::Gz));
     }
-    if file_name.ends_with(".bz2") || file_name.ends_with(".tbz") {
+    if file_name.ends_with(".gz") {
+        return Some(FileType::CompressedFile(Compression::Gz));
+    }
+    if file_name.ends_with(".tar.bz2") || file_name.ends_with(".tbz") {
         return Some(FileType::TarArchive(Compression::Bz2));
     }
-    if file_name.ends_with(".xz") || file_name.ends_with(".txz") {
+    if file_name.ends_with(".bz2") {
+        return Some(FileType::CompressedFile(Compression::Bz2));
+    }
+    if file_name.ends_with(".tar.xz") || file_name.ends_with(".txz") {
         return Some(FileType::TarArchive(Compression::Xz));
+    }
+    if file_name.ends_with(".xz") || file_name.ends_with(".txz") {
+        return Some(FileType::CompressedFile(Compression::Xz));
     }
     if file_name.ends_with(".zip") {
         return Some(FileType::ZipArchive);
@@ -95,10 +104,13 @@ mod tests {
     #[test_case("file.deb", FileType::Debian)]
     #[test_case("file.tar.gz", FileType::TarArchive(Compression::Gz))]
     #[test_case("file.tgz", FileType::TarArchive(Compression::Gz))]
+    #[test_case("file.gz", FileType::CompressedFile(Compression::Gz))]
     #[test_case("file.tar.bz2", FileType::TarArchive(Compression::Bz2))]
     #[test_case("file.tbz", FileType::TarArchive(Compression::Bz2))]
+    #[test_case("file.bz2", FileType::CompressedFile(Compression::Bz2))]
     #[test_case("file.tar.xz", FileType::TarArchive(Compression::Xz))]
     #[test_case("file.txz", FileType::TarArchive(Compression::Xz))]
+    #[test_case("file.xz", FileType::CompressedFile(Compression::Xz))]
     #[test_case("file.zip", FileType::ZipArchive)]
     fn supported_file(file_name: &str, expected_file_type: FileType) {
         let file_info = any_file_info(file_name);
