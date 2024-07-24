@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{Read, Write};
+use std::io::Read;
 use std::path::Path;
 
 use crate::installer::InstallerResult;
@@ -54,16 +54,8 @@ impl CompressedFileInstaller {
         let mut destination_file = File::create(&executable_path)
             .map_fatal_err(format!("Error creating {}", executable_path.display()))?;
 
-        let mut buffer = [0; 1024];
-        while let Ok(bytes) = stream.read(&mut buffer) {
-            if bytes == 0 {
-                break;
-            }
-
-            destination_file
-                .write(&buffer[..bytes])
-                .map_fatal_err(format!("Error saving {}", executable_path.display()))?;
-        }
+        std::io::copy(&mut stream, &mut destination_file)
+            .map_fatal_err(format!("Error saving {}", executable_path.display()))?;
 
         set_executable_permissions(&executable_path)?;
 
