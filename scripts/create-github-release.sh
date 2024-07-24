@@ -27,7 +27,14 @@ release_message=$(git log -1 --pretty=%B)
 
 echo "version $version"
 
+optional_flags=()
+if [[ $version =~ alpha|beta ]]; then
+  echo "This is a pre-release"
+  optional_flags+=("--prerelease")
+fi
+
 gh release create "$version" \
   --title "$version" \
   --notes "$release_message" \
-  --repo "$GITHUB_REPOSITORY"
+  --repo "$GITHUB_REPOSITORY" \
+  "${optional_flags[@]}"
