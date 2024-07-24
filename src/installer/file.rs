@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 use std::path::Path;
-use std::{ffi::OsString, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::installer::error::InstallError;
 
@@ -23,7 +23,6 @@ pub enum FileType {
 pub struct FileInfo {
     pub path: PathBuf,
     pub name: String,
-    extension: Option<OsString>,
 }
 
 #[derive(Debug)]
@@ -87,7 +86,6 @@ impl FileInfo {
         FileInfo {
             path: PathBuf::from(path),
             name: String::from(name),
-            extension: Path::new(name).extension().map(OsString::from),
         }
     }
 }
@@ -137,12 +135,10 @@ mod tests {
 
     fn any_file_info(file_name: &str) -> FileInfo {
         let path = PathBuf::from(file_name);
-        let extension = path.extension().map(|x| x.into());
 
         FileInfo {
             path,
             name: file_name.to_string(),
-            extension,
         }
     }
 
