@@ -33,8 +33,7 @@ pub struct SupportedFileInfo {
 }
 
 pub fn validate_file(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
-    file.extension
-        .and_then(file_type_for)
+    file_type_for(&file)
         .map(|file_type| SupportedFileInfo {
             path: PathBuf::from(&file.path),
             file_type,
@@ -42,20 +41,22 @@ pub fn validate_file(file: FileInfo) -> Result<SupportedFileInfo, InstallError> 
         .ok_or_else(|| InstallError::not_supported(&file.name))
 }
 
-fn file_type_for(extension: OsString) -> Option<FileType> {
-    if extension == "deb" {
+fn file_type_for(file: &FileInfo) -> Option<FileType> {
+    let file_name = file.name.to_lowercase();
+
+    if file_name.ends_with(".deb") {
         return Some(FileType::Debian);
     }
-    if extension == "gz" || extension == "tgz" {
+    if file_name.ends_with(".gz") || file_name.ends_with(".tgz") {
         return Some(FileType::TarArchive(Compression::Gz));
     }
-    if extension == "bz2" || extension == "tbz" {
+    if file_name.ends_with(".bz2") || file_name.ends_with(".tbz") {
         return Some(FileType::TarArchive(Compression::Bz2));
     }
-    if extension == "xz" || extension == "txz" {
+    if file_name.ends_with(".xz") || file_name.ends_with(".txz") {
         return Some(FileType::TarArchive(Compression::Xz));
     }
-    if extension == "zip" {
+    if file_name.ends_with(".zip") {
         return Some(FileType::ZipArchive);
     }
 
@@ -91,24 +92,24 @@ mod tests {
     use super::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
     use crate::installer::error::InstallError;
 
-    #[test_case("deb", FileType::Debian)]
-    #[test_case("gz", FileType::TarArchive(Compression::Gz))]
-    #[test_case("tgz", FileType::TarArchive(Compression::Gz))]
-    #[test_case("bz2", FileType::TarArchive(Compression::Bz2))]
-    #[test_case("tbz", FileType::TarArchive(Compression::Bz2))]
-    #[test_case("xz", FileType::TarArchive(Compression::Xz))]
-    #[test_case("txz", FileType::TarArchive(Compression::Xz))]
-    #[test_case("zip", FileType::ZipArchive)]
-    fn supported_file(file_extension: &str, expected_file_type: FileType) {
-        let file_info = any_file_info(Some(file_extension));
+    #[test_case("file.deb", FileType::Debian)]
+    #[test_case("file.tar.gz", FileType::TarArchive(Compression::Gz))]
+    #[test_case("file.tgz", FileType::TarArchive(Compression::Gz))]
+    #[test_case("file.tar.bz2", FileType::TarArchive(Compression::Bz2))]
+    #[test_case("file.tbz", FileType::TarArchive(Compression::Bz2))]
+    #[test_case("file.tar.xz", FileType::TarArchive(Compression::Xz))]
+    #[test_case("file.txz", FileType::TarArchive(Compression::Xz))]
+    #[test_case("file.zip", FileType::ZipArchive)]
+    fn supported_file(file_name: &str, expected_file_type: FileType) {
+        let file_info = any_file_info(file_name);
         let result = validate_file(file_info);
 
         assert_ok_equal(expected_file_type, result);
     }
 
-    #[test_case("txt")]
-    fn not_supported(file_extension: &str) {
-        let file_info = any_file_info(Some(file_extension));
+    #[test_case("file.txt")]
+    fn not_supported(file_name: &str) {
+        let file_info = any_file_info(file_name);
         let result = validate_file(file_info);
 
         assert_not_supported(result);
@@ -116,17 +117,20 @@ mod tests {
 
     #[test]
     fn no_file_extension() {
-        let file_info = any_file_info(None);
+        let file_info = any_file_info("any_file");
         let result = validate_file(file_info);
 
         assert_not_supported(result);
     }
 
-    fn any_file_info(extension: Option<&str>) -> FileInfo {
+    fn any_file_info(file_name: &str) -> FileInfo {
+        let path = PathBuf::from(file_name);
+        let extension = path.extension().map(|x| x.into());
+
         FileInfo {
-            path: PathBuf::new(),
-            name: "ANY".into(),
-            extension: extension.map(|x| x.into()),
+            path,
+            name: file_name.to_string(),
+            extension,
         }
     }
 
