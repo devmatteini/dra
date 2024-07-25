@@ -116,7 +116,7 @@ fn executable_name_from(name: &str) -> String {
     if name.ends_with(".exe") {
         name.to_string()
     } else {
-        format!("{}.exe", name);
+        format!("{}.exe", name)
     }
 }
 
