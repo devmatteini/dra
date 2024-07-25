@@ -22,10 +22,12 @@ impl ArchiveInstaller {
     where
         F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
     {
+        let executable_name = executable_name_from(executable_name);
+
         let temp_dir = Self::create_temp_dir()?;
         extract_files(source, &temp_dir)?;
 
-        let executable = Self::find_executable(&temp_dir, executable_name)?;
+        let executable = Self::find_executable(&temp_dir, &executable_name)?;
 
         Self::copy_executable_to_destination_dir(executable, destination_dir)?;
         Self::cleanup(&temp_dir)?;
@@ -102,6 +104,20 @@ fn is_executable_file(_: &Path, metadata: std::fs::Metadata) -> bool {
 #[cfg(target_os = "windows")]
 fn is_executable_file(path: &Path, _: std::fs::Metadata) -> bool {
     path.extension().map(|x| x == "exe").unwrap_or(false)
+}
+
+#[cfg(target_family = "unix")]
+fn executable_name_from(name: &str) -> String {
+    name.to_string()
+}
+
+#[cfg(target_os = "windows")]
+fn executable_name_from(name: &str) -> String {
+    if name.ends_with(".exe") {
+        name.to_string()
+    } else {
+        format!("{}.exe", name);
+    }
 }
 
 #[derive(Clone)]
