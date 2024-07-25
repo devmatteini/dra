@@ -1,3 +1,5 @@
+mod assertions;
+mod docker;
 mod fs;
 
 mod archives {
@@ -7,6 +9,8 @@ mod archives {
     use crate::fs::{any_temp_dir, path_to_string};
     use assert_cmd::assert::OutputAssertExt;
     use assert_cmd::prelude::CommandCargoExt;
+
+    use crate::assertions::assert_file_exists;
 
     #[cfg(target_family = "unix")]
     #[test_case("helloworld.tar.gz"; "tar gzip")]
@@ -76,6 +80,52 @@ mod archives {
         result
             .failure()
             .stderr(predicates::str::contains("No executable found"));
+    }
+
+    #[cfg(target_family = "unix")]
+    #[test_case("helloworld-many-executables-unix.tar.gz", "helloworld-v2"; "install helloworld-v2")]
+    fn install_file_successfully(asset: &str, file: &str) {
+        let temp_dir = any_temp_dir();
+        let expected_installed_file = temp_dir.join(file);
+        let output_dir = path_to_string(temp_dir);
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-I", file])
+            .args(["-s", asset])
+            .args(["-o", &output_dir])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result
+            .success()
+            .stdout(predicates::str::contains("Installation completed"));
+        assert_file_exists(&expected_installed_file);
+    }
+
+    #[cfg(target_os = "windows")]
+    #[test_case("helloworld-many-executables-windows.zip", "helloworld-v2.exe"; "install helloworld-v2.exe")]
+    fn install_file_successfully(asset: &str, file: &str) {
+        let temp_dir = any_temp_dir();
+        let expected_installed_file = temp_dir.join(file);
+        let output_dir = path_to_string(temp_dir);
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-I", file])
+            .args(["-s", asset])
+            .args(["-o", &output_dir])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result
+            .success()
+            .stdout(predicates::str::contains("Installation completed"));
+        assert_file_exists(&expected_installed_file);
     }
 }
 

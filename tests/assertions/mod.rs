@@ -2,6 +2,7 @@
 #![allow(clippy::uninlined_format_args)]
 
 use crate::docker::ExecResult;
+use std::path::Path;
 
 pub fn assert_success(result: ExecResult) -> String {
     match result {
@@ -28,4 +29,10 @@ pub fn assert_contains(expected: &str, actual: &str) {
         actual,
         expected
     )
+}
+
+pub fn assert_file_exists(path: &Path) {
+    if !path.exists() {
+        panic!("File does not exist: {:?}", path)
+    }
 }
