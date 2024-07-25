@@ -64,15 +64,24 @@ pub enum Command {
 
         /// Install downloaded asset
         ///
-        /// If the downloaded asset is a supported file, it will try to install it.
+        /// Supported assets are:
         ///
-        /// For archives, if many executables are found, you can specify which one to install (default value is repository name)
+        /// - Debian packages (`.deb`)
+        ///
+        /// - Tar archives (`.tar.gz`, `.tgz`, `.tar.bz2`, `.tbz`, `.tar.xz`, `.txz`)
+        ///
+        /// - Zip files (`.zip`)
+        ///
+        /// - Compressed files (`.gz`, `.bz2`, `.xz`)
+        ///
+        /// If a tar archive or zip file contains more than one executable,
+        /// and it can't detect automatically which one to install, you can use `-I/--install-file <file>`.
         #[arg(short, long, group = "install-feature")]
         install: bool,
 
         /// Install downloaded asset and select which file to install
         ///
-        /// Same rules as `--install` apply to this option
+        /// The only difference with basic `-i/--install` is that you can select which file to install when there are multiple executables in the archive/zip file.
         #[arg(short = 'I', long, group = "install-feature")]
         install_file: Option<String>,
     },
