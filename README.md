@@ -148,6 +148,7 @@ Supported assets that can be installed are:
 - Debian packages (`.deb`)
 - Tar archive with executable (`.tar.[gz|bz2|xz]`, `.tgz`, `.tbz`, `.txz`)
 - Zip file with executable (`.zip`)
+- Compressed files (`.gz`, `.bz2`, `.xz`)
 
 ### Private repositories & rate limit
 
