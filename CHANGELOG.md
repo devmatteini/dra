@@ -7,6 +7,29 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+This release improves the `install` feature on several points.
+
+### Added
+
+- `dra download -I/--install-file <file>` option to install a specific executable file.
+
+  For example, if you want to download the `install.sh` script inside the release asset you can run:
+  `dra download -s helloworld-many-executables-unix.tar.gz -I install.sh devmatteini/dra-tests`
+
+### Changed
+
+- There is a new system to detect the right executable to install when many are available
+- Improved help messages for `dra-download` install feature
+
+### Fixed
+
+- Install of compressed files, like `.gz,` `.bz2`, `.xz`. Before they were treated as tar archives, which was obviously wrong
+- Find executables in deeply nested directories when installing from a tar archive or zip file
+
+### Development
+
+- Extend release infrastructure to be able to create alpha/beta releases.
+
 ## [0.5.4] - 2024-07-20
 
 ### Added
