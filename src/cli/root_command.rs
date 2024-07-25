@@ -67,8 +67,14 @@ pub enum Command {
         /// If the downloaded asset is a supported file, it will try to install it.
         ///
         /// For archives, if many executables are found, you can specify which one to install (default value is repository name)
-        #[arg(short, long)]
-        install: Option<Option<String>>,
+        #[arg(short, long, group = "install-feature")]
+        install: bool,
+
+        /// Install downloaded asset and select which file to install
+        ///
+        /// Same rules as `--install` apply to this option
+        #[arg(short = 'I', long, group = "install-feature")]
+        install_file: Option<String>,
     },
 
     /// Select an asset and generate an untagged version of it

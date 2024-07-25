@@ -40,7 +40,10 @@ fn run(cli: Cli) -> HandlerResult {
             tag,
             output,
             install,
-        } => DownloadHandler::new(repo, select, automatic, tag, output, install).run(),
+            install_file,
+        } => {
+            DownloadHandler::new(repo, select, automatic, tag, output, install, install_file).run()
+        }
         Command::Untag { repo } => UntagHandler::new(repo).run(),
         Command::Completion { shell } => CompletionHandler::new(shell).run(),
     }

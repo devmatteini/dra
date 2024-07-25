@@ -49,12 +49,11 @@ enum Install {
 }
 
 impl Install {
-    fn new(install: Option<Option<String>>, repository: &Repository) -> Self {
-        match install {
-            Some(executable_name) => {
-                Self::Yes(executable_name.unwrap_or_else(|| repository.repo.clone()))
-            }
-            _ => Self::No,
+    fn new(install: bool, install_file: Option<String>, repository: &Repository) -> Self {
+        match (install_file, install) {
+            (Some(executable_name), _) => Self::Yes(executable_name),
+            (_, true) => Self::Yes(repository.repo.clone()),
+            (None, false) => Self::No,
         }
     }
 
@@ -73,9 +72,10 @@ impl DownloadHandler {
         automatic: bool,
         tag: Option<String>,
         output: Option<PathBuf>,
-        install: Option<Option<String>>,
+        install: bool,
+        install_file: Option<String>,
     ) -> Self {
-        let install = Install::new(install, &repository);
+        let install = Install::new(install, install_file, &repository);
         DownloadHandler {
             repository,
             mode: DownloadMode::new(select.clone(), automatic),
