@@ -24,7 +24,7 @@ clap = { version = "4.5.13", features = ["derive"] }
 clap_complete = "4.5.8"
 dialoguer = "0.11.0"
 indicatif = "0.17.8"
-uuid = { version = "1.9.1", features = ["v4"] }
+uuid = { version = "1.10.0", features = ["v4"] }
 ctrlc = "3.4.4"
 walkdir = "2.5.0"
 zip = { version = "0.6.6", default-features = false, features = ["deflate"] }
