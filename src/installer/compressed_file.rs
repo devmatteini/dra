@@ -4,35 +4,38 @@ use std::path::Path;
 
 use crate::installer::InstallerResult;
 
-use super::error::{InstallError, InstallErrorMapErr};
+use super::{
+    error::{InstallError, InstallErrorMapErr},
+    Executable,
+};
 
 pub struct CompressedFileInstaller;
 
 impl CompressedFileInstaller {
-    pub fn gz(source: &Path, destination_dir: &Path, executable_name: &str) -> InstallerResult {
+    pub fn gz(source: &Path, destination_dir: &Path, executable: &Executable) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(flate2::read::GzDecoder::new(file)),
             source,
             destination_dir,
-            executable_name,
+            executable,
         )
     }
 
-    pub fn xz(source: &Path, destination_dir: &Path, executable_name: &str) -> InstallerResult {
+    pub fn xz(source: &Path, destination_dir: &Path, executable: &Executable) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(xz2::read::XzDecoder::new(file)),
             source,
             destination_dir,
-            executable_name,
+            executable,
         )
     }
 
-    pub fn bz2(source: &Path, destination_dir: &Path, executable_name: &str) -> InstallerResult {
+    pub fn bz2(source: &Path, destination_dir: &Path, executable: &Executable) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(bzip2::read::BzDecoder::new(file)),
             source,
             destination_dir,
-            executable_name,
+            executable,
         )
     }
 
@@ -40,7 +43,7 @@ impl CompressedFileInstaller {
         decode: D,
         source: &Path,
         destination_dir: &Path,
-        executable_name: &str,
+        executable: &Executable,
     ) -> Result<(), InstallError>
     where
         D: FnOnce(File) -> Box<dyn Read>,
@@ -50,7 +53,7 @@ impl CompressedFileInstaller {
 
         let mut stream = decode(compressed_file);
 
-        let executable_path = destination_dir.join(executable_name);
+        let executable_path = destination_dir.join(executable.name());
         let mut destination_file = File::create(&executable_path)
             .map_fatal_err(format!("Error creating {}", executable_path.display()))?;
 

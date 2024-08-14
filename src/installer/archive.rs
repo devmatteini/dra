@@ -9,6 +9,7 @@ use crate::installer::error::InstallErrorMapErr;
 use crate::installer::InstallerResult;
 
 use super::error::InstallError;
+use super::Executable;
 
 pub struct ArchiveInstaller;
 
@@ -17,12 +18,12 @@ impl ArchiveInstaller {
         extract_files: F,
         source: &Path,
         destination_dir: &Path,
-        executable_name: &str,
+        executable: &Executable,
     ) -> InstallerResult
     where
         F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
     {
-        let executable_name = executable_name_from(executable_name);
+        let executable_name = executable_name_from(executable.name());
 
         let temp_dir = Self::create_temp_dir()?;
         extract_files(source, &temp_dir)?;
@@ -157,7 +158,7 @@ mod tests {
     use std::os::unix::fs::PermissionsExt;
     use std::path::{Path, PathBuf};
 
-    use crate::installer::{error::InstallError, InstallerResult};
+    use crate::installer::{error::InstallError, Executable, InstallerResult};
 
     use super::ArchiveInstaller;
 
@@ -174,7 +175,7 @@ mod tests {
             },
             &any_directory_path(),
             &destination_dir,
-            ANY_EXECUTABLE_NAME,
+            &any_executable_name(),
         );
 
         assert_ok(result);
@@ -193,7 +194,7 @@ mod tests {
             },
             &any_directory_path(),
             &destination_dir,
-            ANY_EXECUTABLE_NAME,
+            &any_executable_name(),
         );
 
         assert_no_executable(result);
@@ -214,7 +215,7 @@ mod tests {
             },
             &any_directory_path(),
             &destination_dir,
-            ANY_EXECUTABLE_NAME,
+            &any_executable_name(),
         );
 
         assert_ok(result);
@@ -225,24 +226,24 @@ mod tests {
     fn many_executable_select_preferred() {
         let destination_dir = temp_dir("many_executable_select_preferred");
 
-        let executable_name = "mytool";
+        let executable_name = Executable::Selected("mytool".to_string());
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
                 create_file(temp_dir, "README.md");
                 create_file(temp_dir, "LICENSE");
                 create_executable_file(temp_dir, "some-random-script");
-                create_executable_file(temp_dir, executable_name);
+                create_executable_file(temp_dir, executable_name.name());
                 create_executable_file(temp_dir, "mytool-v2");
                 Ok(())
             },
             &any_directory_path(),
             &destination_dir,
-            executable_name,
+            &executable_name,
         );
 
         assert_ok(result);
-        assert_file_exists(executable_path(&destination_dir, executable_name))
+        assert_file_exists(executable_path(&destination_dir, executable_name.name()))
     }
 
     #[test]
@@ -260,13 +261,15 @@ mod tests {
             },
             &any_directory_path(),
             &destination_dir,
-            ANY_EXECUTABLE_NAME,
+            &any_executable_name(),
         );
 
         assert_too_many_candidates(vec!["some-random-script", "mytool", "install.sh"], result)
     }
 
-    const ANY_EXECUTABLE_NAME: &str = "ANY_EXECUTABLE_NAME";
+    fn any_executable_name() -> Executable {
+        Executable::Default(String::from("ANY_EXECUTABLE_NAME"))
+    }
 
     #[cfg(target_family = "unix")]
     fn create_executable_file(directory: &Path, name_without_extension: &str) -> PathBuf {
