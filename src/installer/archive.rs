@@ -279,7 +279,8 @@ mod tests {
     #[test]
     fn selected_executable_not_found() {
         let destination_dir = temp_dir("selected_executable_not_found");
-        let executable = Executable::Selected(executable_name("mytool"));
+        let mytool = executable_name("mytool");
+        let executable = Executable::Selected(mytool.clone());
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -295,7 +296,7 @@ mod tests {
             &executable,
         );
 
-        assert_executable_not_found(result, "mytool")
+        assert_executable_not_found(result, &mytool)
     }
 
     #[test]
