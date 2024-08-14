@@ -8,6 +8,7 @@ pub enum InstallError {
     Fatal(String),
     NoExecutable,
     TooManyExecutableCandidates(Vec<String>),
+    ExecutableNotFound(String),
 }
 
 impl InstallError {
@@ -35,6 +36,10 @@ impl std::fmt::Display for InstallError {
                 }
                 f.write_str("\nYou can use --install-file <INSTALL_FILE> instead")?;
                 Ok(())
+            }
+            InstallError::ExecutableNotFound(executable) => {
+                let message = format!("Executable {} not found", executable);
+                f.write_str(&message)
             }
         }
     }
