@@ -1,5 +1,7 @@
 // NOTE: this rule is not supported by rust-analyzer or JetBrains Rust plugin go to definition/refactoring tools so disable it until it's supported properly
 #![allow(clippy::uninlined_format_args)]
+// NOTE: this is needed because clippy gives false positives when compiling each integration test in different crates
+#![allow(dead_code)]
 
 use crate::docker::ExecResult;
 use std::path::Path;

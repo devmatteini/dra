@@ -1,3 +1,6 @@
+// NOTE: this is needed because clippy gives false positives when compiling each integration test in different crates
+#![allow(dead_code)]
+
 use std::path::PathBuf;
 
 pub fn any_temp_dir() -> PathBuf {
