@@ -42,8 +42,8 @@ mod archives {
     }
 
     #[cfg(target_os = "windows")]
-    #[test_case("helloworld-windows.tar.gz", "helloworld"; "tar gzip")]
-    #[test_case("helloworld-windows.zip", "helloworld"; "zip")]
+    #[test_case("helloworld-windows.tar.gz", "helloworld.exe"; "tar gzip")]
+    #[test_case("helloworld-windows.zip", "helloworld.exe"; "zip")]
     #[test_case("helloworld-compressed-windows.gz", "dra-tests"; "gzip")]
     #[test_case("helloworld-compressed-windows.bz2", "dra-tests"; "bzip2")]
     #[test_case("helloworld-compressed-windows.xz", "dra-tests"; "xz")]
