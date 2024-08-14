@@ -70,7 +70,7 @@ impl CompressedFileInstaller {
 fn set_executable_permissions(path: &Path) -> Result<(), InstallError> {
     use std::os::unix::fs::PermissionsExt;
 
-    std::fs::set_permissions(&path, PermissionsExt::from_mode(0o755)).map_fatal_err(format!(
+    std::fs::set_permissions(path, PermissionsExt::from_mode(0o755)).map_fatal_err(format!(
         "Cannot set executable permissions on {}",
         path.display(),
     ))
