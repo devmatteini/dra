@@ -13,16 +13,16 @@ mod archives {
     use crate::assertions::assert_file_exists;
 
     #[cfg(target_family = "unix")]
-    #[test_case("helloworld.tar.gz"; "tar gzip")]
-    #[test_case("helloworld.tgz"; "tar tgz")]
-    #[test_case("helloworld.tar.bz2"; "tar bzip2")]
-    #[test_case("helloworld.tar.xz"; "tar xz")]
-    #[test_case("helloworld.zip"; "zip")]
-    #[test_case("helloworld-compressed-unix.gz"; "gzip")]
-    #[test_case("helloworld-compressed-unix.bz2"; "bzip2")]
-    #[test_case("helloworld-compressed-unix.xz"; "xz")]
-    fn installed_successfully(asset: &str) {
-        let output_dir = path_to_string(any_temp_dir());
+    #[test_case("helloworld.tar.gz", "helloworld"; "tar gzip")]
+    #[test_case("helloworld.tgz", "helloworld"; "tar tgz")]
+    #[test_case("helloworld.tar.bz2", "helloworld"; "tar bzip2")]
+    #[test_case("helloworld.tar.xz", "helloworld"; "tar xz")]
+    #[test_case("helloworld.zip", "helloworld"; "zip")]
+    #[test_case("helloworld-compressed-unix.gz", "dra-tests"; "gzip")]
+    #[test_case("helloworld-compressed-unix.bz2", "dra-tests"; "bzip2")]
+    #[test_case("helloworld-compressed-unix.xz", "dra-tests"; "xz")]
+    fn installed_successfully(asset: &str, expected_executable: &str) {
+        let output_dir = any_temp_dir();
 
         let mut cmd = Command::cargo_bin("dra").unwrap();
 
@@ -30,23 +30,25 @@ mod archives {
             .arg("download")
             .arg("-i")
             .args(["-s", asset])
-            .args(["-o", &output_dir])
+            .args(["-o", &path_to_string(output_dir.clone())])
             .arg("devmatteini/dra-tests")
             .assert();
 
         result
             .success()
             .stdout(predicates::str::contains("Installation completed"));
+
+        assert_file_exists(output_dir.join(expected_executable).as_path());
     }
 
     #[cfg(target_os = "windows")]
-    #[test_case("helloworld-windows.tar.gz"; "tar gzip")]
-    #[test_case("helloworld-windows.zip"; "zip")]
-    #[test_case("helloworld-compressed-windows.gz"; "gzip")]
-    #[test_case("helloworld-compressed-windows.bz2"; "bzip2")]
-    #[test_case("helloworld-compressed-windows.xz"; "xz")]
-    fn installed_successfully(asset: &str) {
-        let output_dir = path_to_string(any_temp_dir());
+    #[test_case("helloworld-windows.tar.gz", "helloworld"; "tar gzip")]
+    #[test_case("helloworld-windows.zip", "helloworld"; "zip")]
+    #[test_case("helloworld-compressed-windows.gz", "dra-tests"; "gzip")]
+    #[test_case("helloworld-compressed-windows.bz2", "dra-tests"; "bzip2")]
+    #[test_case("helloworld-compressed-windows.xz", "dra-tests"; "xz")]
+    fn installed_successfully(asset: &str, expected_executable: &str) {
+        let output_dir = any_temp_dir();
 
         let mut cmd = Command::cargo_bin("dra").unwrap();
 
@@ -54,13 +56,15 @@ mod archives {
             .arg("download")
             .arg("-i")
             .args(["-s", asset])
-            .args(["-o", &output_dir])
+            .args(["-o", &path_to_string(output_dir.clone())])
             .arg("devmatteini/dra-tests")
             .assert();
 
         result
             .success()
             .stdout(predicates::str::contains("Installation completed"));
+
+        assert_file_exists(output_dir.join(expected_executable).as_path());
     }
 
     #[test]
