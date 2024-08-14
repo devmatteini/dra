@@ -19,6 +19,21 @@ mod file;
 mod tar_archive;
 mod zip_archive;
 
+#[derive(Debug)]
+pub enum Executable {
+    Default(String),
+    Selected(String),
+}
+
+impl Executable {
+    pub fn name(&self) -> &str {
+        match self {
+            Executable::Default(name) => name,
+            Executable::Selected(name) => name,
+        }
+    }
+}
+
 pub fn install(
     asset_name: String,
     source: &Path,

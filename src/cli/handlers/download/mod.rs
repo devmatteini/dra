@@ -15,6 +15,7 @@ use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
 use crate::installer::cleanup::InstallCleanup;
+use crate::installer::Executable;
 use crate::{github, installer};
 
 mod find_asset_by_system;
@@ -45,14 +46,14 @@ impl DownloadMode {
 
 enum Install {
     No,
-    Yes(String),
+    Yes(Executable),
 }
 
 impl Install {
     fn new(install: bool, install_file: Option<String>, repository: &Repository) -> Self {
         match (install_file, install) {
-            (Some(executable_name), _) => Self::Yes(executable_name),
-            (_, true) => Self::Yes(repository.repo.clone()),
+            (Some(executable_name), _) => Self::Yes(Executable::Selected(executable_name)),
+            (_, true) => Self::Yes(Executable::Default(repository.repo.clone())),
             (None, false) => Self::No,
         }
     }
@@ -138,7 +139,7 @@ impl DownloadHandler {
     fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
         match &self.install {
             Install::No => Ok(()),
-            Install::Yes(executable_name) => {
+            Install::Yes(executable) => {
                 let destination_dir = self.output_dir_or_cwd()?;
                 let spinner = Spinner::install_layout();
                 spinner.show();
@@ -147,7 +148,7 @@ impl DownloadHandler {
                     asset_name.to_string(),
                     path,
                     &destination_dir,
-                    &executable_name,
+                    executable.name(),
                 )
                 .cleanup(path)
                 .map_err(|x| HandlerError::new(x.to_string()))?;
