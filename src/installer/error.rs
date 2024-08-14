@@ -33,6 +33,7 @@ impl std::fmt::Display for InstallError {
                     let message = format!("- {}\n", candidate);
                     f.write_str(&message)?;
                 }
+                f.write_str("\nYou can use --install-file <INSTALL_FILE> instead")?;
                 Ok(())
             }
         }
