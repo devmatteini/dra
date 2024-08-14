@@ -55,8 +55,21 @@ impl ArchiveInstaller {
             .map(ExecutableFile::from_file)
             .collect();
 
-        let preferred = executables.iter().find(|x| x.name == executable.name());
-        if let Some(executable) = preferred {
+        match executable {
+            Executable::Default(name) => {
+                Self::find_default_executable(executables, name, directory)
+            }
+            Executable::Selected(name) => Self::find_selected_executable(executables, name),
+        }
+    }
+
+    fn find_default_executable(
+        executables: Vec<ExecutableFile>,
+        executable_name: &str,
+        directory: &Path,
+    ) -> Result<ExecutableFile, InstallError> {
+        let default_executable = executables.iter().find(|x| x.name == executable_name);
+        if let Some(executable) = default_executable {
             return Ok(executable.clone());
         }
 
@@ -65,6 +78,16 @@ impl ArchiveInstaller {
             [x] => Ok(x.clone()),
             candidates => Err(too_many_executable_candidates(candidates, directory)),
         }
+    }
+
+    fn find_selected_executable(
+        executables: Vec<ExecutableFile>,
+        executable_name: &str,
+    ) -> Result<ExecutableFile, InstallError> {
+        executables
+            .into_iter()
+            .find(|x| x.name == executable_name)
+            .ok_or_else(|| InstallError::ExecutableNotFound(executable_name.to_string()))
     }
 
     fn is_executable(x: &walkdir::DirEntry) -> bool {
@@ -147,28 +170,52 @@ mod tests {
     use super::ArchiveInstaller;
 
     #[test]
-    fn single_executable() {
-        let destination_dir = temp_dir("single_executable");
+    fn default_executable_with_default_name() {
+        let destination_dir = temp_dir("default_executable_with_default_name");
+        let executable = Executable::Default(executable_name("my-tool"));
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
                 create_file(temp_dir, "README.md");
                 create_file(temp_dir, "LICENSE");
-                create_executable_file(temp_dir, "my-executable");
+                create_executable_file(temp_dir, "another-tool");
+                create_executable_file(temp_dir, "my-tool");
                 Ok(())
             },
             &any_directory_path(),
             &destination_dir,
-            &any_executable_name(),
+            &executable,
         );
 
         assert_ok(result);
-        assert_file_exists(executable_path(&destination_dir, "my-executable"))
+        assert_file_exists(executable_path(&destination_dir, "my-tool"))
     }
 
     #[test]
-    fn no_executable() {
-        let destination_dir = temp_dir("no_executable");
+    fn default_executable_with_single_executable() {
+        let destination_dir = temp_dir("default_executable_with_single_executable");
+        let executable = Executable::Default(executable_name("long-tool-name"));
+
+        let result = ArchiveInstaller::run(
+            |_, temp_dir| {
+                create_file(temp_dir, "README.md");
+                create_file(temp_dir, "LICENSE");
+                create_executable_file(temp_dir, "ltn");
+                Ok(())
+            },
+            &any_directory_path(),
+            &destination_dir,
+            &executable,
+        );
+
+        assert_ok(result);
+        assert_file_exists(executable_path(&destination_dir, "ltn"))
+    }
+
+    #[test]
+    fn default_executable_with_no_executable() {
+        let destination_dir = temp_dir("default_executable_with_no_executable");
+        let executable = Executable::Default(executable_name("my-tool"));
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -178,61 +225,16 @@ mod tests {
             },
             &any_directory_path(),
             &destination_dir,
-            &any_executable_name(),
+            &executable,
         );
 
         assert_no_executable(result);
     }
 
     #[test]
-    fn executable_inside_nested_directory() {
-        let destination_dir = temp_dir("executable_inside_nested_directory");
-
-        let result = ArchiveInstaller::run(
-            |_, temp_dir| {
-                let nested_dir = create_dir(temp_dir, "nested");
-                create_file(&nested_dir, "README.md");
-                create_file(&nested_dir, "LICENSE");
-                create_executable_file(&nested_dir, "my-executable");
-
-                Ok(())
-            },
-            &any_directory_path(),
-            &destination_dir,
-            &any_executable_name(),
-        );
-
-        assert_ok(result);
-        assert_file_exists(executable_path(&destination_dir, "my-executable"))
-    }
-
-    #[test]
-    fn many_executable_select_preferred() {
-        let destination_dir = temp_dir("many_executable_select_preferred");
-
-        let executable_name = Executable::Selected(executable_name("mytool"));
-
-        let result = ArchiveInstaller::run(
-            |_, temp_dir| {
-                create_file(temp_dir, "README.md");
-                create_file(temp_dir, "LICENSE");
-                create_executable_file(temp_dir, "some-random-script");
-                create_executable_file(temp_dir, executable_name.name());
-                create_executable_file(temp_dir, "mytool-v2");
-                Ok(())
-            },
-            &any_directory_path(),
-            &destination_dir,
-            &executable_name,
-        );
-
-        assert_ok(result);
-        assert_file_exists(executable_path(&destination_dir, executable_name.name()))
-    }
-
-    #[test]
-    fn many_executable_no_matches() {
-        let destination_dir = temp_dir("many_executable_no_matches");
+    fn default_executable_with_many_executable_candidates() {
+        let destination_dir = temp_dir("default_executable_with_many_executable_candidates");
+        let executable = Executable::Default(executable_name("my-tool"));
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -245,13 +247,80 @@ mod tests {
             },
             &any_directory_path(),
             &destination_dir,
-            &any_executable_name(),
+            &executable,
         );
 
         assert_too_many_candidates(vec!["some-random-script", "mytool", "install.sh"], result)
     }
 
-    fn any_executable_name() -> Executable {
+    #[test]
+    fn selected_executable_found() {
+        let destination_dir = temp_dir("selected_executable_found");
+        let executable = Executable::Selected(executable_name("mytool"));
+
+        let result = ArchiveInstaller::run(
+            |_, temp_dir| {
+                create_file(temp_dir, "README.md");
+                create_file(temp_dir, "LICENSE");
+                create_executable_file(temp_dir, "some-random-script");
+                create_executable_file(temp_dir, "mytool");
+                create_executable_file(temp_dir, "mytool-v2");
+                Ok(())
+            },
+            &any_directory_path(),
+            &destination_dir,
+            &executable,
+        );
+
+        assert_ok(result);
+        assert_file_exists(executable_path(&destination_dir, executable.name()))
+    }
+
+    #[test]
+    fn selected_executable_not_found() {
+        let destination_dir = temp_dir("selected_executable_not_found");
+        let executable = Executable::Selected(executable_name("mytool"));
+
+        let result = ArchiveInstaller::run(
+            |_, temp_dir| {
+                create_file(temp_dir, "README.md");
+                create_file(temp_dir, "LICENSE");
+                create_executable_file(temp_dir, "some-random-script");
+                create_executable_file(temp_dir, "my-tool");
+                create_executable_file(temp_dir, "my-tool-v2");
+                Ok(())
+            },
+            &any_directory_path(),
+            &destination_dir,
+            &executable,
+        );
+
+        assert_executable_not_found(result, "mytool")
+    }
+
+    #[test]
+    fn executable_inside_nested_directory() {
+        let destination_dir = temp_dir("executable_inside_nested_directory");
+        let executable = any_default_executable_name();
+
+        let result = ArchiveInstaller::run(
+            |_, temp_dir| {
+                let nested_dir = create_dir(temp_dir, "nested");
+                create_file(&nested_dir, "README.md");
+                create_file(&nested_dir, "LICENSE");
+                create_executable_file(&nested_dir, "my-executable");
+                Ok(())
+            },
+            &any_directory_path(),
+            &destination_dir,
+            &executable,
+        );
+
+        assert_ok(result);
+        assert_file_exists(executable_path(&destination_dir, "my-executable"))
+    }
+
+    fn any_default_executable_name() -> Executable {
         Executable::Default(executable_name("ANY_EXECUTABLE_NAME"))
     }
 
@@ -360,6 +429,22 @@ mod tests {
                         "Installer error is not TooManyExecutableCandidates: {:?}",
                         e
                     );
+                }
+            },
+        }
+    }
+
+    fn assert_executable_not_found(result: InstallerResult, expected_name: &str) {
+        match result {
+            Ok(_) => {
+                panic!("No installer error");
+            }
+            Err(e) => match e {
+                InstallError::ExecutableNotFound(name) => {
+                    assert_eq!(expected_name, name);
+                }
+                _ => {
+                    panic!("Installer error is not NoExecutable: {:?}", e);
                 }
             },
         }
