@@ -23,12 +23,10 @@ impl ArchiveInstaller {
     where
         F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
     {
-        let executable_name = executable_name_from(executable.name());
-
         let temp_dir = Self::create_temp_dir()?;
         extract_files(source, &temp_dir)?;
 
-        let executable = Self::find_executable(&temp_dir, &executable_name)?;
+        let executable = Self::find_executable(&temp_dir, executable.name())?;
 
         Self::copy_executable_to_destination_dir(executable, destination_dir)?;
         Self::cleanup(&temp_dir)?;
@@ -105,20 +103,6 @@ fn is_executable_file(_: &Path, metadata: std::fs::Metadata) -> bool {
 #[cfg(target_os = "windows")]
 fn is_executable_file(path: &Path, _: std::fs::Metadata) -> bool {
     path.extension().map(|x| x == "exe").unwrap_or(false)
-}
-
-#[cfg(target_family = "unix")]
-fn executable_name_from(name: &str) -> String {
-    name.to_string()
-}
-
-#[cfg(target_os = "windows")]
-fn executable_name_from(name: &str) -> String {
-    if name.ends_with(".exe") {
-        name.to_string()
-    } else {
-        format!("{}.exe", name)
-    }
 }
 
 #[derive(Clone)]
@@ -226,7 +210,7 @@ mod tests {
     fn many_executable_select_preferred() {
         let destination_dir = temp_dir("many_executable_select_preferred");
 
-        let executable_name = Executable::Selected("mytool".to_string());
+        let executable_name = Executable::Selected(executable_name("mytool"));
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -268,29 +252,37 @@ mod tests {
     }
 
     fn any_executable_name() -> Executable {
-        Executable::Default(String::from("ANY_EXECUTABLE_NAME"))
+        Executable::Default(executable_name("ANY_EXECUTABLE_NAME"))
     }
 
     #[cfg(target_family = "unix")]
-    fn create_executable_file(directory: &Path, name_without_extension: &str) -> PathBuf {
-        let path = executable_path(directory, name_without_extension);
+    fn create_executable_file(directory: &Path, name: &str) -> PathBuf {
+        let path = executable_path(directory, name);
         std::fs::File::create(&path).unwrap();
         std::fs::set_permissions(&path, PermissionsExt::from_mode(0o755)).unwrap();
         path
     }
 
     #[cfg(target_os = "windows")]
-    fn create_executable_file(directory: &Path, name_without_extension: &str) -> PathBuf {
-        let path = executable_path(directory, name_without_extension);
+    fn create_executable_file(directory: &Path, name: &str) -> PathBuf {
+        let path = executable_path(directory, name);
         std::fs::File::create(&path).unwrap();
         path
     }
 
-    fn executable_path(directory: &Path, name_without_extension: &str) -> PathBuf {
+    fn executable_path(directory: &Path, name: &str) -> PathBuf {
+        directory.join(executable_name(name))
+    }
+
+    fn executable_name(name: &str) -> String {
         if cfg!(target_os = "windows") {
-            directory.join(format!("{}.exe", name_without_extension))
+            if name.ends_with(".exe") {
+                name.to_string()
+            } else {
+                format!("{}.exe", name)
+            }
         } else {
-            directory.join(name_without_extension)
+            name.to_string()
         }
     }
 
