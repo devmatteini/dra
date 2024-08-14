@@ -38,12 +38,12 @@ pub fn install(
     asset_name: String,
     source: &Path,
     destination_dir: &Path,
-    executable_name: &str,
+    executable: &Executable,
 ) -> Result<(), InstallError> {
     let file_info = file_info_from(&asset_name, source).and_then(validate_file)?;
     let installer = find_installer_for(&file_info.file_type);
 
-    installer(&file_info.path, destination_dir, executable_name)
+    installer(&file_info.path, destination_dir, executable.name())
 }
 
 type InstallerResult = Result<(), InstallError>;
