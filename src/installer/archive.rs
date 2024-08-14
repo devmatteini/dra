@@ -26,7 +26,7 @@ impl ArchiveInstaller {
         let temp_dir = Self::create_temp_dir()?;
         extract_files(source, &temp_dir)?;
 
-        let executable = Self::find_executable(&temp_dir, executable.name())?;
+        let executable = Self::find_executable(&temp_dir, executable)?;
 
         Self::copy_executable_to_destination_dir(executable, destination_dir)?;
         Self::cleanup(&temp_dir)?;
@@ -43,7 +43,7 @@ impl ArchiveInstaller {
 
     fn find_executable(
         directory: &Path,
-        executable_name: &str,
+        executable: &Executable,
     ) -> Result<ExecutableFile, InstallError> {
         let ignore_error = |result: walkdir::Result<walkdir::DirEntry>| result.ok();
 
@@ -55,7 +55,7 @@ impl ArchiveInstaller {
             .map(ExecutableFile::from_file)
             .collect();
 
-        let preferred = executables.iter().find(|x| x.name == executable_name);
+        let preferred = executables.iter().find(|x| x.name == executable.name());
         if let Some(executable) = preferred {
             return Ok(executable.clone());
         }
