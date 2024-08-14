@@ -1,4 +1,5 @@
 use std::fmt::{Display, Formatter};
+use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 
@@ -17,6 +18,7 @@ pub enum FileType {
     TarArchive(Compression),
     ZipArchive,
     CompressedFile(Compression),
+    ExecutableFile,
 }
 
 #[derive(Debug)]
@@ -67,8 +69,27 @@ fn file_type_for(file: &FileInfo) -> Option<FileType> {
     if file_name.ends_with(".zip") {
         return Some(FileType::ZipArchive);
     }
+    if is_elf_file(&file.path) || file_name.ends_with(".exe") {
+        return Some(FileType::ExecutableFile);
+    }
 
     None
+}
+
+fn is_elf_file(path: &Path) -> bool {
+    check_elf_file(path).unwrap_or(false)
+}
+
+// https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
+const ELF_MAGIC_NUMBER: [u8; 4] = [0x7F, b'E', b'L', b'F'];
+
+fn check_elf_file(path: &Path) -> std::io::Result<bool> {
+    let mut file = std::fs::File::open(path)?;
+    let mut header = [0u8; 4];
+
+    file.read_exact(&mut header)?;
+
+    Ok(header == ELF_MAGIC_NUMBER)
 }
 
 impl Display for Compression {
@@ -92,11 +113,13 @@ impl FileInfo {
 
 #[cfg(test)]
 mod tests {
-    use std::path::PathBuf;
+    use std::{io::Write, path::PathBuf};
 
     use test_case::test_case;
 
-    use super::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
+    use super::{
+        validate_file, Compression, FileInfo, FileType, SupportedFileInfo, ELF_MAGIC_NUMBER,
+    };
     use crate::installer::error::InstallError;
 
     #[test_case("file.deb", FileType::Debian)]
@@ -110,11 +133,21 @@ mod tests {
     #[test_case("file.txz", FileType::TarArchive(Compression::Xz))]
     #[test_case("file.xz", FileType::CompressedFile(Compression::Xz))]
     #[test_case("file.zip", FileType::ZipArchive)]
+    #[test_case("file.exe", FileType::ExecutableFile)]
     fn supported_file(file_name: &str, expected_file_type: FileType) {
         let file_info = any_file_info(file_name);
         let result = validate_file(file_info);
 
         assert_ok_equal(expected_file_type, result);
+    }
+
+    #[test]
+    fn supported_elf_file() {
+        let file_info = create_elf_file("file");
+
+        let result = validate_file(file_info);
+
+        assert_ok_equal(FileType::ExecutableFile, result);
     }
 
     #[test_case("file.txt")]
@@ -135,6 +168,21 @@ mod tests {
 
     fn any_file_info(file_name: &str) -> FileInfo {
         let path = PathBuf::from(file_name);
+
+        FileInfo {
+            path,
+            name: file_name.to_string(),
+        }
+    }
+
+    fn create_elf_file(file_name: &str) -> FileInfo {
+        let temp_dir = std::env::temp_dir().join("dra-file-tests");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        let path = temp_dir.join(file_name);
+
+        let mut file = std::fs::File::create(&path).unwrap();
+        file.write(&ELF_MAGIC_NUMBER).unwrap();
 
         FileInfo {
             path,

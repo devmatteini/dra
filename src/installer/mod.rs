@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use compressed_file::CompressedFileInstaller;
+use executable_file::ExecutableFileInstaller;
 
 use crate::installer::debian::DebianInstaller;
 use crate::installer::error::InstallError;
@@ -15,6 +16,7 @@ mod command;
 mod compressed_file;
 mod debian;
 pub mod error;
+mod executable_file;
 mod file;
 mod tar_archive;
 mod zip_archive;
@@ -65,5 +67,6 @@ fn find_installer_for(file_type: &FileType) -> fn(&Path, &Path, &Executable) -> 
         FileType::CompressedFile(Compression::Gz) => CompressedFileInstaller::gz,
         FileType::CompressedFile(Compression::Xz) => CompressedFileInstaller::xz,
         FileType::CompressedFile(Compression::Bz2) => CompressedFileInstaller::bz2,
+        FileType::ExecutableFile => ExecutableFileInstaller::run,
     }
 }
