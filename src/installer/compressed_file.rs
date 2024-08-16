@@ -20,7 +20,7 @@ impl CompressedFileInstaller {
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(flate2::read::GzDecoder::new(file)),
-            &file_info.path,
+            file_info,
             destination_dir,
             executable,
         )
@@ -33,7 +33,7 @@ impl CompressedFileInstaller {
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(xz2::read::XzDecoder::new(file)),
-            &file_info.path,
+            file_info,
             destination_dir,
             executable,
         )
@@ -46,7 +46,7 @@ impl CompressedFileInstaller {
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(bzip2::read::BzDecoder::new(file)),
-            &file_info.path,
+            file_info,
             destination_dir,
             executable,
         )
@@ -54,15 +54,15 @@ impl CompressedFileInstaller {
 
     fn decompress_and_move<D>(
         decode: D,
-        source: &Path,
+        file_info: SupportedFileInfo,
         destination_dir: &Path,
         executable: &Executable,
     ) -> Result<(), InstallError>
     where
         D: FnOnce(File) -> Box<dyn Read>,
     {
-        let compressed_file =
-            File::open(source).map_fatal_err(format!("Error opening {}", source.display()))?;
+        let compressed_file = File::open(&file_info.path)
+            .map_fatal_err(format!("Error opening {}", file_info.path.display()))?;
 
         let mut stream = decode(compressed_file);
 
