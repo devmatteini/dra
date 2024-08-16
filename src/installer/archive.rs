@@ -17,9 +17,9 @@ pub struct ArchiveInstaller;
 impl ArchiveInstaller {
     pub fn run<F>(
         extract_files: F,
+        file_info: SupportedFileInfo,
         destination_dir: &Path,
         executable: &Executable,
-        file_info: SupportedFileInfo,
     ) -> InstallerResult
     where
         F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
@@ -187,9 +187,9 @@ mod tests {
                 create_executable_file(temp_dir, "my-tool");
                 Ok(())
             },
+            any_file_info(),
             &destination_dir,
             &executable,
-            any_file_info(),
         );
 
         assert_ok(result);
@@ -208,9 +208,9 @@ mod tests {
                 create_executable_file(temp_dir, "ltn");
                 Ok(())
             },
+            any_file_info(),
             &destination_dir,
             &executable,
-            any_file_info(),
         );
 
         assert_ok(result);
@@ -228,9 +228,9 @@ mod tests {
                 create_file(temp_dir, "LICENSE");
                 Ok(())
             },
+            any_file_info(),
             &destination_dir,
             &executable,
-            any_file_info(),
         );
 
         assert_no_executable(result);
@@ -250,9 +250,9 @@ mod tests {
                 create_executable_file(temp_dir, "install.sh");
                 Ok(())
             },
+            any_file_info(),
             &destination_dir,
             &executable,
-            any_file_info(),
         );
 
         assert_too_many_candidates(vec!["some-random-script", "mytool", "install.sh"], result)
@@ -272,9 +272,9 @@ mod tests {
                 create_executable_file(temp_dir, "mytool-v2");
                 Ok(())
             },
+            any_file_info(),
             &destination_dir,
             &executable,
-            any_file_info(),
         );
 
         assert_ok(result);
@@ -296,9 +296,9 @@ mod tests {
                 create_executable_file(temp_dir, "my-tool-v2");
                 Ok(())
             },
+            any_file_info(),
             &destination_dir,
             &executable,
-            any_file_info(),
         );
 
         assert_executable_not_found(result, &mytool)
@@ -317,9 +317,9 @@ mod tests {
                 create_executable_file(&nested_dir, "my-executable");
                 Ok(())
             },
+            any_file_info(),
             &destination_dir,
             &executable,
-            any_file_info(),
         );
 
         assert_ok(result);

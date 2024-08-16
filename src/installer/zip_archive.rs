@@ -12,15 +12,15 @@ pub struct ZipArchiveInstaller;
 
 impl ZipArchiveInstaller {
     pub fn run(
+        file_info: SupportedFileInfo,
         destination_dir: &Path,
         executable: &Executable,
-        file_info: SupportedFileInfo,
     ) -> InstallerResult {
         ArchiveInstaller::run(
             Self::extract_archive,
+            file_info,
             destination_dir,
             executable,
-            file_info,
         )
     }
 

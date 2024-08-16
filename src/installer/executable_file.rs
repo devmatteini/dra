@@ -11,9 +11,9 @@ pub struct ExecutableFileInstaller;
 
 impl ExecutableFileInstaller {
     pub fn run(
+        file_info: SupportedFileInfo,
         destination_dir: &Path,
         executable: &Executable,
-        file_info: SupportedFileInfo,
     ) -> InstallerResult {
         let executable_path = destination_dir.join(executable.name());
 

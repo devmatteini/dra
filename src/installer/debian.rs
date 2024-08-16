@@ -13,9 +13,9 @@ pub struct DebianInstaller;
 
 impl DebianInstaller {
     pub fn run(
+        file_info: SupportedFileInfo,
         _destination_dir: &Path,
         _executable: &Executable,
-        file_info: SupportedFileInfo,
     ) -> InstallerResult {
         exec_command(
             DPKG,
