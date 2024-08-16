@@ -26,7 +26,7 @@ impl ArchiveInstaller {
         F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
     {
         let temp_dir = Self::create_temp_dir()?;
-        extract_files(source, &temp_dir)?;
+        extract_files(&file_info.path, &temp_dir)?;
 
         let executable = Self::find_executable(&temp_dir, executable)?;
 

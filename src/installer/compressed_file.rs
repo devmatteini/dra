@@ -21,7 +21,7 @@ impl CompressedFileInstaller {
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(flate2::read::GzDecoder::new(file)),
-            source,
+            &file_info.path,
             destination_dir,
             executable,
         )
@@ -35,7 +35,7 @@ impl CompressedFileInstaller {
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(xz2::read::XzDecoder::new(file)),
-            source,
+            &file_info.path,
             destination_dir,
             executable,
         )
@@ -49,7 +49,7 @@ impl CompressedFileInstaller {
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(bzip2::read::BzDecoder::new(file)),
-            source,
+            &file_info.path,
             destination_dir,
             executable,
         )

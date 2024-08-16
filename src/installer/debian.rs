@@ -18,6 +18,9 @@ impl DebianInstaller {
         _executable: &Executable,
         file_info: SupportedFileInfo,
     ) -> InstallerResult {
-        exec_command(DPKG, Command::new(DPKG).arg("--install").arg(source))
+        exec_command(
+            DPKG,
+            Command::new(DPKG).arg("--install").arg(file_info.path),
+        )
     }
 }

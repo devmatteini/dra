@@ -18,7 +18,7 @@ impl ExecutableFileInstaller {
     ) -> InstallerResult {
         let executable_path = destination_dir.join(executable.name());
 
-        std::fs::copy(source, &executable_path)
+        std::fs::copy(file_info.path, &executable_path)
             .map_fatal_err(format!("Error copying {}", executable_path.display()))?;
 
         set_executable_permissions(&executable_path)?;
