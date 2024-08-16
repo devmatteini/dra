@@ -29,6 +29,7 @@ pub struct FileInfo {
 
 #[derive(Debug)]
 pub struct SupportedFileInfo {
+    pub name: String,
     pub path: PathBuf,
     pub file_type: FileType,
 }
@@ -36,6 +37,7 @@ pub struct SupportedFileInfo {
 pub fn validate_file(file: FileInfo) -> Result<SupportedFileInfo, InstallError> {
     file_type_for(&file)
         .map(|file_type| SupportedFileInfo {
+            name: file.name.clone(),
             path: PathBuf::from(&file.path),
             file_type,
         })
