@@ -3,13 +3,19 @@ use std::path::Path;
 
 use super::{
     error::{InstallError, InstallErrorMapErr},
+    file::SupportedFileInfo,
     Executable,
 };
 
 pub struct ExecutableFileInstaller;
 
 impl ExecutableFileInstaller {
-    pub fn run(source: &Path, destination_dir: &Path, executable: &Executable) -> InstallerResult {
+    pub fn run(
+        source: &Path,
+        destination_dir: &Path,
+        executable: &Executable,
+        file_info: SupportedFileInfo,
+    ) -> InstallerResult {
         let executable_path = destination_dir.join(executable.name());
 
         std::fs::copy(source, &executable_path)

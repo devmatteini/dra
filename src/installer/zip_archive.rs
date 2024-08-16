@@ -5,13 +5,25 @@ use crate::installer::archive::ArchiveInstaller;
 use crate::installer::InstallerResult;
 
 use super::error::InstallError;
+use super::file::SupportedFileInfo;
 use super::Executable;
 
 pub struct ZipArchiveInstaller;
 
 impl ZipArchiveInstaller {
-    pub fn run(source: &Path, destination_dir: &Path, executable: &Executable) -> InstallerResult {
-        ArchiveInstaller::run(Self::extract_archive, source, destination_dir, executable)
+    pub fn run(
+        source: &Path,
+        destination_dir: &Path,
+        executable: &Executable,
+        file_info: SupportedFileInfo,
+    ) -> InstallerResult {
+        ArchiveInstaller::run(
+            Self::extract_archive,
+            source,
+            destination_dir,
+            executable,
+            file_info,
+        )
     }
 
     fn extract_archive(source: &Path, temp_dir: &Path) -> Result<(), InstallError> {

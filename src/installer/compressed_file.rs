@@ -6,13 +6,19 @@ use crate::installer::InstallerResult;
 
 use super::{
     error::{InstallError, InstallErrorMapErr},
+    file::SupportedFileInfo,
     Executable,
 };
 
 pub struct CompressedFileInstaller;
 
 impl CompressedFileInstaller {
-    pub fn gz(source: &Path, destination_dir: &Path, executable: &Executable) -> InstallerResult {
+    pub fn gz(
+        source: &Path,
+        destination_dir: &Path,
+        executable: &Executable,
+        file_info: SupportedFileInfo,
+    ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(flate2::read::GzDecoder::new(file)),
             source,
@@ -21,7 +27,12 @@ impl CompressedFileInstaller {
         )
     }
 
-    pub fn xz(source: &Path, destination_dir: &Path, executable: &Executable) -> InstallerResult {
+    pub fn xz(
+        source: &Path,
+        destination_dir: &Path,
+        executable: &Executable,
+        file_info: SupportedFileInfo,
+    ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(xz2::read::XzDecoder::new(file)),
             source,
@@ -30,7 +41,12 @@ impl CompressedFileInstaller {
         )
     }
 
-    pub fn bz2(source: &Path, destination_dir: &Path, executable: &Executable) -> InstallerResult {
+    pub fn bz2(
+        source: &Path,
+        destination_dir: &Path,
+        executable: &Executable,
+        file_info: SupportedFileInfo,
+    ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(bzip2::read::BzDecoder::new(file)),
             source,

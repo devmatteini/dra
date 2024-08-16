@@ -9,6 +9,7 @@ use crate::installer::error::InstallErrorMapErr;
 use crate::installer::InstallerResult;
 
 use super::error::InstallError;
+use super::file::SupportedFileInfo;
 use super::Executable;
 
 pub struct ArchiveInstaller;
@@ -19,6 +20,7 @@ impl ArchiveInstaller {
         source: &Path,
         destination_dir: &Path,
         executable: &Executable,
+        file_info: SupportedFileInfo,
     ) -> InstallerResult
     where
         F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
@@ -165,7 +167,11 @@ mod tests {
     use std::os::unix::fs::PermissionsExt;
     use std::path::{Path, PathBuf};
 
-    use crate::installer::{error::InstallError, Executable, InstallerResult};
+    use crate::installer::{
+        error::InstallError,
+        file::{FileType, SupportedFileInfo},
+        Executable, InstallerResult,
+    };
 
     use super::ArchiveInstaller;
 
@@ -185,6 +191,7 @@ mod tests {
             &any_directory_path(),
             &destination_dir,
             &executable,
+            any_file_info(),
         );
 
         assert_ok(result);
@@ -206,6 +213,7 @@ mod tests {
             &any_directory_path(),
             &destination_dir,
             &executable,
+            any_file_info(),
         );
 
         assert_ok(result);
@@ -226,6 +234,7 @@ mod tests {
             &any_directory_path(),
             &destination_dir,
             &executable,
+            any_file_info(),
         );
 
         assert_no_executable(result);
@@ -248,6 +257,7 @@ mod tests {
             &any_directory_path(),
             &destination_dir,
             &executable,
+            any_file_info(),
         );
 
         assert_too_many_candidates(vec!["some-random-script", "mytool", "install.sh"], result)
@@ -270,6 +280,7 @@ mod tests {
             &any_directory_path(),
             &destination_dir,
             &executable,
+            any_file_info(),
         );
 
         assert_ok(result);
@@ -294,6 +305,7 @@ mod tests {
             &any_directory_path(),
             &destination_dir,
             &executable,
+            any_file_info(),
         );
 
         assert_executable_not_found(result, &mytool)
@@ -315,6 +327,7 @@ mod tests {
             &any_directory_path(),
             &destination_dir,
             &executable,
+            any_file_info(),
         );
 
         assert_ok(result);
@@ -376,6 +389,14 @@ mod tests {
 
     fn any_directory_path() -> PathBuf {
         std::env::temp_dir().join("dra-any")
+    }
+
+    fn any_file_info() -> SupportedFileInfo {
+        SupportedFileInfo {
+            name: "any-name".to_string(),
+            path: any_directory_path(),
+            file_type: FileType::TarArchive(crate::installer::file::Compression::Gz),
+        }
     }
 
     fn assert_file_exists(path: PathBuf) {
