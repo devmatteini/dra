@@ -28,15 +28,6 @@ pub enum Executable {
     Selected(String),
 }
 
-impl Executable {
-    pub fn name(&self) -> &str {
-        match self {
-            Executable::Default(name) => name,
-            Executable::Selected(name) => name,
-        }
-    }
-}
-
 pub fn install(
     asset_name: String,
     source: &Path,

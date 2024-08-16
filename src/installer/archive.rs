@@ -261,7 +261,8 @@ mod tests {
     #[test]
     fn selected_executable_found() {
         let destination_dir = temp_dir("selected_executable_found");
-        let executable = Executable::Selected(executable_name("mytool"));
+        let mytool = executable_name("mytool");
+        let executable = Executable::Selected(mytool.clone());
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -278,7 +279,7 @@ mod tests {
         );
 
         assert_ok(result);
-        assert_file_exists(executable_path(&destination_dir, executable.name()))
+        assert_file_exists(executable_path(&destination_dir, &mytool))
     }
 
     #[test]
