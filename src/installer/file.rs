@@ -69,7 +69,7 @@ fn file_type_for(file: &FileInfo) -> Option<FileType> {
     if file_name.ends_with(".zip") {
         return Some(FileType::ZipArchive);
     }
-    if is_elf_file(&file.path) || file_name.ends_with(".exe") {
+    if is_elf_file(&file.path) || file.path.extension().is_none() || file_name.ends_with(".exe") {
         return Some(FileType::ExecutableFile);
     }
 
@@ -134,6 +134,7 @@ mod tests {
     #[test_case("file.xz", FileType::CompressedFile(Compression::Xz))]
     #[test_case("file.zip", FileType::ZipArchive)]
     #[test_case("file.exe", FileType::ExecutableFile)]
+    #[test_case("file", FileType::ExecutableFile)]
     fn supported_file(file_name: &str, expected_file_type: FileType) {
         let file_info = any_file_info(file_name);
         let result = validate_file(file_info);
@@ -153,14 +154,6 @@ mod tests {
     #[test_case("file.txt")]
     fn not_supported(file_name: &str) {
         let file_info = any_file_info(file_name);
-        let result = validate_file(file_info);
-
-        assert_not_supported(result);
-    }
-
-    #[test]
-    fn no_file_extension() {
-        let file_info = any_file_info("any_file");
         let result = validate_file(file_info);
 
         assert_not_supported(result);
