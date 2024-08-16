@@ -1,6 +1,6 @@
-use std::fs::File;
 use std::io::Read;
 use std::path::Path;
+use std::{fs::File, path::PathBuf};
 
 use crate::installer::InstallerResult;
 
@@ -16,39 +16,36 @@ impl CompressedFileInstaller {
     pub fn gz(
         file_info: SupportedFileInfo,
         destination_dir: &Path,
-        executable: &Executable,
+        _executable: &Executable,
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(flate2::read::GzDecoder::new(file)),
             file_info,
             destination_dir,
-            executable,
         )
     }
 
     pub fn xz(
         file_info: SupportedFileInfo,
         destination_dir: &Path,
-        executable: &Executable,
+        _executable: &Executable,
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(xz2::read::XzDecoder::new(file)),
             file_info,
             destination_dir,
-            executable,
         )
     }
 
     pub fn bz2(
         file_info: SupportedFileInfo,
         destination_dir: &Path,
-        executable: &Executable,
+        _executable: &Executable,
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(bzip2::read::BzDecoder::new(file)),
             file_info,
             destination_dir,
-            executable,
         )
     }
 
@@ -56,7 +53,6 @@ impl CompressedFileInstaller {
         decode: D,
         file_info: SupportedFileInfo,
         destination_dir: &Path,
-        executable: &Executable,
     ) -> Result<(), InstallError>
     where
         D: FnOnce(File) -> Box<dyn Read>,
@@ -66,7 +62,7 @@ impl CompressedFileInstaller {
 
         let mut stream = decode(compressed_file);
 
-        let executable_path = destination_dir.join(executable.name());
+        let executable_path = destination_dir.join(executable_name(&file_info));
         let mut destination_file = File::create(&executable_path)
             .map_fatal_err(format!("Error creating {}", executable_path.display()))?;
 
@@ -77,6 +73,17 @@ impl CompressedFileInstaller {
 
         Ok(())
     }
+}
+
+/// This follows the same behavior of bzip2, gzip, and xz when decompressing a file.
+fn executable_name(file_info: &SupportedFileInfo) -> PathBuf {
+    let default_name = PathBuf::from(&file_info.name);
+
+    default_name
+        .as_path()
+        .file_stem()
+        .map(PathBuf::from)
+        .unwrap_or_else(|| default_name)
 }
 
 #[cfg(target_family = "unix")]

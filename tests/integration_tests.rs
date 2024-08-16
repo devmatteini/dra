@@ -18,9 +18,9 @@ mod archives {
     #[test_case("helloworld.tar.bz2", "helloworld"; "tar bzip2")]
     #[test_case("helloworld.tar.xz", "helloworld"; "tar xz")]
     #[test_case("helloworld.zip", "helloworld"; "zip")]
-    #[test_case("helloworld-compressed-unix.gz", "dra-tests"; "gzip")]
-    #[test_case("helloworld-compressed-unix.bz2", "dra-tests"; "bzip2")]
-    #[test_case("helloworld-compressed-unix.xz", "dra-tests"; "xz")]
+    #[test_case("helloworld-compressed-unix.gz", "helloworld-compressed-unix"; "gzip")]
+    #[test_case("helloworld-compressed-unix.bz2", "helloworld-compressed-unix"; "bzip2")]
+    #[test_case("helloworld-compressed-unix.xz", "helloworld-compressed-unix"; "xz")]
     #[test_case("helloworld-unix", "helloworld-unix"; "executable")]
     fn installed_successfully(asset: &str, expected_executable: &str) {
         let output_dir = any_temp_dir();
@@ -45,9 +45,9 @@ mod archives {
     #[cfg(target_os = "windows")]
     #[test_case("helloworld-windows.tar.gz", "helloworld.exe"; "tar gzip")]
     #[test_case("helloworld-windows.zip", "helloworld.exe"; "zip")]
-    #[test_case("helloworld-compressed-windows.gz", "dra-tests"; "gzip")]
-    #[test_case("helloworld-compressed-windows.bz2", "dra-tests"; "bzip2")]
-    #[test_case("helloworld-compressed-windows.xz", "dra-tests"; "xz")]
+    #[test_case("helloworld-compressed-windows.gz", "helloworld-compressed-windows"; "gzip")]
+    #[test_case("helloworld-compressed-windows.bz2", "helloworld-compressed-windows"; "bzip2")]
+    #[test_case("helloworld-compressed-windows.xz", "helloworld-compressed-windows"; "xz")]
     #[test_case("helloworld-windows.exe", "helloworld-windows.exe"; "executable")]
     fn installed_successfully(asset: &str, expected_executable: &str) {
         let output_dir = any_temp_dir();
