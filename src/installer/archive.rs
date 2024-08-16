@@ -17,7 +17,6 @@ pub struct ArchiveInstaller;
 impl ArchiveInstaller {
     pub fn run<F>(
         extract_files: F,
-        source: &Path,
         destination_dir: &Path,
         executable: &Executable,
         file_info: SupportedFileInfo,
@@ -188,7 +187,6 @@ mod tests {
                 create_executable_file(temp_dir, "my-tool");
                 Ok(())
             },
-            &any_directory_path(),
             &destination_dir,
             &executable,
             any_file_info(),
@@ -210,7 +208,6 @@ mod tests {
                 create_executable_file(temp_dir, "ltn");
                 Ok(())
             },
-            &any_directory_path(),
             &destination_dir,
             &executable,
             any_file_info(),
@@ -231,7 +228,6 @@ mod tests {
                 create_file(temp_dir, "LICENSE");
                 Ok(())
             },
-            &any_directory_path(),
             &destination_dir,
             &executable,
             any_file_info(),
@@ -254,7 +250,6 @@ mod tests {
                 create_executable_file(temp_dir, "install.sh");
                 Ok(())
             },
-            &any_directory_path(),
             &destination_dir,
             &executable,
             any_file_info(),
@@ -277,7 +272,6 @@ mod tests {
                 create_executable_file(temp_dir, "mytool-v2");
                 Ok(())
             },
-            &any_directory_path(),
             &destination_dir,
             &executable,
             any_file_info(),
@@ -302,7 +296,6 @@ mod tests {
                 create_executable_file(temp_dir, "my-tool-v2");
                 Ok(())
             },
-            &any_directory_path(),
             &destination_dir,
             &executable,
             any_file_info(),
@@ -324,7 +317,6 @@ mod tests {
                 create_executable_file(&nested_dir, "my-executable");
                 Ok(())
             },
-            &any_directory_path(),
             &destination_dir,
             &executable,
             any_file_info(),

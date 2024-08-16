@@ -14,7 +14,6 @@ pub struct CompressedFileInstaller;
 
 impl CompressedFileInstaller {
     pub fn gz(
-        source: &Path,
         destination_dir: &Path,
         executable: &Executable,
         file_info: SupportedFileInfo,
@@ -28,7 +27,6 @@ impl CompressedFileInstaller {
     }
 
     pub fn xz(
-        source: &Path,
         destination_dir: &Path,
         executable: &Executable,
         file_info: SupportedFileInfo,
@@ -42,7 +40,6 @@ impl CompressedFileInstaller {
     }
 
     pub fn bz2(
-        source: &Path,
         destination_dir: &Path,
         executable: &Executable,
         file_info: SupportedFileInfo,

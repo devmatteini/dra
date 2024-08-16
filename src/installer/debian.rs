@@ -13,7 +13,6 @@ pub struct DebianInstaller;
 
 impl DebianInstaller {
     pub fn run(
-        source: &Path,
         _destination_dir: &Path,
         _executable: &Executable,
         file_info: SupportedFileInfo,
