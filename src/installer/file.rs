@@ -177,7 +177,7 @@ mod tests {
         let path = temp_dir.join(file_name);
 
         let mut file = std::fs::File::create(&path).unwrap();
-        file.write(&ELF_MAGIC_NUMBER).unwrap();
+        file.write_all(&ELF_MAGIC_NUMBER).unwrap();
 
         FileInfo {
             path,
