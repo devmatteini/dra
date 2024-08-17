@@ -4,7 +4,7 @@ use std::path::Path;
 use super::{
     error::{InstallError, InstallErrorMapErr},
     file::SupportedFileInfo,
-    Executable,
+    Destination, Executable,
 };
 
 pub struct ExecutableFileInstaller;
@@ -14,6 +14,7 @@ impl ExecutableFileInstaller {
         file_info: SupportedFileInfo,
         destination_dir: &Path,
         _executable: &Executable,
+        destination: Destination,
     ) -> InstallerResult {
         let executable_path = destination_dir.join(file_info.name);
 

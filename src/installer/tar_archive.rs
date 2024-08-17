@@ -7,7 +7,7 @@ use crate::installer::InstallerResult;
 
 use super::error::InstallError;
 use super::file::SupportedFileInfo;
-use super::Executable;
+use super::{Destination, Executable};
 
 pub struct TarArchiveInstaller;
 
@@ -16,24 +16,45 @@ impl TarArchiveInstaller {
         file_info: SupportedFileInfo,
         destination_dir: &Path,
         executable: &Executable,
+        destination: Destination,
     ) -> InstallerResult {
-        ArchiveInstaller::run(Self::extract_gz, file_info, destination_dir, executable)
+        ArchiveInstaller::run(
+            Self::extract_gz,
+            file_info,
+            destination_dir,
+            executable,
+            destination,
+        )
     }
 
     pub fn xz(
         file_info: SupportedFileInfo,
         destination_dir: &Path,
         executable: &Executable,
+        destination: Destination,
     ) -> InstallerResult {
-        ArchiveInstaller::run(Self::extract_xz, file_info, destination_dir, executable)
+        ArchiveInstaller::run(
+            Self::extract_xz,
+            file_info,
+            destination_dir,
+            executable,
+            destination,
+        )
     }
 
     pub fn bz2(
         file_info: SupportedFileInfo,
         destination_dir: &Path,
         executable: &Executable,
+        destination: Destination,
     ) -> InstallerResult {
-        ArchiveInstaller::run(Self::extract_bz2, file_info, destination_dir, executable)
+        ArchiveInstaller::run(
+            Self::extract_bz2,
+            file_info,
+            destination_dir,
+            executable,
+            destination,
+        )
     }
 
     fn extract_gz(source: &Path, temp_dir: &Path) -> Result<(), InstallError> {

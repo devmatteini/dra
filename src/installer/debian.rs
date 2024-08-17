@@ -5,7 +5,7 @@ use crate::installer::command::exec_command;
 use crate::installer::InstallerResult;
 
 use super::file::SupportedFileInfo;
-use super::Executable;
+use super::{Destination, Executable};
 
 const DPKG: &str = "dpkg";
 
@@ -16,6 +16,7 @@ impl DebianInstaller {
         file_info: SupportedFileInfo,
         _destination_dir: &Path,
         _executable: &Executable,
+        _destination: Destination,
     ) -> InstallerResult {
         exec_command(
             DPKG,

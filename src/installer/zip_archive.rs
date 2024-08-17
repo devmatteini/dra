@@ -6,7 +6,7 @@ use crate::installer::InstallerResult;
 
 use super::error::InstallError;
 use super::file::SupportedFileInfo;
-use super::Executable;
+use super::{Destination, Executable};
 
 pub struct ZipArchiveInstaller;
 
@@ -15,12 +15,14 @@ impl ZipArchiveInstaller {
         file_info: SupportedFileInfo,
         destination_dir: &Path,
         executable: &Executable,
+        destination: Destination,
     ) -> InstallerResult {
         ArchiveInstaller::run(
             Self::extract_archive,
             file_info,
             destination_dir,
             executable,
+            destination,
         )
     }
 

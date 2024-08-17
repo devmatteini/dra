@@ -10,7 +10,7 @@ use crate::installer::InstallerResult;
 
 use super::error::InstallError;
 use super::file::SupportedFileInfo;
-use super::Executable;
+use super::{Destination, Executable};
 
 pub struct ArchiveInstaller;
 
@@ -20,6 +20,7 @@ impl ArchiveInstaller {
         file_info: SupportedFileInfo,
         destination_dir: &Path,
         executable: &Executable,
+        destination: Destination,
     ) -> InstallerResult
     where
         F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
@@ -169,7 +170,7 @@ mod tests {
     use crate::installer::{
         error::InstallError,
         file::{FileType, SupportedFileInfo},
-        Executable, InstallerResult,
+        Destination, Executable, InstallerResult,
     };
 
     use super::ArchiveInstaller;
@@ -177,6 +178,7 @@ mod tests {
     #[test]
     fn default_executable_with_default_name() {
         let destination_dir = temp_dir("default_executable_with_default_name");
+        let destination = Destination::Directory(destination_dir.clone());
         let executable = Executable::Default(executable_name("my-tool"));
 
         let result = ArchiveInstaller::run(
@@ -190,6 +192,7 @@ mod tests {
             any_file_info(),
             &destination_dir,
             &executable,
+            destination,
         );
 
         assert_ok(result);
@@ -199,6 +202,7 @@ mod tests {
     #[test]
     fn default_executable_with_single_executable() {
         let destination_dir = temp_dir("default_executable_with_single_executable");
+        let destination = Destination::Directory(destination_dir.clone());
         let executable = Executable::Default(executable_name("long-tool-name"));
 
         let result = ArchiveInstaller::run(
@@ -211,6 +215,7 @@ mod tests {
             any_file_info(),
             &destination_dir,
             &executable,
+            destination,
         );
 
         assert_ok(result);
@@ -220,6 +225,7 @@ mod tests {
     #[test]
     fn default_executable_with_no_executable() {
         let destination_dir = temp_dir("default_executable_with_no_executable");
+        let destination = Destination::Directory(destination_dir.clone());
         let executable = Executable::Default(executable_name("my-tool"));
 
         let result = ArchiveInstaller::run(
@@ -231,6 +237,7 @@ mod tests {
             any_file_info(),
             &destination_dir,
             &executable,
+            destination,
         );
 
         assert_no_executable(result);
@@ -239,6 +246,7 @@ mod tests {
     #[test]
     fn default_executable_with_many_executable_candidates() {
         let destination_dir = temp_dir("default_executable_with_many_executable_candidates");
+        let destination = Destination::Directory(destination_dir.clone());
         let executable = Executable::Default(executable_name("my-tool"));
 
         let result = ArchiveInstaller::run(
@@ -253,6 +261,7 @@ mod tests {
             any_file_info(),
             &destination_dir,
             &executable,
+            destination,
         );
 
         assert_too_many_candidates(vec!["some-random-script", "mytool", "install.sh"], result)
@@ -261,6 +270,7 @@ mod tests {
     #[test]
     fn selected_executable_found() {
         let destination_dir = temp_dir("selected_executable_found");
+        let destination = Destination::Directory(destination_dir.clone());
         let mytool = executable_name("mytool");
         let executable = Executable::Selected(mytool.clone());
 
@@ -276,6 +286,7 @@ mod tests {
             any_file_info(),
             &destination_dir,
             &executable,
+            destination,
         );
 
         assert_ok(result);
@@ -285,6 +296,7 @@ mod tests {
     #[test]
     fn selected_executable_not_found() {
         let destination_dir = temp_dir("selected_executable_not_found");
+        let destination = Destination::Directory(destination_dir.clone());
         let mytool = executable_name("mytool");
         let executable = Executable::Selected(mytool.clone());
 
@@ -300,6 +312,7 @@ mod tests {
             any_file_info(),
             &destination_dir,
             &executable,
+            destination,
         );
 
         assert_executable_not_found(result, &mytool)
@@ -308,6 +321,7 @@ mod tests {
     #[test]
     fn executable_inside_nested_directory() {
         let destination_dir = temp_dir("executable_inside_nested_directory");
+        let destination = Destination::Directory(destination_dir.clone());
         let executable = any_default_executable_name();
 
         let result = ArchiveInstaller::run(
@@ -321,6 +335,7 @@ mod tests {
             any_file_info(),
             &destination_dir,
             &executable,
+            destination,
         );
 
         assert_ok(result);
