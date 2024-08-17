@@ -140,9 +140,12 @@ impl DownloadHandler {
         match &self.install {
             Install::No => Ok(()),
             Install::Yes(executable) => {
-                let destination_dir = self.output_dir_or_cwd()?;
-                // TODO: add support for destination files
-                let destination = Destination::Directory(destination_dir.clone());
+                let cwd = Self::cwd()?;
+                let destination = match self.output.as_ref() {
+                    Some(output) if output.is_dir() => Destination::Directory(output.clone()),
+                    Some(output) => Destination::File(output.clone()),
+                    None => Destination::Directory(cwd),
+                };
 
                 let spinner = Spinner::install_layout();
                 spinner.show();
@@ -157,15 +160,9 @@ impl DownloadHandler {
         }
     }
 
-    fn output_dir_or_cwd(&self) -> Result<PathBuf, HandlerError> {
-        self.output
-            .as_ref()
-            .map(|x| Self::dir_or_error(x))
-            .unwrap_or_else(|| {
-                std::env::current_dir().map_err(|x| {
-                    HandlerError::new(format!("Error retrieving current directory: {}", x))
-                })
-            })
+    fn cwd() -> Result<PathBuf, HandlerError> {
+        std::env::current_dir()
+            .map_err(|x| HandlerError::new(format!("Error retrieving current directory: {}", x)))
     }
 
     fn autoselect_asset(release: Release, untagged: &str) -> Result<Asset, HandlerError> {
@@ -247,17 +244,6 @@ impl DownloadHandler {
             output_path.display(),
             error
         ))
-    }
-
-    fn dir_or_error(path: &Path) -> Result<PathBuf, HandlerError> {
-        if path.is_dir() {
-            Ok(PathBuf::from(path))
-        } else {
-            Err(HandlerError::new(format!(
-                "{} is not a directory",
-                path.display()
-            )))
-        }
     }
 
     fn download_error(e: GithubError) -> HandlerError {

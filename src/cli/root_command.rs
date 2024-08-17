@@ -58,7 +58,7 @@ pub enum Command {
         ///
         /// Default path is current working directory and the name of the asset.
         ///
-        /// If used with `--install` it must be a directory path
+        /// It can be used with install feature to save the asset to a custom path.
         #[arg(short, long, value_hint = ValueHint::AnyPath)]
         output: Option<PathBuf>,
 
