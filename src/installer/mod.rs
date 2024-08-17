@@ -31,6 +31,7 @@ pub enum Executable {
 #[derive(Debug)]
 pub enum Destination {
     Directory(PathBuf),
+    File(PathBuf),
 }
 
 pub fn install(

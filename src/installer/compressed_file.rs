@@ -65,6 +65,7 @@ impl CompressedFileInstaller {
 
         let executable_path = match destination {
             Destination::Directory(dir) => dir.join(executable_name(&file_info)),
+            Destination::File(file) => file,
         };
         let mut destination_file = File::create(&executable_path)
             .map_fatal_err(format!("Error creating {}", executable_path.display()))?;

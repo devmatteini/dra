@@ -17,6 +17,7 @@ impl ExecutableFileInstaller {
     ) -> InstallerResult {
         let executable_path = match destination {
             Destination::Directory(dir) => dir.join(file_info.name),
+            Destination::File(file) => file,
         };
 
         std::fs::copy(file_info.path, &executable_path)

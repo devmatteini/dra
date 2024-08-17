@@ -105,6 +105,7 @@ impl ArchiveInstaller {
     ) -> Result<(), InstallError> {
         let to = match destination {
             Destination::Directory(dir) => dir.join(executable.name),
+            Destination::File(file) => file,
         };
 
         std::fs::copy(&executable.path, &to)
