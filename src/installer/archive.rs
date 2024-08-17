@@ -29,7 +29,7 @@ impl ArchiveInstaller {
 
         let executable = Self::find_executable(&temp_dir, executable)?;
 
-        Self::copy_executable_to_destination_dir(executable, destination)?;
+        Self::copy_executable_to_destination(executable, destination)?;
         Self::cleanup(&temp_dir)?;
 
         Ok(())
@@ -99,8 +99,7 @@ impl ArchiveInstaller {
             .unwrap_or(false)
     }
 
-    // TODO: rename to copy_executable_to_destination
-    fn copy_executable_to_destination_dir(
+    fn copy_executable_to_destination(
         executable: ExecutableFile,
         destination: Destination,
     ) -> Result<(), InstallError> {
