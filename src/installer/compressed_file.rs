@@ -16,8 +16,8 @@ pub struct CompressedFileInstaller;
 impl CompressedFileInstaller {
     pub fn gz(
         file_info: SupportedFileInfo,
-        _executable: &Executable,
         destination: Destination,
+        _executable: &Executable,
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(flate2::read::GzDecoder::new(file)),
@@ -28,8 +28,8 @@ impl CompressedFileInstaller {
 
     pub fn xz(
         file_info: SupportedFileInfo,
-        _executable: &Executable,
         destination: Destination,
+        _executable: &Executable,
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(xz2::read::XzDecoder::new(file)),
@@ -40,8 +40,8 @@ impl CompressedFileInstaller {
 
     pub fn bz2(
         file_info: SupportedFileInfo,
-        _executable: &Executable,
         destination: Destination,
+        _executable: &Executable,
     ) -> InstallerResult {
         Self::decompress_and_move(
             |file| Box::new(bzip2::read::BzDecoder::new(file)),

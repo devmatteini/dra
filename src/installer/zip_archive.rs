@@ -13,10 +13,10 @@ pub struct ZipArchiveInstaller;
 impl ZipArchiveInstaller {
     pub fn run(
         file_info: SupportedFileInfo,
-        executable: &Executable,
         destination: Destination,
+        executable: &Executable,
     ) -> InstallerResult {
-        ArchiveInstaller::run(Self::extract_archive, file_info, executable, destination)
+        ArchiveInstaller::run(Self::extract_archive, file_info, destination, executable)
     }
 
     fn extract_archive(source: &Path, temp_dir: &Path) -> Result<(), InstallError> {

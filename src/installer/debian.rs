@@ -13,8 +13,8 @@ pub struct DebianInstaller;
 impl DebianInstaller {
     pub fn run(
         file_info: SupportedFileInfo,
-        _executable: &Executable,
         _destination: Destination,
+        _executable: &Executable,
     ) -> InstallerResult {
         exec_command(
             DPKG,
