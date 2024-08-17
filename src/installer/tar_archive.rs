@@ -14,47 +14,26 @@ pub struct TarArchiveInstaller;
 impl TarArchiveInstaller {
     pub fn gz(
         file_info: SupportedFileInfo,
-        destination_dir: &Path,
         executable: &Executable,
         destination: Destination,
     ) -> InstallerResult {
-        ArchiveInstaller::run(
-            Self::extract_gz,
-            file_info,
-            destination_dir,
-            executable,
-            destination,
-        )
+        ArchiveInstaller::run(Self::extract_gz, file_info, executable, destination)
     }
 
     pub fn xz(
         file_info: SupportedFileInfo,
-        destination_dir: &Path,
         executable: &Executable,
         destination: Destination,
     ) -> InstallerResult {
-        ArchiveInstaller::run(
-            Self::extract_xz,
-            file_info,
-            destination_dir,
-            executable,
-            destination,
-        )
+        ArchiveInstaller::run(Self::extract_xz, file_info, executable, destination)
     }
 
     pub fn bz2(
         file_info: SupportedFileInfo,
-        destination_dir: &Path,
         executable: &Executable,
         destination: Destination,
     ) -> InstallerResult {
-        ArchiveInstaller::run(
-            Self::extract_bz2,
-            file_info,
-            destination_dir,
-            executable,
-            destination,
-        )
+        ArchiveInstaller::run(Self::extract_bz2, file_info, executable, destination)
     }
 
     fn extract_gz(source: &Path, temp_dir: &Path) -> Result<(), InstallError> {

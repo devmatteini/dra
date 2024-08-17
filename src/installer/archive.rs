@@ -18,7 +18,6 @@ impl ArchiveInstaller {
     pub fn run<F>(
         extract_files: F,
         file_info: SupportedFileInfo,
-        destination_dir: &Path,
         executable: &Executable,
         destination: Destination,
     ) -> InstallerResult
@@ -30,7 +29,7 @@ impl ArchiveInstaller {
 
         let executable = Self::find_executable(&temp_dir, executable)?;
 
-        Self::copy_executable_to_destination_dir(executable, destination_dir, destination)?;
+        Self::copy_executable_to_destination_dir(executable, destination)?;
         Self::cleanup(&temp_dir)?;
 
         Ok(())
@@ -100,9 +99,9 @@ impl ArchiveInstaller {
             .unwrap_or(false)
     }
 
+    // TODO: rename to copy_executable_to_destination
     fn copy_executable_to_destination_dir(
         executable: ExecutableFile,
-        destination_dir: &Path,
         destination: Destination,
     ) -> Result<(), InstallError> {
         let to = match destination {
@@ -193,7 +192,6 @@ mod tests {
                 Ok(())
             },
             any_file_info(),
-            &destination_dir,
             &executable,
             destination,
         );
@@ -216,7 +214,6 @@ mod tests {
                 Ok(())
             },
             any_file_info(),
-            &destination_dir,
             &executable,
             destination,
         );
@@ -238,7 +235,6 @@ mod tests {
                 Ok(())
             },
             any_file_info(),
-            &destination_dir,
             &executable,
             destination,
         );
@@ -262,7 +258,6 @@ mod tests {
                 Ok(())
             },
             any_file_info(),
-            &destination_dir,
             &executable,
             destination,
         );
@@ -287,7 +282,6 @@ mod tests {
                 Ok(())
             },
             any_file_info(),
-            &destination_dir,
             &executable,
             destination,
         );
@@ -313,7 +307,6 @@ mod tests {
                 Ok(())
             },
             any_file_info(),
-            &destination_dir,
             &executable,
             destination,
         );
@@ -336,7 +329,6 @@ mod tests {
                 Ok(())
             },
             any_file_info(),
-            &destination_dir,
             &executable,
             destination,
         );

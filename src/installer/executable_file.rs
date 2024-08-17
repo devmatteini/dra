@@ -12,7 +12,6 @@ pub struct ExecutableFileInstaller;
 impl ExecutableFileInstaller {
     pub fn run(
         file_info: SupportedFileInfo,
-        destination_dir: &Path,
         _executable: &Executable,
         destination: Destination,
     ) -> InstallerResult {

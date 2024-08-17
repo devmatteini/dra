@@ -1,4 +1,3 @@
-use std::path::Path;
 use std::process::Command;
 
 use crate::installer::command::exec_command;
@@ -14,7 +13,6 @@ pub struct DebianInstaller;
 impl DebianInstaller {
     pub fn run(
         file_info: SupportedFileInfo,
-        _destination_dir: &Path,
         _executable: &Executable,
         _destination: Destination,
     ) -> InstallerResult {
