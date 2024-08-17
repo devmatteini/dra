@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use compressed_file::CompressedFileInstaller;
 use executable_file::ExecutableFileInstaller;
@@ -28,11 +28,17 @@ pub enum Executable {
     Selected(String),
 }
 
+#[derive(Debug)]
+pub enum Destination {
+    Directory(PathBuf),
+}
+
 pub fn install(
     asset_name: String,
     source: &Path,
     destination_dir: &Path,
     executable: &Executable,
+    destination: Destination,
 ) -> Result<(), InstallError> {
     let file_info = file_info_from(&asset_name, source).and_then(validate_file)?;
     let installer = find_installer_for(&file_info.file_type);

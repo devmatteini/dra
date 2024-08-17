@@ -15,7 +15,7 @@ use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
 use crate::installer::cleanup::InstallCleanup;
-use crate::installer::Executable;
+use crate::installer::{Destination, Executable};
 use crate::{github, installer};
 
 mod find_asset_by_system;
@@ -141,12 +141,21 @@ impl DownloadHandler {
             Install::No => Ok(()),
             Install::Yes(executable) => {
                 let destination_dir = self.output_dir_or_cwd()?;
+                // TODO: add support for destination files
+                let destination = Destination::Directory(destination_dir.clone());
+
                 let spinner = Spinner::install_layout();
                 spinner.show();
 
-                installer::install(asset_name.to_string(), path, &destination_dir, executable)
-                    .cleanup(path)
-                    .map_err(|x| HandlerError::new(x.to_string()))?;
+                installer::install(
+                    asset_name.to_string(),
+                    path,
+                    &destination_dir,
+                    executable,
+                    destination,
+                )
+                .cleanup(path)
+                .map_err(|x| HandlerError::new(x.to_string()))?;
 
                 spinner.finish();
                 Ok(())
