@@ -145,10 +145,18 @@ dra download --install devmatteini/dra-tests
 
 Supported assets that can be installed are:
 
-- Debian packages (`.deb`)
-- Tar archive with executable (`.tar.[gz|bz2|xz]`, `.tgz`, `.tbz`, `.txz`)
-- Zip file with executable (`.zip`)
-- Compressed files (`.gz`, `.bz2`, `.xz`)
+- Debian packages (requires elevated privileges)
+- Tar archives
+- Zip files
+- Compressed files
+- Executable files
+- AppImage files
+
+You can use `--install-file <INSTALL_FILE>` option when a tar archive or zip file contains many executables or when `dra` can't automatically detect which one to install:
+
+```shell
+dra download -s helloworld-many-executables-unix.tar.gz --install-file helloworld-v2 devmatteini/dra-tests
+```
 
 ### Private repositories & rate limit
 
