@@ -72,7 +72,7 @@ fn file_type_for(file: &FileInfo) -> Option<FileType> {
         return Some(FileType::ZipArchive);
     }
     if is_elf_file(&file.path)
-        || file.path.extension().is_none()
+        || Path::new(&file_name).extension().is_none()
         || file_name.ends_with(".appimage")
         || file_name.ends_with(".exe")
     {
