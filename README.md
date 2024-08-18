@@ -104,7 +104,20 @@ Release tag is 0.1.5
 
 This mode is useful to be used in automated scripts.
 
-There are two modes to download assets: [selection](#selection) and [automatic](#automatic).
+There are two modes to download assets: [automatic](#automatic) and [selection](#selection).
+
+#### Automatic
+
+Automatically select and download an asset based on your operating system and architecture
+
+```shell
+# you can use -a or --automatic
+dra download -a devmatteini/dra-tests
+```
+
+> [!IMPORTANT]
+> Since there is no naming convention for release assets,
+> be aware that this mode may fail if no asset matches your system based on `dra` rules for recognizing an asset.
 
 #### Selection
 
@@ -121,19 +134,6 @@ Copy the output and run:
 # use this command in your scripts
 dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
 ```
-
-#### Automatic
-
-Automatically select and download an asset based on your operating system and architecture
-
-```shell
-# you can use -a or --automatic
-dra download -a devmatteini/dra-tests
-```
-
-> [!IMPORTANT]
-> Since there is no naming convention for release assets,
-> be aware that this mode may fail if no asset matches your system based on `dra` rules for recognizing an asset.
 
 ### Install assets
 
