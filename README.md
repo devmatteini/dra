@@ -65,6 +65,7 @@ make release
 - [Install assets](#install-assets)
 - [Private repositories & rate limit](#private-repositories--rate-limit)
 - [Shell completion](#shell-completion)
+- [Examples](#examples)
 
 ### Interactive download
 
@@ -185,6 +186,55 @@ For more information on args/flags/options/commands run:
 ```shell
 dra --help
 dra <command> --help
+```
+
+### Examples
+
+Install an executable from a tar archive
+
+```shell
+dra download -s helloworld.tar.gz -i devmatteini/dra-tests
+./helloworld
+```
+
+Install and move the executable to a custom directory
+
+```shell
+dra download -a -i -o ~/.local/bin/ devmatteini/dra-tests
+~/.local/bin/helloworld
+```
+
+Install an executable file without an archive
+
+```shell
+dra download -s helloworld-unix -i devmatteini/dra-tests
+./helloworld-unix
+```
+
+Install an executable from a compressed file
+
+```shell
+dra download -s helloworld-compressed-unix.bz2 -i devmatteini/dra-tests
+./helloworld-compressed-unix
+```
+
+Install and rename the executable (useful when downloading an executable or compressed file)
+
+```shell
+dra download -s helloworld-unix -i -o helloworld devmatteini/dra-tests
+./helloworld
+```
+
+Install a specific executable when many are available
+
+```shell
+# First download the main executable
+dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 devmatteini/dra-tests
+./helloworld-v2
+
+# Then download another executable
+dra download -s helloworld-many-executables-unix.tar.gz -I random-script devmatteini/dra-tests
+./random-script
 ```
 
 ## Contributing
