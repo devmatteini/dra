@@ -8,19 +8,19 @@ use crate::github::Repository;
 /// A command line tool to download release assets from GitHub
 ///
 /// EXAMPLES:
-/// Select and download an asset:
+/// Select and download an asset (interactive mode):
 /// $ dra download devmatteini/dra-tests
 ///
-/// Automatically select and download an asset:
+/// Download a selected asset (non-interactive mode):
 /// $ dra untag devmatteini/dra-tests
 /// helloworld_{tag}.tar.gz
-/// $ dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
+/// $ dra download -s "helloworld_{tag}.tar.gz" devmatteini/dra-tests
 ///
-/// Automatically select and download an asset based on your operating system and architecture:
+/// Automatically select and download an asset based on your operating system and architecture (non-interactive mode):
 /// $ dra download -a devmatteini/dra-tests
 ///
 /// Download and install an asset:
-/// $ dra download --install devmatteini/dra-tests
+/// $ dra download -i devmatteini/dra-tests
 ///
 /// More examples can be found at https://github.com/devmatteini/dra#usage
 #[derive(Debug, Parser)]
