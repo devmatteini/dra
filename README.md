@@ -179,15 +179,6 @@ source dra-completion
 
 See all supported shell with `dra completion -h`
 
----
-
-For more information on args/flags/options/commands run:
-
-```shell
-dra --help
-dra <command> --help
-```
-
 ### Examples
 
 Install an executable from a tar archive
@@ -235,6 +226,15 @@ dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 devmatt
 # Then download another executable
 dra download -s helloworld-many-executables-unix.tar.gz -I random-script devmatteini/dra-tests
 ./random-script
+```
+
+---
+
+For more information on args/flags/options/commands run:
+
+```shell
+dra --help
+dra <command> --help
 ```
 
 ## Contributing
