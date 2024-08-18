@@ -62,6 +62,7 @@ make release
 
 - [Download assets with interactive mode](#interactive-download)
 - [Download assets with non-interactive mode](#non-interactive-download)
+- [Download options](#download-options)
 - [Install assets](#install-assets)
 - [Private repositories & rate limit](#private-repositories--rate-limit)
 - [Shell completion](#shell-completion)
@@ -69,36 +70,10 @@ make release
 
 ### Interactive download
 
-Select and download an asset from a repository
+Manually select and download an asset from a repository
 
 ```shell
 dra download devmatteini/dra-tests
-```
-
-Select and download an asset to custom path
-
-```shell
-dra download --output /tmp/dra-example devmatteini/dra-tests
-
-# or save to custom directory path
-dra download --output ~/Downloads devmatteini/dra-tests
-```
-
-Select and download an asset from a specific release
-
-```shell
-dra download --tag 0.1.1 devmatteini/dra-tests
-```
-
-Select and download source code archives
-
-```shell
-dra download devmatteini/dra-tests
-Release tag is 0.1.5
-? Pick the asset to download ›
-  helloworld_0.1.5.tar.gz
-❯ Source code (tar.gz)
-  Source code (zip)
 ```
 
 ### Non-Interactive download
@@ -134,6 +109,36 @@ Copy the output and run:
 ```shell
 # use this command in your scripts
 dra download --select "helloworld_{tag}.tar.gz" devmatteini/dra-tests
+```
+
+### Download options
+
+All `dra-download` options works with both interactive and non-interactive modes.
+
+Select and download an asset to custom path
+
+```shell
+dra download --output /tmp/dra-example devmatteini/dra-tests
+
+# or save to custom directory path
+dra download --output ~/Downloads devmatteini/dra-tests
+```
+
+Select and download an asset from a specific release
+
+```shell
+dra download --tag 0.1.1 devmatteini/dra-tests
+```
+
+Select and download source code archives
+
+```shell
+dra download devmatteini/dra-tests
+Release tag is 0.1.5
+? Pick the asset to download ›
+  helloworld_0.1.5.tar.gz
+❯ Source code (tar.gz)
+  Source code (zip)
 ```
 
 ### Install assets
