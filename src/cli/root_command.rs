@@ -67,9 +67,9 @@ pub enum Command {
         /// Supported assets are:
         ///
         /// - Debian packages (requires elevated privileges)
-        /// - Tar archives
-        /// - Zip files
-        /// - Compressed files
+        /// - Tar archives with executable(s)
+        /// - Zip files with executable(s)
+        /// - Compressed executable files
         /// - Executable files
         /// - AppImage files
         ///
