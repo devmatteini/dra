@@ -7,28 +7,46 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-This release improves the `install` feature on several points.
+## [0.6.0] - 2024-08-18
+
+This release focuses on improving the `install` feature and adds support for more assets types ([#205](https://github.com/devmatteini/dra/issues/205)).
+The install system is now more reliable and can handle more complex scenarios.
+
+Thanks @sandreas and @adriangalilea for the help testing this release.
 
 ### Added
 
-- `dra download -I/--install-file <file>` option to install a specific executable file.
+New supported assets to install are:
 
-  For example, if you want to download the `install.sh` script inside the release asset you can run:
-  `dra download -s helloworld-many-executables-unix.tar.gz -I install.sh devmatteini/dra-tests`
+- Compressed executable files
+- Executable files
+- AppImage files
+
+A new option `--install-file/-I <INSTALL_FILE>` has been added to `dra-download` command.
+This option is useful when a tar archive or zip file contains many executables:
+
+- `dra` can't automatically detect which one to install
+- The repository provides more than one executable and you want to install them
+
+See [Examples](./README.md#examples) section on for more information.
 
 ### Changed
 
-- There is a new system to detect the right executable to install when many are available
-- Improved help messages for `dra-download` install feature
-
-### Fixed
-
-- Install of compressed files, like `.gz,` `.bz2`, `.xz`. Before they were treated as tar archives, which was obviously wrong
-- Find executables in deeply nested directories when installing from a tar archive or zip file
+- The `--output` option of `dra-download` now also accepts file paths when used with install feature. This allows to rename the installed executable file ([examples](./README.md#examples))
 
 ### Development
 
 - Extend release infrastructure to be able to create alpha/beta releases.
+
+### Updated dependencies
+
+- bump `uuid` from 1.9.1 to 1.10.0
+- bump `ureq` from 2.9.7 to 2.10.0
+- bump `serde` from 1.0.203 to 1.0.204
+- bump `predicates` from 3.1.0 to 3.1.2
+- bump `clap` from 4.5.8 to 4.5.13
+- bump `clap_complete` from 4.5.3 to 4.5.8
+- bump `assert_cmd` from 2.0.14 to 2.0.15
 
 ## [0.5.4] - 2024-07-20
 
