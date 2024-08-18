@@ -58,7 +58,7 @@ pub enum Command {
         ///
         /// Default path is current working directory and the name of the asset.
         ///
-        /// It can be used with install feature to save the asset to a custom path.
+        /// When used with install feature, it will save the executable to the specified path when applicable.
         #[arg(short, long, value_hint = ValueHint::AnyPath)]
         output: Option<PathBuf>,
 
@@ -66,22 +66,24 @@ pub enum Command {
         ///
         /// Supported assets are:
         ///
-        /// - Debian packages (`.deb`)
+        /// - Debian packages (requires elevated privileges)
+        /// - Tar archives
+        /// - Zip files
+        /// - Compressed files
+        /// - Executable files
+        /// - AppImage files
         ///
-        /// - Tar archives (`.tar.gz`, `.tgz`, `.tar.bz2`, `.tbz`, `.tar.xz`, `.txz`)
-        ///
-        /// - Zip files (`.zip`)
-        ///
-        /// - Compressed files (`.gz`, `.bz2`, `.xz`)
-        ///
-        /// If a tar archive or zip file contains many executables,
-        /// and it can't detect automatically which one to install, you can use `-I/--install-file <file>`.
+        /// If a tar archive or zip file contains many executables and cannot automatically detect which one to install, use `--install-file <INSTALL_FILE>`.
         #[arg(short, long, group = "install-feature")]
         install: bool,
 
         /// Install downloaded asset and select which executable to install
         ///
-        /// The only difference with basic `-i/--install` is that you can select which executable to install when there are many available in the tar archive/zip.
+        /// This option is useful when a tar archive or zip file contains many executables:
+        /// 1. When `dra` can't automatically detect which one to install
+        /// 2. The repository provides more than one executable and you want to install them
+        ///
+        /// If you use this option for other types of assets, it will be treated as the default install.
         #[arg(short = 'I', long, group = "install-feature")]
         install_file: Option<String>,
     },
