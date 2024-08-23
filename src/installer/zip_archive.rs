@@ -3,8 +3,9 @@ use std::path::Path;
 
 use crate::installer::archive::ArchiveInstaller;
 use crate::installer::error::InstallError;
+use crate::installer::executable::Executable;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::{Destination, Executable, InstallerResult};
+use crate::installer::{Destination, InstallerResult};
 
 pub struct ZipArchiveInstaller;
 

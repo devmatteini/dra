@@ -1,8 +1,9 @@
 use std::path::Path;
 
 use crate::installer::error::{InstallError, InstallErrorMapErr};
+use crate::installer::executable::Executable;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::{Destination, Executable, InstallerResult};
+use crate::installer::{Destination, InstallerResult};
 
 pub struct ExecutableFileInstaller;
 

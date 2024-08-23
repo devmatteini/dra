@@ -6,8 +6,9 @@ use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
 use crate::installer::error::{InstallError, InstallErrorMapErr};
+use crate::installer::executable::Executable;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::{Destination, Executable, InstallerResult};
+use crate::installer::{Destination, InstallerResult};
 
 pub struct ArchiveInstaller;
 
@@ -166,13 +167,13 @@ mod tests {
     use std::os::unix::fs::PermissionsExt;
     use std::path::{Path, PathBuf};
 
+    use super::ArchiveInstaller;
+    use crate::installer::executable::Executable;
     use crate::installer::{
         error::InstallError,
         file::{FileType, SupportedFileInfo},
-        Destination, Executable, InstallerResult,
+        Destination, InstallerResult,
     };
-
-    use super::ArchiveInstaller;
 
     #[test]
     fn default_executable_with_default_name() {
