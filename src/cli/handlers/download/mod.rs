@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 
 use crate::cli::environment::get_env;
 use crate::cli::handlers::common::fetch_release_for;
-use crate::cli::handlers::download::find_asset_by_system::find_asset_by_system;
+use crate::cli::handlers::find_asset_by_system::find_asset_by_system;
 use crate::cli::handlers::result::{HandlerError, HandlerResult};
 use crate::cli::progress_bar::ProgressBar;
 use crate::cli::select;
@@ -17,8 +17,6 @@ use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
 use crate::installer;
 use crate::installer::{Destination, Executable};
-
-mod find_asset_by_system;
 
 pub struct DownloadHandler {
     repository: Repository,
