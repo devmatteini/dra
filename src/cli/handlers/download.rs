@@ -84,11 +84,11 @@ impl DownloadHandler {
     }
 
     pub fn run(&self) -> HandlerResult {
-        let client = GithubClient::from_environment();
-        let release = self.fetch_release(&client)?;
+        let github = GithubClient::from_environment();
+        let release = self.fetch_release(&github)?;
         let selected_asset = self.select_asset(release)?;
         let output_path = self.choose_output_path(&selected_asset.name);
-        Self::download_asset(&client, &selected_asset, &output_path)?;
+        Self::download_asset(&github, &selected_asset, &output_path)?;
         self.maybe_install(&selected_asset.name, &output_path)?;
         Ok(())
     }
@@ -173,8 +173,8 @@ impl DownloadHandler {
             .ok_or_else(|| HandlerError::new(format!("No asset found for {}", untagged)))
     }
 
-    fn fetch_release(&self, client: &GithubClient) -> Result<Release, HandlerError> {
-        fetch_release_for(client, &self.repository, self.tag.as_ref())
+    fn fetch_release(&self, github: &GithubClient) -> Result<Release, HandlerError> {
+        fetch_release_for(github, &self.repository, self.tag.as_ref())
     }
 
     fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
@@ -188,13 +188,13 @@ impl DownloadHandler {
     }
 
     fn download_asset(
-        client: &GithubClient,
+        github: &GithubClient,
         selected_asset: &Asset,
         output_path: &Path,
     ) -> Result<(), HandlerError> {
         let progress_bar = ProgressBar::download_layout(&selected_asset.name, output_path);
         progress_bar.show();
-        let (mut stream, maybe_content_length) = client
+        let (mut stream, maybe_content_length) = github
             .download_asset_stream(selected_asset)
             .map_err(Self::download_error)?;
         progress_bar.set_length(maybe_content_length);

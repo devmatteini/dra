@@ -16,8 +16,8 @@ impl UntagHandler {
     }
 
     pub fn run(&self) -> HandlerResult {
-        let client = GithubClient::from_environment();
-        let release = Self::fetch_latest_release(&client, &self.repository)?;
+        let github = GithubClient::from_environment();
+        let release = Self::fetch_latest_release(&github, &self.repository)?;
         check_has_assets(&release)?;
         let selected_asset = Self::ask_select_asset(release.assets)?;
         let untagged = TaggedAsset::untag(&release.tag, &selected_asset);
@@ -26,10 +26,10 @@ impl UntagHandler {
     }
 
     fn fetch_latest_release(
-        client: &GithubClient,
+        github: &GithubClient,
         repository: &Repository,
     ) -> Result<Release, HandlerError> {
-        fetch_release_for(client, repository, None)
+        fetch_release_for(github, repository, None)
     }
 
     fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {

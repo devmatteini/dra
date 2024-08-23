@@ -7,14 +7,14 @@ use crate::github::release::{Release, Tag};
 use crate::github::repository::Repository;
 
 pub fn fetch_release_for(
-    client: &GithubClient,
+    github: &GithubClient,
     repository: &Repository,
     tag: Option<&Tag>,
 ) -> Result<Release, HandlerError> {
     let spinner = Spinner::empty_layout();
     spinner.show();
 
-    let release = client.get_release(repository, tag).map_err(release_error)?;
+    let release = github.get_release(repository, tag).map_err(release_error)?;
 
     let message = format!("Release tag is {}", Color::new(&release.tag.0).bold());
     spinner.finish_with_message(&message);
