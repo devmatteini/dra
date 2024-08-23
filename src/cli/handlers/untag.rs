@@ -1,4 +1,4 @@
-use crate::cli::get_env;
+use crate::cli::environment::get_env;
 use crate::cli::handlers::common::{check_has_assets, fetch_release_for};
 use crate::cli::handlers::result::{HandlerError, HandlerResult};
 use crate::cli::select;

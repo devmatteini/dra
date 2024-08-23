@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
-use crate::cli::get_env;
+use crate::cli::environment::get_env;
 use crate::cli::handlers::common::fetch_release_for;
 use crate::cli::handlers::download::find_asset_by_system::find_asset_by_system;
 use crate::cli::handlers::result::{HandlerError, HandlerResult};
