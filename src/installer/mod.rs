@@ -12,7 +12,6 @@ use crate::installer::zip_archive::ZipArchiveInstaller;
 use crate::installer::file::{validate_file, Compression, FileInfo, FileType};
 
 mod archive;
-pub mod cleanup;
 mod command;
 mod compressed_file;
 mod debian;
