@@ -5,6 +5,7 @@ use crate::installer::error::InstallError;
 use crate::installer::executable::Executable;
 use crate::installer::executable_file::ExecutableFileInstaller;
 use crate::installer::file::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
+use crate::installer::result::InstallerResult;
 use crate::installer::tar_archive::TarArchiveInstaller;
 use crate::installer::zip_archive::ZipArchiveInstaller;
 use std::path::Path;
@@ -18,6 +19,7 @@ pub mod error;
 pub mod executable;
 mod executable_file;
 mod file;
+mod result;
 mod tar_archive;
 mod zip_archive;
 
@@ -32,8 +34,6 @@ pub fn install(
 
     installer(file_info, destination, executable)
 }
-
-type InstallerResult = Result<(), InstallError>;
 
 fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
     if !path.is_file() {

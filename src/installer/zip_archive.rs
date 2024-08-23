@@ -6,7 +6,7 @@ use crate::installer::destination::Destination;
 use crate::installer::error::InstallError;
 use crate::installer::executable::Executable;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::InstallerResult;
+use crate::installer::result::InstallerResult;
 
 pub struct ZipArchiveInstaller;
 
