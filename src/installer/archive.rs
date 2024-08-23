@@ -56,14 +56,12 @@ impl ArchiveInstaller {
             .collect();
 
         match executable {
-            Executable::Default(name) => {
-                Self::find_default_executable(executables, name, directory)
-            }
+            Executable::Automatic(name) => Self::discover_executable(executables, name, directory),
             Executable::Selected(name) => Self::find_selected_executable(executables, name),
         }
     }
 
-    fn find_default_executable(
+    fn discover_executable(
         executables: Vec<ExecutableFile>,
         executable_name: &str,
         directory: &Path,
@@ -178,10 +176,10 @@ mod tests {
     };
 
     #[test]
-    fn default_executable_with_default_name() {
-        let destination_dir = temp_dir("default_executable_with_default_name");
+    fn automatic_executable_with_default_name() {
+        let destination_dir = temp_dir("automatic_executable_with_default_name");
         let destination = Destination::Directory(destination_dir.clone());
-        let executable = Executable::Default(executable_name("my-tool"));
+        let executable = Executable::Automatic(executable_name("my-tool"));
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -201,10 +199,10 @@ mod tests {
     }
 
     #[test]
-    fn default_executable_with_single_executable() {
-        let destination_dir = temp_dir("default_executable_with_single_executable");
+    fn automatic_executable_with_single_executable() {
+        let destination_dir = temp_dir("automatic_executable_with_single_executable");
         let destination = Destination::Directory(destination_dir.clone());
-        let executable = Executable::Default(executable_name("long-tool-name"));
+        let executable = Executable::Automatic(executable_name("long-tool-name"));
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -223,10 +221,10 @@ mod tests {
     }
 
     #[test]
-    fn default_executable_with_no_executable() {
-        let destination_dir = temp_dir("default_executable_with_no_executable");
+    fn automatic_executable_with_no_executable() {
+        let destination_dir = temp_dir("automatic_executable_with_no_executable");
         let destination = Destination::Directory(destination_dir.clone());
-        let executable = Executable::Default(executable_name("my-tool"));
+        let executable = Executable::Automatic(executable_name("my-tool"));
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -243,10 +241,10 @@ mod tests {
     }
 
     #[test]
-    fn default_executable_with_many_executable_candidates() {
-        let destination_dir = temp_dir("default_executable_with_many_executable_candidates");
+    fn automatic_executable_with_many_executable_candidates() {
+        let destination_dir = temp_dir("automatic_executable_with_many_executable_candidates");
         let destination = Destination::Directory(destination_dir.clone());
-        let executable = Executable::Default(executable_name("my-tool"));
+        let executable = Executable::Automatic(executable_name("my-tool"));
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -318,7 +316,7 @@ mod tests {
     fn executable_inside_nested_directory() {
         let destination_dir = temp_dir("executable_inside_nested_directory");
         let destination = Destination::Directory(destination_dir.clone());
-        let executable = any_default_executable_name();
+        let executable = any_automatic_executable_name();
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -337,8 +335,8 @@ mod tests {
         assert_file_exists(executable_path(&destination_dir, "my-executable"))
     }
 
-    fn any_default_executable_name() -> Executable {
-        Executable::Default(executable_name("ANY_EXECUTABLE_NAME"))
+    fn any_automatic_executable_name() -> Executable {
+        Executable::Automatic(executable_name("ANY_EXECUTABLE_NAME"))
     }
 
     #[cfg(target_family = "unix")]

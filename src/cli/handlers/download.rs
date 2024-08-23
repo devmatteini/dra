@@ -50,7 +50,7 @@ impl Install {
     fn new(install: bool, install_file: Option<String>, repository: &Repository) -> Self {
         match (install_file, install) {
             (Some(executable_name), _) => Self::Yes(Executable::Selected(executable_name)),
-            (_, true) => Self::Yes(Executable::Default(repository.repo.clone())),
+            (_, true) => Self::Yes(Executable::Automatic(repository.repo.clone())),
             (None, false) => Self::No,
         }
     }
