@@ -14,7 +14,6 @@ use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
-use crate::installer::cleanup::InstallCleanup;
 use crate::installer::{Destination, Executable};
 use crate::{github, installer};
 
@@ -151,8 +150,10 @@ impl DownloadHandler {
                 spinner.show();
 
                 installer::install(asset_name.to_string(), path, executable, destination)
-                    .cleanup(path)
                     .map_err(|x| HandlerError::new(x.to_string()))?;
+                std::fs::remove_file(path).map_err(|x| {
+                    HandlerError::new(format!("Unable to delete installed asset: {}", x))
+                })?;
 
                 spinner.finish();
                 Ok(())
