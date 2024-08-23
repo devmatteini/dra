@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
-use crate::installer::archive::ArchiveInstaller;
+use crate::installer::archive_installer::ArchiveInstaller;
 use crate::installer::destination::Destination;
 use crate::installer::error::InstallError;
 use crate::installer::executable::Executable;

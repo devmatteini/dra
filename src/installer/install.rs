@@ -1,13 +1,13 @@
-use crate::installer::compressed_file::CompressedFileInstaller;
-use crate::installer::debian::DebianInstaller;
+use crate::installer::compressed_file_installer::CompressedFileInstaller;
+use crate::installer::debian_installer::DebianInstaller;
 use crate::installer::destination::Destination;
 use crate::installer::error::InstallError;
 use crate::installer::executable::Executable;
-use crate::installer::executable_file::ExecutableFileInstaller;
+use crate::installer::executable_file_installer::ExecutableFileInstaller;
 use crate::installer::file::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
 use crate::installer::result::InstallerResult;
-use crate::installer::tar_archive::TarArchiveInstaller;
-use crate::installer::zip_archive::ZipArchiveInstaller;
+use crate::installer::tar_archive_installer::TarArchiveInstaller;
+use crate::installer::zip_archive_installer::ZipArchiveInstaller;
 use std::path::Path;
 
 pub fn install(
