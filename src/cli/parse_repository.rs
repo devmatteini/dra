@@ -1,4 +1,4 @@
-use crate::github::Repository;
+use crate::github::repository::Repository;
 
 pub fn try_parse_repository(src: &str) -> Result<Repository, String> {
     if src.is_empty() {

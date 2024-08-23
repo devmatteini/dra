@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use clap::{Parser, ValueHint};
 
 use crate::cli::parse_repository::try_parse_repository;
-use crate::github::Repository;
+use crate::github::repository::Repository;
 
 /// A command line tool to download release assets from GitHub
 ///

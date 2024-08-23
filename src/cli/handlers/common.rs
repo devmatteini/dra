@@ -5,7 +5,7 @@ use crate::github;
 use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
 use crate::github::release::{Release, Tag};
-use crate::github::Repository;
+use crate::github::repository::Repository;
 
 pub fn fetch_release_for(
     client: &GithubClient,

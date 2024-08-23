@@ -4,8 +4,9 @@ use crate::cli::handlers::result::{HandlerError, HandlerResult};
 use crate::cli::select;
 use crate::github::client::GithubClient;
 use crate::github::release::{Asset, Release};
+use crate::github::repository::Repository;
 use crate::github::tagged_asset::TaggedAsset;
-use crate::github::{Repository, GITHUB_TOKEN};
+use crate::github::GITHUB_TOKEN;
 
 pub struct UntagHandler {
     repository: Repository,

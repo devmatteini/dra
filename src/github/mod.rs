@@ -1,30 +1,19 @@
 use crate::github::client::GithubClient;
+use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
+use crate::github::repository::Repository;
 use crate::github::response::ReleaseResponse;
-use error::GithubError;
-use std::fmt::Formatter;
 use std::io::Read;
 use std::time::Duration;
 
 pub mod client;
 pub mod error;
 pub mod release;
+pub mod repository;
 mod response;
 pub mod tagged_asset;
 
 pub const GITHUB_TOKEN: &str = "GITHUB_TOKEN";
-
-#[derive(Debug, Eq, PartialEq, Clone)]
-pub struct Repository {
-    pub owner: String,
-    pub repo: String,
-}
-
-impl std::fmt::Display for Repository {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}/{}", &self.owner, &self.repo)
-    }
-}
 
 // DOCS:
 // - https://docs.github.com/en/rest/releases/releases#get-the-latest-release
