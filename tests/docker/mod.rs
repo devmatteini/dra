@@ -46,7 +46,7 @@ impl Docker {
     pub fn exec(&self, command: &str, args: ExecArgs) -> ExecResult {
         let result = Command::new("docker")
             .arg("exec")
-            .args(&args.to_args())
+            .args(args.to_args())
             .arg(&self.id)
             .arg("sh")
             .arg("-c")
