@@ -3,11 +3,9 @@ use std::io::Read;
 use std::path::Path;
 
 use crate::installer::archive::ArchiveInstaller;
-use crate::installer::InstallerResult;
-
 use crate::installer::error::InstallError;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::{Destination, Executable};
+use crate::installer::{Destination, Executable, InstallerResult};
 
 pub struct TarArchiveInstaller;
 

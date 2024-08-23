@@ -1,15 +1,12 @@
 use std::path::{Path, PathBuf};
 
-use compressed_file::CompressedFileInstaller;
-use executable_file::ExecutableFileInstaller;
-use file::SupportedFileInfo;
-
+use crate::installer::compressed_file::CompressedFileInstaller;
 use crate::installer::debian::DebianInstaller;
 use crate::installer::error::InstallError;
+use crate::installer::executable_file::ExecutableFileInstaller;
+use crate::installer::file::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
 use crate::installer::tar_archive::TarArchiveInstaller;
 use crate::installer::zip_archive::ZipArchiveInstaller;
-
-use crate::installer::file::{validate_file, Compression, FileInfo, FileType};
 
 mod archive;
 mod command;

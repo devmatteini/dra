@@ -1,7 +1,6 @@
 use std::fmt::{Display, Formatter};
 use std::io::Read;
-use std::path::Path;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use crate::installer::error::InstallError;
 

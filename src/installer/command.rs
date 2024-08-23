@@ -1,5 +1,4 @@
-use crate::installer::error::InstallError;
-use crate::installer::error::InstallErrorMapErr;
+use crate::installer::error::{InstallError, InstallErrorMapErr};
 use std::process::{Command, Output};
 
 pub fn exec_command(name: &str, command: &mut Command) -> Result<(), InstallError> {

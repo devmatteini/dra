@@ -1,11 +1,8 @@
-use crate::installer::InstallerResult;
 use std::path::Path;
 
-use crate::installer::{
-    error::{InstallError, InstallErrorMapErr},
-    file::SupportedFileInfo,
-    Destination, Executable,
-};
+use crate::installer::error::{InstallError, InstallErrorMapErr};
+use crate::installer::file::SupportedFileInfo;
+use crate::installer::{Destination, Executable, InstallerResult};
 
 pub struct ExecutableFileInstaller;
 

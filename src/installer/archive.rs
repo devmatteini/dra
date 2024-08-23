@@ -5,12 +5,9 @@ use std::path::{Path, PathBuf};
 
 use walkdir::WalkDir;
 
-use crate::installer::error::InstallErrorMapErr;
-use crate::installer::InstallerResult;
-
-use crate::installer::error::InstallError;
+use crate::installer::error::{InstallError, InstallErrorMapErr};
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::{Destination, Executable};
+use crate::installer::{Destination, Executable, InstallerResult};
 
 pub struct ArchiveInstaller;
 
