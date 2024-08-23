@@ -20,7 +20,7 @@ impl GithubClient {
         Self::new(std::env::var(GITHUB_TOKEN).ok())
     }
 
-    pub fn get(&self, url: &str) -> ureq::Request {
+    fn get(&self, url: &str) -> ureq::Request {
         self.token
             .as_ref()
             .map(|x| ureq::get(url).set("Authorization", &format!("token {}", x)))

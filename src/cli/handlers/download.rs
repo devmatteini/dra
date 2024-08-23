@@ -8,7 +8,6 @@ use crate::cli::handlers::result::{HandlerError, HandlerResult};
 use crate::cli::progress_bar::ProgressBar;
 use crate::cli::select;
 use crate::cli::spinner::Spinner;
-use crate::github;
 use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
@@ -195,8 +194,9 @@ impl DownloadHandler {
     ) -> Result<(), HandlerError> {
         let progress_bar = ProgressBar::download_layout(&selected_asset.name, output_path);
         progress_bar.show();
-        let (mut stream, maybe_content_length) =
-            github::download_asset_stream(client, selected_asset).map_err(Self::download_error)?;
+        let (mut stream, maybe_content_length) = client
+            .download_asset_stream(selected_asset)
+            .map_err(Self::download_error)?;
         progress_bar.set_length(maybe_content_length);
 
         let mut destination = Self::create_file(output_path)?;

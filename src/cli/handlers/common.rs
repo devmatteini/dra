@@ -1,7 +1,6 @@
 use crate::cli::color::Color;
 use crate::cli::handlers::result::HandlerError;
 use crate::cli::spinner::Spinner;
-use crate::github;
 use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
 use crate::github::release::{Release, Tag};
@@ -15,7 +14,7 @@ pub fn fetch_release_for(
     let spinner = Spinner::empty_layout();
     spinner.show();
 
-    let release = github::get_release(client, repository, tag).map_err(release_error)?;
+    let release = client.get_release(repository, tag).map_err(release_error)?;
 
     let message = format!("Release tag is {}", Color::new(&release.tag.0).bold());
     spinner.finish_with_message(&message);
