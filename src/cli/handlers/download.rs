@@ -2,7 +2,6 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
-use crate::cli::environment::get_env;
 use crate::cli::handlers::common::fetch_release_for;
 use crate::cli::handlers::find_asset_by_system::find_asset_by_system;
 use crate::cli::handlers::result::{HandlerError, HandlerResult};
@@ -15,7 +14,6 @@ use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::repository::Repository;
 use crate::github::tagged_asset::TaggedAsset;
-use crate::github::GITHUB_TOKEN;
 use crate::installer;
 use crate::installer::destination::Destination;
 use crate::installer::executable::Executable;
@@ -87,7 +85,7 @@ impl DownloadHandler {
     }
 
     pub fn run(&self) -> HandlerResult {
-        let client = GithubClient::new(get_env(GITHUB_TOKEN));
+        let client = GithubClient::from_environment();
         let release = self.fetch_release(&client)?;
         let selected_asset = self.select_asset(release)?;
         let output_path = self.choose_output_path(&selected_asset.name);

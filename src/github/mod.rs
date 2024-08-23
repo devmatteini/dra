@@ -13,8 +13,6 @@ pub mod repository;
 mod response;
 pub mod tagged_asset;
 
-pub const GITHUB_TOKEN: &str = "GITHUB_TOKEN";
-
 // DOCS:
 // - https://docs.github.com/en/rest/releases/releases#get-the-latest-release
 // - https://docs.github.com/en/rest/releases/releases#get-a-release-by-tag-name

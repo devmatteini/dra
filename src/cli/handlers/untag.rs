@@ -1,4 +1,3 @@
-use crate::cli::environment::get_env;
 use crate::cli::handlers::common::{check_has_assets, fetch_release_for};
 use crate::cli::handlers::result::{HandlerError, HandlerResult};
 use crate::cli::select;
@@ -6,7 +5,6 @@ use crate::github::client::GithubClient;
 use crate::github::release::{Asset, Release};
 use crate::github::repository::Repository;
 use crate::github::tagged_asset::TaggedAsset;
-use crate::github::GITHUB_TOKEN;
 
 pub struct UntagHandler {
     repository: Repository,
@@ -18,7 +16,7 @@ impl UntagHandler {
     }
 
     pub fn run(&self) -> HandlerResult {
-        let client = GithubClient::new(get_env(GITHUB_TOKEN));
+        let client = GithubClient::from_environment();
         let release = Self::fetch_latest_release(&client, &self.repository)?;
         check_has_assets(&release)?;
         let selected_asset = Self::ask_select_asset(release.assets)?;
