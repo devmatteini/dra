@@ -2,7 +2,7 @@ use std::io::Write;
 
 use clap::CommandFactory;
 
-use crate::cli::handlers::HandlerResult;
+use crate::cli::handlers::result::HandlerResult;
 use crate::Cli;
 
 pub struct CompletionHandler {

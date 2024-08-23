@@ -1,5 +1,5 @@
 use crate::cli::color::Color;
-use crate::cli::handlers::HandlerError;
+use crate::cli::handlers::result::HandlerError;
 use crate::cli::spinner::Spinner;
 use crate::github;
 use crate::github::client::GithubClient;

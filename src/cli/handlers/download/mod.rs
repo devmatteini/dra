@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use crate::cli::get_env;
 use crate::cli::handlers::common::fetch_release_for;
 use crate::cli::handlers::download::find_asset_by_system::find_asset_by_system;
-use crate::cli::handlers::{HandlerError, HandlerResult};
+use crate::cli::handlers::result::{HandlerError, HandlerResult};
 use crate::cli::progress_bar::ProgressBar;
 use crate::cli::select;
 use crate::cli::spinner::Spinner;
