@@ -1,10 +1,10 @@
 use std::fs::File;
 use std::io::Read;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use crate::installer::destination::Destination;
 use crate::installer::error::{InstallError, InstallErrorMapErr};
-use crate::installer::executable::Executable;
+use crate::installer::executable::{set_executable_permissions, Executable};
 use crate::installer::file::SupportedFileInfo;
 use crate::installer::result::InstallerResult;
 
@@ -85,19 +85,4 @@ fn executable_name(file_info: &SupportedFileInfo) -> PathBuf {
         .file_stem()
         .map(PathBuf::from)
         .unwrap_or_else(|| default_name)
-}
-
-#[cfg(target_family = "unix")]
-fn set_executable_permissions(path: &Path) -> Result<(), InstallError> {
-    use std::os::unix::fs::PermissionsExt;
-
-    std::fs::set_permissions(path, PermissionsExt::from_mode(0o755)).map_fatal_err(format!(
-        "Cannot set executable permissions on {}",
-        path.display(),
-    ))
-}
-
-#[cfg(target_os = "windows")]
-fn set_executable_permissions(path: &Path) -> Result<(), InstallError> {
-    Ok(())
 }
