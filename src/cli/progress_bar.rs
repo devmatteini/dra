@@ -1,9 +1,8 @@
+use indicatif::ProgressStyle;
 use std::path::Path;
 
-use indicatif::ProgressStyle;
-
-use crate::cli;
 use crate::cli::color::Color;
+use crate::cli::spinner;
 
 pub struct ProgressBar {
     pb: indicatif::ProgressBar,
@@ -15,7 +14,7 @@ impl ProgressBar {
         let pb = indicatif::ProgressBar::new_spinner();
         pb.set_style(
             ProgressStyle::default_spinner()
-                .tick_strings(cli::spinner::TICKS)
+                .tick_strings(spinner::TICKS)
                 .template("{spinner:.blue} {msg}")
                 .unwrap(),
         );
@@ -24,7 +23,7 @@ impl ProgressBar {
     }
 
     pub fn show(&self) {
-        self.pb.enable_steady_tick(cli::spinner::TICK_DURATION);
+        self.pb.enable_steady_tick(spinner::TICK_DURATION);
     }
 
     pub fn finish(&self) {
@@ -43,7 +42,7 @@ impl ProgressBar {
     fn set_unknown_length(&self) {
         self.pb.set_style(
             ProgressStyle::default_spinner()
-                .tick_strings(cli::spinner::TICKS)
+                .tick_strings(spinner::TICKS)
                 .template("{spinner:.blue} {msg} {bytes}")
                 .unwrap(),
         )
@@ -52,7 +51,7 @@ impl ProgressBar {
     fn set_progress_bar_length(&self, progress: u64) {
         self.pb.set_style(
             ProgressStyle::default_spinner()
-                .tick_strings(cli::spinner::TICKS)
+                .tick_strings(spinner::TICKS)
                 .template("{spinner:.blue} {msg} {percent}% ({eta})")
                 .unwrap(),
         );

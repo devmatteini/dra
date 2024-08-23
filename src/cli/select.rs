@@ -1,5 +1,5 @@
+use crate::cli::handlers::HandlerError;
 use crate::github::release::Asset;
-use crate::HandlerError;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Select;
 

@@ -9,13 +9,14 @@ use crate::cli::handlers::{HandlerError, HandlerResult};
 use crate::cli::progress_bar::ProgressBar;
 use crate::cli::select;
 use crate::cli::spinner::Spinner;
+use crate::github;
 use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
+use crate::installer;
 use crate::installer::{Destination, Executable};
-use crate::{github, installer};
 
 mod find_asset_by_system;
 
