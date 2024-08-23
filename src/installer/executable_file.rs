@@ -1,7 +1,7 @@
 use crate::installer::InstallerResult;
 use std::path::Path;
 
-use super::{
+use crate::installer::{
     error::{InstallError, InstallErrorMapErr},
     file::SupportedFileInfo,
     Destination, Executable,

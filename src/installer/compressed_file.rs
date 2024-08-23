@@ -4,8 +4,8 @@ use std::{fs::File, path::PathBuf};
 
 use crate::installer::InstallerResult;
 
-use super::Destination;
-use super::{
+use crate::installer::Destination;
+use crate::installer::{
     error::{InstallError, InstallErrorMapErr},
     file::SupportedFileInfo,
     Executable,

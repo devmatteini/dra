@@ -8,9 +8,9 @@ use walkdir::WalkDir;
 use crate::installer::error::InstallErrorMapErr;
 use crate::installer::InstallerResult;
 
-use super::error::InstallError;
-use super::file::SupportedFileInfo;
-use super::{Destination, Executable};
+use crate::installer::error::InstallError;
+use crate::installer::file::SupportedFileInfo;
+use crate::installer::{Destination, Executable};
 
 pub struct ArchiveInstaller;
 

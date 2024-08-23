@@ -3,8 +3,8 @@ use std::process::Command;
 use crate::installer::command::exec_command;
 use crate::installer::InstallerResult;
 
-use super::file::SupportedFileInfo;
-use super::{Destination, Executable};
+use crate::installer::file::SupportedFileInfo;
+use crate::installer::{Destination, Executable};
 
 const DPKG: &str = "dpkg";
 
