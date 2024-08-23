@@ -5,10 +5,11 @@ use std::path::{Path, PathBuf};
 
 use walkdir::WalkDir;
 
+use crate::installer::destination::Destination;
 use crate::installer::error::{InstallError, InstallErrorMapErr};
 use crate::installer::executable::Executable;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::{Destination, InstallerResult};
+use crate::installer::InstallerResult;
 
 pub struct ArchiveInstaller;
 
@@ -168,11 +169,12 @@ mod tests {
     use std::path::{Path, PathBuf};
 
     use super::ArchiveInstaller;
+    use crate::installer::destination::Destination;
     use crate::installer::executable::Executable;
     use crate::installer::{
         error::InstallError,
         file::{FileType, SupportedFileInfo},
-        Destination, InstallerResult,
+        InstallerResult,
     };
 
     #[test]

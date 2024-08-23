@@ -1,29 +1,25 @@
 use crate::installer::compressed_file::CompressedFileInstaller;
 use crate::installer::debian::DebianInstaller;
+use crate::installer::destination::Destination;
 use crate::installer::error::InstallError;
 use crate::installer::executable::Executable;
 use crate::installer::executable_file::ExecutableFileInstaller;
 use crate::installer::file::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
 use crate::installer::tar_archive::TarArchiveInstaller;
 use crate::installer::zip_archive::ZipArchiveInstaller;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 mod archive;
 mod command;
 mod compressed_file;
 mod debian;
+pub mod destination;
 pub mod error;
 pub mod executable;
 mod executable_file;
 mod file;
 mod tar_archive;
 mod zip_archive;
-
-#[derive(Debug)]
-pub enum Destination {
-    Directory(PathBuf),
-    File(PathBuf),
-}
 
 pub fn install(
     asset_name: String,

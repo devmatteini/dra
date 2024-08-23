@@ -2,10 +2,11 @@ use std::fs::File;
 use std::path::Path;
 
 use crate::installer::archive::ArchiveInstaller;
+use crate::installer::destination::Destination;
 use crate::installer::error::InstallError;
 use crate::installer::executable::Executable;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::{Destination, InstallerResult};
+use crate::installer::InstallerResult;
 
 pub struct ZipArchiveInstaller;
 

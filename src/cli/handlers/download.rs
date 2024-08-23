@@ -16,8 +16,8 @@ use crate::github::release::{Asset, Release, Tag};
 use crate::github::tagged_asset::TaggedAsset;
 use crate::github::{Repository, GITHUB_TOKEN};
 use crate::installer;
+use crate::installer::destination::Destination;
 use crate::installer::executable::Executable;
-use crate::installer::Destination;
 
 pub struct DownloadHandler {
     repository: Repository,

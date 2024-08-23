@@ -2,10 +2,11 @@ use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
+use crate::installer::destination::Destination;
 use crate::installer::error::{InstallError, InstallErrorMapErr};
 use crate::installer::executable::Executable;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::{Destination, InstallerResult};
+use crate::installer::InstallerResult;
 
 pub struct CompressedFileInstaller;
 
