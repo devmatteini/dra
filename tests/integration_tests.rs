@@ -2,7 +2,7 @@ mod assertions;
 mod docker;
 mod fs;
 
-mod archives {
+mod install {
     use std::process::Command;
     use test_case::test_case;
 
