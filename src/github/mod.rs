@@ -1,6 +1,6 @@
 pub mod client;
 pub mod error;
 pub mod release;
+mod release_response;
 pub mod repository;
-mod response;
 pub mod tagged_asset;

@@ -1,5 +1,5 @@
+use crate::github::release_response::{AssetResponse, ReleaseResponse};
 use crate::github::repository::Repository;
-use crate::github::response::{AssetResponse, ReleaseResponse};
 
 #[derive(Debug)]
 pub struct Tag(pub String);

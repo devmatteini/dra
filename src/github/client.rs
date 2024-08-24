@@ -1,7 +1,7 @@
 use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
+use crate::github::release_response::ReleaseResponse;
 use crate::github::repository::Repository;
-use crate::github::response::ReleaseResponse;
 use std::io::Read;
 use std::time::Duration;
 
