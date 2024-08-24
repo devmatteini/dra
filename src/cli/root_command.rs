@@ -2,7 +2,6 @@ use std::path::PathBuf;
 
 use clap::{Parser, ValueHint};
 
-use crate::cli::parse_repository::try_parse_repository;
 use crate::github::repository::Repository;
 
 /// A command line tool to download release assets from GitHub
@@ -35,7 +34,7 @@ pub enum Command {
     /// Select and download an asset
     Download {
         /// Github repository using format {owner}/{repo}
-        #[arg(value_parser = try_parse_repository)]
+        #[arg(value_parser = Repository::try_parse)]
         repo: Repository,
 
         /// Untagged asset name to automatically select which asset to download
@@ -91,7 +90,7 @@ pub enum Command {
     /// Select an asset and generate an untagged version of it
     Untag {
         /// Github repository using format {owner}/{repo}
-        #[arg(value_parser = try_parse_repository)]
+        #[arg(value_parser = Repository::try_parse)]
         repo: Repository,
     },
 
