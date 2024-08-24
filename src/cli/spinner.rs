@@ -11,6 +11,7 @@ pub const TICK_DURATION: Duration = Duration::from_millis(80);
 
 pub struct Spinner {
     pb: ProgressBar,
+    #[allow(dead_code)]
     end_message: String,
 }
 
@@ -31,6 +32,7 @@ impl Spinner {
         self.pb.enable_steady_tick(TICK_DURATION);
     }
 
+    #[allow(dead_code)]
     pub fn finish(&self) {
         self.pb.finish_and_clear();
         println!("{}", &self.end_message);
