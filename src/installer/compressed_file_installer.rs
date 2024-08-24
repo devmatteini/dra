@@ -73,7 +73,7 @@ impl CompressedFileInstaller {
         set_executable_permissions(&executable_path)?;
 
         Ok(InstallOutput::new(format!(
-            "Extracted executable '{}' from compressed file",
+            "Extracted compressed executable to '{}'",
             executable_path.display()
         )))
     }

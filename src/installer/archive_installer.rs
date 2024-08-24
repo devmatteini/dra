@@ -31,7 +31,7 @@ impl ArchiveInstaller {
         Self::cleanup(&temp_dir)?;
 
         Ok(InstallOutput::new(format!(
-            "Extracted executable '{}' from archive",
+            "Extracted archive executable to '{}'",
             destination_path.display()
         )))
     }

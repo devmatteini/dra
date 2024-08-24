@@ -23,7 +23,7 @@ impl ExecutableFileInstaller {
         set_executable_permissions(&executable_path)?;
 
         Ok(InstallOutput::new(format!(
-            "Extracted executable '{}'",
+            "Extracted executable to '{}'",
             executable_path.display()
         )))
     }
