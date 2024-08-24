@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.1] - 2024-08-24
+
 ### Added
 
 - Show more information about the installed asset. For example, when installing an executable from a
