@@ -9,5 +9,4 @@ pub mod result;
 pub mod root_command;
 mod select_assets;
 mod spinner;
-pub(crate) mod temp_file;
 pub mod untag_handler;

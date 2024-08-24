@@ -261,7 +261,7 @@ where
     IsDir: FnOnce(&Path) -> bool,
 {
     if install {
-        return crate::cli::temp_file::temp_file();
+        return crate::temp_file::temp_file();
     }
 
     output

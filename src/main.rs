@@ -13,6 +13,7 @@ use std::process::exit;
 mod cli;
 mod github;
 mod installer;
+mod temp_file;
 
 fn main() {
     let cli: Cli = Cli::parse();
