@@ -2,8 +2,8 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
-use crate::cli::handlers::common::fetch_release_for;
 use crate::cli::handlers::find_asset_by_system::find_asset_by_system;
+use crate::cli::handlers::github_release::fetch_release_for;
 use crate::cli::handlers::result::{HandlerError, HandlerResult};
 use crate::cli::progress_bar::ProgressBar;
 use crate::cli::select_assets;
