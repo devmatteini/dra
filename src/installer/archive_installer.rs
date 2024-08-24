@@ -35,10 +35,7 @@ impl ArchiveInstaller {
     }
 
     fn create_temp_dir() -> Result<PathBuf, InstallError> {
-        let temp_dir = crate::temp_file::temp_dir();
-        std::fs::create_dir(&temp_dir)
-            .map(|_| temp_dir)
-            .map_fatal_err("Error creating temp dir".into())
+        crate::temp_file::make_temp_dir().map_fatal_err("Error creating temp dir".into())
     }
 
     fn find_executable(
