@@ -30,7 +30,6 @@ impl ArchiveInstaller {
         let destination_path = Self::copy_executable_to_destination(executable, destination)?;
         Self::cleanup(&temp_dir)?;
 
-        // TODO: specify if it's a tar or zip archive
         Ok(InstallOutput::new(format!(
             "Extracted executable '{}' from archive",
             destination_path.display()

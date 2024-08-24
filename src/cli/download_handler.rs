@@ -1,7 +1,4 @@
-use std::fs::File;
-use std::io::{Read, Write};
-use std::path::{Path, PathBuf};
-
+use crate::cli::color::Color;
 use crate::cli::find_asset_by_system::find_asset_by_system;
 use crate::cli::github_release::fetch_release_for;
 use crate::cli::progress_bar::ProgressBar;
@@ -13,9 +10,12 @@ use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::repository::Repository;
 use crate::github::tagged_asset::TaggedAsset;
-use crate::installer;
 use crate::installer::destination::Destination;
 use crate::installer::executable::Executable;
+use crate::installer::install;
+use std::fs::File;
+use std::io::{Read, Write};
+use std::path::{Path, PathBuf};
 
 pub struct DownloadHandler {
     repository: Repository,
@@ -147,13 +147,18 @@ impl DownloadHandler {
                 let spinner = Spinner::install_layout();
                 spinner.show();
 
-                installer::install(asset_name.to_string(), path, executable, destination)
+                let output = install(asset_name.to_string(), path, executable, destination)
                     .map_err(|x| HandlerError::new(x.to_string()))?;
                 std::fs::remove_file(path).map_err(|x| {
                     HandlerError::new(format!("Unable to delete installed asset: {}", x))
                 })?;
 
-                spinner.finish();
+                let message = format!(
+                    "{}\n{}",
+                    Color::new("Installation completed!").green(),
+                    output
+                );
+                spinner.finish_with_message(&message);
                 Ok(())
             }
         }
