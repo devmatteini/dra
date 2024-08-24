@@ -22,7 +22,7 @@ pub fn fetch_release_for(
 }
 
 fn release_error(e: GithubError) -> HandlerError {
-    HandlerError::new(format!("Error fetching the release: {}", e))
+    HandlerError::new(format!("Error fetching release: {}", e))
 }
 
 pub fn check_has_assets(release: &Release) -> Result<(), HandlerError> {

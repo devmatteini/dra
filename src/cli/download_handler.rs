@@ -150,7 +150,10 @@ impl DownloadHandler {
                 let output = install(asset_name.to_string(), path, executable, destination)
                     .map_err(|x| HandlerError::new(x.to_string()))?;
                 std::fs::remove_file(path).map_err(|x| {
-                    HandlerError::new(format!("Unable to delete installed asset: {}", x))
+                    HandlerError::new(format!(
+                        "Unable to delete temporary file after installation: {}",
+                        x
+                    ))
                 })?;
 
                 let message = format!(
@@ -234,11 +237,7 @@ impl DownloadHandler {
 
     fn create_file(path: &Path) -> Result<File, HandlerError> {
         File::create(path).map_err(|e| {
-            HandlerError::new(format!(
-                "Failed to create the file {}: {}",
-                path.display(),
-                e
-            ))
+            HandlerError::new(format!("Failed to create file {}: {}", path.display(), e))
         })
     }
 
