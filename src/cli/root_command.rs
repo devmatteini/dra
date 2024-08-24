@@ -33,7 +33,7 @@ pub struct Cli {
 pub enum Command {
     /// Select and download an asset
     Download {
-        /// Github repository using format {owner}/{repo}
+        /// GitHub repository using format {owner}/{repo}
         #[arg(value_parser = Repository::try_parse)]
         repo: Repository,
 
@@ -66,10 +66,15 @@ pub enum Command {
         /// Supported assets are:
         ///
         /// - Debian packages (requires elevated privileges)
+        ///
         /// - Tar archives with executable(s)
+        ///
         /// - Zip files with executable(s)
+        ///
         /// - Compressed executable files
+        ///
         /// - Executable files
+        ///
         /// - AppImage files
         ///
         /// If a tar archive or zip file contains many executables and cannot automatically detect which one to install, use `--install-file <INSTALL_FILE>`.
@@ -79,7 +84,9 @@ pub enum Command {
         /// Install downloaded asset and select which executable to install
         ///
         /// This option is useful when a tar archive or zip file contains many executables:
+        ///
         /// 1. When `dra` can't automatically detect which one to install
+        ///
         /// 2. The repository provides more than one executable and you want to install them
         ///
         /// If you use this option for other types of assets, it will be treated as the default install.
@@ -89,7 +96,7 @@ pub enum Command {
 
     /// Select an asset and generate an untagged version of it
     Untag {
-        /// Github repository using format {owner}/{repo}
+        /// GitHub repository using format {owner}/{repo}
         #[arg(value_parser = Repository::try_parse)]
         repo: Repository,
     },
