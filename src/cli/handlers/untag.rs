@@ -1,6 +1,6 @@
 use crate::cli::handlers::common::{check_has_assets, fetch_release_for};
 use crate::cli::handlers::result::{HandlerError, HandlerResult};
-use crate::cli::select;
+use crate::cli::select_assets;
 use crate::github::client::GithubClient;
 use crate::github::release::{Asset, Release};
 use crate::github::repository::Repository;
@@ -32,10 +32,10 @@ impl UntagHandler {
         fetch_release_for(github, repository, None)
     }
 
-    fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
-        select::ask_select_asset(
+    fn ask_select_asset(assets: Vec<Asset>) -> select_assets::AskSelectAssetResult {
+        select_assets::ask_select_asset(
             assets,
-            select::Messages {
+            select_assets::Messages {
                 select_prompt: "Pick the asset to untag",
                 quit_select: "No asset selected",
             },

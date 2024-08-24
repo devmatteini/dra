@@ -4,6 +4,6 @@ pub mod handlers;
 mod parse_repository;
 pub mod progress_bar;
 pub mod root_command;
-mod select;
+mod select_assets;
 pub mod spinner;
 pub(crate) mod temp_file;

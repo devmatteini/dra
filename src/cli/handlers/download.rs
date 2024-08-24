@@ -6,7 +6,7 @@ use crate::cli::handlers::common::fetch_release_for;
 use crate::cli::handlers::find_asset_by_system::find_asset_by_system;
 use crate::cli::handlers::result::{HandlerError, HandlerResult};
 use crate::cli::progress_bar::ProgressBar;
-use crate::cli::select;
+use crate::cli::select_assets;
 use crate::cli::spinner::Spinner;
 use crate::github::client::GithubClient;
 use crate::github::error::GithubError;
@@ -177,10 +177,10 @@ impl DownloadHandler {
         fetch_release_for(github, &self.repository, self.tag.as_ref())
     }
 
-    fn ask_select_asset(assets: Vec<Asset>) -> select::AskSelectAssetResult {
-        select::ask_select_asset(
+    fn ask_select_asset(assets: Vec<Asset>) -> select_assets::AskSelectAssetResult {
+        select_assets::ask_select_asset(
             assets,
-            select::Messages {
+            select_assets::Messages {
                 select_prompt: "Pick the asset to download",
                 quit_select: "No asset selected",
             },
