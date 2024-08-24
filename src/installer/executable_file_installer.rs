@@ -17,8 +17,11 @@ impl ExecutableFileInstaller {
             Destination::File(file) => file,
         };
 
-        std::fs::copy(file_info.path, &executable_path)
-            .map_fatal_err(format!("Error copying {}", executable_path.display()))?;
+        std::fs::copy(&file_info.path, &executable_path).map_fatal_err(format!(
+            "Error copying {} to {}",
+            file_info.path.as_path().display(),
+            executable_path.display()
+        ))?;
 
         set_executable_permissions(&executable_path)?;
 

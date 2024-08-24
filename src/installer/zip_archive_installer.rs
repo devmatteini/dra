@@ -21,14 +21,18 @@ impl ZipArchiveInstaller {
 
     fn extract_archive(source: &Path, temp_dir: &Path) -> Result<(), InstallError> {
         let zip_archive = File::open(source).map_err(|x| {
-            InstallError::Fatal(format!("Error opening {}: {}", source.display(), x))
+            InstallError::Fatal(format!(
+                "Error opening zip archive {}: {}",
+                source.display(),
+                x
+            ))
         })?;
 
         let mut archive = zip::ZipArchive::new(zip_archive)
-            .map_err(|x| InstallError::Fatal(format!("Error opening zip archive: {}", x)))?;
+            .map_err(|x| InstallError::Fatal(format!("Error reading zip archive: {}", x)))?;
 
         archive
             .extract(temp_dir)
-            .map_err(|x| InstallError::Fatal(format!("Error extracting the zip archive: {}", x)))
+            .map_err(|x| InstallError::Fatal(format!("Error extracting zip archive: {}", x)))
     }
 }

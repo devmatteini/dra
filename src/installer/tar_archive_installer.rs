@@ -65,7 +65,11 @@ impl TarArchiveInstaller {
         D: FnOnce(File) -> Box<dyn Read>,
     {
         let archive = File::open(source).map_err(|x| {
-            InstallError::Fatal(format!("Error opening {}: {}", source.display(), x))
+            InstallError::Fatal(format!(
+                "Error opening tar archive {}: {}",
+                source.display(),
+                x
+            ))
         })?;
 
         let stream = decode(archive);
@@ -73,6 +77,6 @@ impl TarArchiveInstaller {
 
         archive
             .unpack(temp_dir)
-            .map_err(|x| InstallError::Fatal(format!("Error extracting the archive: {}", x)))
+            .map_err(|x| InstallError::Fatal(format!("Error extracting tar archive: {}", x)))
     }
 }
