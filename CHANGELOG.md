@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Show more information about the installed asset. For example, when installing an executable from a
+  tar archive, you
+  will see a message like `Extracted archive executable to '/home/<user>/Downloads/helloworld'`.
+
 ## [0.6.0] - 2024-08-18
 
 This release focuses on improving the `install` feature and adds support for more assets types ([#205](https://github.com/devmatteini/dra/issues/205)).
