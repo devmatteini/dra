@@ -2,10 +2,10 @@
 #![allow(clippy::uninlined_format_args)]
 
 use crate::cli::color::Color;
-use crate::cli::handlers::completion::CompletionHandler;
-use crate::cli::handlers::download::DownloadHandler;
+use crate::cli::handlers::completion_handler::CompletionHandler;
+use crate::cli::handlers::download_handler::DownloadHandler;
 use crate::cli::handlers::result::{HandlerError, HandlerResult};
-use crate::cli::handlers::untag::UntagHandler;
+use crate::cli::handlers::untag_handler::UntagHandler;
 use crate::cli::root_command::{Cli, Command};
 use clap::Parser;
 use std::process::exit;
