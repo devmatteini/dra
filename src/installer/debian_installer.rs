@@ -4,7 +4,7 @@ use crate::installer::command::exec_command;
 use crate::installer::destination::Destination;
 use crate::installer::executable::Executable;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::result::InstallerResult;
+use crate::installer::result::{InstallOutput, InstallerResult};
 
 const DPKG: &str = "dpkg";
 
@@ -20,5 +20,6 @@ impl DebianInstaller {
             DPKG,
             Command::new(DPKG).arg("--install").arg(file_info.path),
         )
+        .map(|_| InstallOutput::new(format!("Debian package '{}' installed", file_info.name)))
     }
 }

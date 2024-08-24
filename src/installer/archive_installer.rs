@@ -3,13 +3,12 @@ use std::ffi::OsString;
 use std::os::unix::prelude::PermissionsExt;
 use std::path::{Path, PathBuf};
 
-use walkdir::WalkDir;
-
 use crate::installer::destination::Destination;
 use crate::installer::error::{InstallError, InstallErrorMapErr};
 use crate::installer::executable::Executable;
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::result::InstallerResult;
+use crate::installer::result::{InstallOutput, InstallerResult};
+use walkdir::WalkDir;
 
 pub struct ArchiveInstaller;
 
@@ -28,10 +27,14 @@ impl ArchiveInstaller {
 
         let executable = Self::find_executable(&temp_dir, executable)?;
 
-        Self::copy_executable_to_destination(executable, destination)?;
+        let destination_path = Self::copy_executable_to_destination(executable, destination)?;
         Self::cleanup(&temp_dir)?;
 
-        Ok(())
+        // TODO: specify if it's a tar or zip archive
+        Ok(InstallOutput::new(format!(
+            "Extracted executable '{}' from archive",
+            destination_path.display()
+        )))
     }
 
     fn create_temp_dir() -> Result<PathBuf, InstallError> {
@@ -96,7 +99,7 @@ impl ArchiveInstaller {
     fn copy_executable_to_destination(
         executable: ExecutableFile,
         destination: Destination,
-    ) -> Result<(), InstallError> {
+    ) -> Result<PathBuf, InstallError> {
         let to = match destination {
             Destination::Directory(dir) => dir.join(executable.name),
             Destination::File(file) => file,
@@ -108,7 +111,9 @@ impl ArchiveInstaller {
                 "Error copying {} to {}",
                 &executable.path.display(),
                 to.display(),
-            ))
+            ))?;
+
+        Ok(to)
     }
 
     fn cleanup(temp_dir: &Path) -> Result<(), InstallError> {

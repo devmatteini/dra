@@ -15,7 +15,7 @@ pub fn install(
     source: &Path,
     executable: &Executable,
     destination: Destination,
-) -> Result<(), InstallError> {
+) -> InstallerResult {
     let file_info = file_info_from(&asset_name, source).and_then(validate_file)?;
     let installer = find_installer_for(&file_info.file_type);
 

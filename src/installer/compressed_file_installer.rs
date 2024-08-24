@@ -3,10 +3,10 @@ use std::io::Read;
 use std::path::PathBuf;
 
 use crate::installer::destination::Destination;
-use crate::installer::error::{InstallError, InstallErrorMapErr};
+use crate::installer::error::InstallErrorMapErr;
 use crate::installer::executable::{set_executable_permissions, Executable};
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::result::InstallerResult;
+use crate::installer::result::{InstallOutput, InstallerResult};
 
 pub struct CompressedFileInstaller;
 
@@ -51,7 +51,7 @@ impl CompressedFileInstaller {
         decode: D,
         file_info: SupportedFileInfo,
         destination: Destination,
-    ) -> Result<(), InstallError>
+    ) -> InstallerResult
     where
         D: FnOnce(File) -> Box<dyn Read>,
     {
@@ -72,7 +72,10 @@ impl CompressedFileInstaller {
 
         set_executable_permissions(&executable_path)?;
 
-        Ok(())
+        Ok(InstallOutput::new(format!(
+            "Extracted executable '{}' from compressed file",
+            executable_path.display()
+        )))
     }
 }
 

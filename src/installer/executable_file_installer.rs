@@ -2,7 +2,7 @@ use crate::installer::destination::Destination;
 use crate::installer::error::InstallErrorMapErr;
 use crate::installer::executable::{set_executable_permissions, Executable};
 use crate::installer::file::SupportedFileInfo;
-use crate::installer::result::InstallerResult;
+use crate::installer::result::{InstallOutput, InstallerResult};
 
 pub struct ExecutableFileInstaller;
 
@@ -22,6 +22,9 @@ impl ExecutableFileInstaller {
 
         set_executable_permissions(&executable_path)?;
 
-        Ok(())
+        Ok(InstallOutput::new(format!(
+            "Extracted executable '{}'",
+            executable_path.display()
+        )))
     }
 }
