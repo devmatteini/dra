@@ -1,8 +1,13 @@
 pub mod color;
+pub mod completion_handler;
+pub mod download_handler;
 mod environment;
-pub mod handlers;
+mod find_asset_by_system;
+mod github_release;
 pub mod progress_bar;
+pub mod result;
 pub mod root_command;
 mod select_assets;
 pub mod spinner;
 pub(crate) mod temp_file;
+pub mod untag_handler;

@@ -1,5 +1,5 @@
-use crate::cli::handlers::github_release::{check_has_assets, fetch_release_for};
-use crate::cli::handlers::result::{HandlerError, HandlerResult};
+use crate::cli::github_release::{check_has_assets, fetch_release_for};
+use crate::cli::result::{HandlerError, HandlerResult};
 use crate::cli::select_assets;
 use crate::github::client::GithubClient;
 use crate::github::release::{Asset, Release};

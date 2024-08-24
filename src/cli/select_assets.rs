@@ -1,4 +1,4 @@
-use crate::cli::handlers::result::HandlerError;
+use crate::cli::result::HandlerError;
 use crate::github::release::Asset;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Select;
