@@ -41,7 +41,7 @@ fn is_same_arch(arch: &str, asset_name: &str) -> bool {
         return true;
     }
     let aliases: Vec<&str> = match arch {
-        "x86_64" => vec!["amd64", "x64"],
+        "x86_64" => vec!["amd64", "x64", "win64"],
         "aarch64" => vec!["arm64"],
         "arm" => vec!["armv6", "armv7"],
         _ => return false,
@@ -205,6 +205,19 @@ mod tests {
         let result = find_asset_by_system("linux", "x86_64", assets);
 
         assert_eq_asset("mypackage-x86_64-linux-musl.tar.gz", result)
+    }
+
+    #[test]
+    fn windows_os_and_arch_aliases() {
+        let assets = vec![
+            asset("mypackage.AppImage"),
+            asset("mypackage-linux.zip"),
+            asset("mypackage-win64.zip"),
+        ];
+
+        let result = find_asset_by_system("windows", "x86_64", assets);
+
+        assert_eq_asset("mypackage-win64.zip", result)
     }
 
     fn assert_eq_asset(expected_name: &str, actual: Option<Asset>) {
