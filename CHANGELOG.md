@@ -7,6 +7,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.2] - 2024-09-07
+
+### Fixed
+
+- Asset detection for automatic download on windows when `win64` is used for both OS and
+  ARCH ([#224](https://github.com/devmatteini/dra/issues/224))
+
+### Updated dependencies
+
+- bump `ureq` from 2.10.0 to 2.10.1
+- bump `serde` from 1.0.204 to 1.0.209
+- bump `flate2` from 1.0.30 to 1.0.33
+- bump `ctrlc` from 3.4.4 to 3.4.5
+- bump `clap` from 4.5.13 to 4.5.16
+- bump `clap_complete` from 4.5.8 to 4.5.24
+- bump `assert_cmd` from 2.0.15 to 2.0.16
+
 ## [0.6.1] - 2024-08-24
 
 ### Added
@@ -17,7 +34,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.6.0] - 2024-08-18
 
-This release focuses on improving the `install` feature and adds support for more assets types ([#205](https://github.com/devmatteini/dra/issues/205)).
+This release focuses on improving the `install` feature and adds support for more assets
+types ([#205](https://github.com/devmatteini/dra/issues/205)).
 The install system is now more reliable and can handle more complex scenarios.
 
 Thanks @sandreas and @adriangalilea for the help testing this release.
@@ -40,7 +58,8 @@ See [Examples](./README.md#examples) section on for more information.
 
 ### Changed
 
-- The `--output` option of `dra-download` now also accepts file paths when used with install feature. This allows to rename the installed executable file ([examples](./README.md#examples))
+- The `--output` option of `dra-download` now also accepts file paths when used with install feature. This allows to
+  rename the installed executable file ([examples](./README.md#examples))
 
 ### Development
 
@@ -442,9 +461,9 @@ added `completion`.
 
   The supported assets are:
 
-  - Debian packages (`.deb`)
-  - Tar archive with executable inside (`.tar.[gz|bz2|xz]`)
-  - Zip file with executable inside (`.zip`)
+    - Debian packages (`.deb`)
+    - Tar archive with executable inside (`.tar.[gz|bz2|xz]`)
+    - Zip file with executable inside (`.zip`)
 
 ### Internals
 
