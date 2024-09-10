@@ -31,7 +31,8 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 
 ### Recommended
 
-Download the prebuilt versions of `dra` for supported platforms from the [latest release](https://github.com/devmatteini/dra/releases/latest).
+Download the prebuilt versions of `dra` for supported platforms from
+the [latest release](https://github.com/devmatteini/dra/releases/latest).
 
 ### Debian-based distributions
 
@@ -44,7 +45,8 @@ sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number
 
 ### On Arch Linux
 
-Arch Linux users can install `dra` from the [community repository](https://archlinux.org/packages/extra/x86_64/dra/) using [pacman](https://wiki.archlinux.org/title/Pacman):
+Arch Linux users can install `dra` from the [community repository](https://archlinux.org/packages/extra/x86_64/dra/)
+using [pacman](https://wiki.archlinux.org/title/Pacman):
 
 ```shell
 pacman -S dra
@@ -158,7 +160,8 @@ Supported assets that can be installed are:
 - Executable files
 - AppImage files
 
-You can use `--install-file <INSTALL_FILE>` option when a tar archive or zip file contains many executables or when `dra` can't automatically detect which one to install:
+You can use `--install-file <INSTALL_FILE>` option when a tar archive or zip file contains many executables or
+when `dra` can't automatically detect which one to install:
 
 ```shell
 dra download -s helloworld-many-executables-unix.tar.gz --install-file helloworld-v2 devmatteini/dra-tests
