@@ -29,9 +29,9 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 
 `dra` is available on Linux (x86_64, armv6, arm64), macOS (x86_64, arm64) and Windows.
 
-### Recommended
+### Pre-built binaries
 
-Download the prebuilt versions of `dra` for supported platforms from
+Download the prebuilt versions of `dra` for all supported platforms from
 the [latest release](https://github.com/devmatteini/dra/releases/latest).
 
 ### Debian-based distributions
@@ -45,11 +45,18 @@ sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number
 
 ### On Arch Linux
 
-Arch Linux users can install `dra` from the [community repository](https://archlinux.org/packages/extra/x86_64/dra/)
-using [pacman](https://wiki.archlinux.org/title/Pacman):
+`dra` can be installed from the [community repository](https://archlinux.org/packages/extra/x86_64/dra/):
 
 ```shell
 pacman -S dra
+```
+
+### On macOS/Linux with Homebrew
+
+`dra` can be installed from [Homebrew](https://formulae.brew.sh/formula/dra#default):
+
+```shell
+brew install dra
 ```
 
 ### From source
