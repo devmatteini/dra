@@ -15,13 +15,16 @@ use crate::github::repository::Repository;
 /// helloworld_{tag}.tar.gz
 /// $ dra download -s "helloworld_{tag}.tar.gz" devmatteini/dra-tests
 ///
-/// Automatically select and download an asset based on your operating system and architecture (non-interactive mode):
+/// Automatically select and download an asset based on your operating system
+/// and architecture (non-interactive mode):
 /// $ dra download -a devmatteini/dra-tests
 ///
 /// Download and install an asset:
-/// $ dra download -i devmatteini/dra-tests
+/// $ dra download --install devmatteini/dra-tests
 ///
-/// More examples can be found at https://github.com/devmatteini/dra#usage
+/// More examples can be found at:
+/// - https://github.com/devmatteini/dra#usage
+/// - https://github.com/devmatteini/dra#examples
 #[derive(Debug, Parser)]
 #[command(name = "dra", version, verbatim_doc_comment)]
 pub struct Cli {
