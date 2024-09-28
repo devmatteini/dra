@@ -2,7 +2,6 @@
 
 [![CI](https://github.com/devmatteini/dra/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/devmatteini/dra/actions/workflows/ci.yml)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/devmatteini/dra)
-![GitHub downloads all releases](https://img.shields.io/github/downloads/devmatteini/dra/total)
 
 A command line tool to download release assets from GitHub.
 
@@ -29,7 +28,7 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 
 `dra` is available on Linux (x86_64, armv6, arm64), macOS (x86_64, arm64) and Windows.
 
-### Pre-built binaries
+### Prebuilt binaries
 
 Download the prebuilt versions of `dra` for all supported platforms from
 the [latest release](https://github.com/devmatteini/dra/releases/latest).
@@ -43,7 +42,7 @@ install it via:
 sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number
 ```
 
-### On Arch Linux
+### Arch Linux
 
 `dra` can be installed from the [community repository](https://archlinux.org/packages/extra/x86_64/dra/):
 
@@ -51,7 +50,7 @@ sudo dpkg -i dra_x.y.z_amd64.deb # adapt version number
 pacman -S dra
 ```
 
-### On macOS/Linux with Homebrew
+### macOS/Linux with Homebrew
 
 `dra` can be installed from [Homebrew](https://formulae.brew.sh/formula/dra#default):
 
@@ -167,7 +166,7 @@ Supported assets that can be installed are:
 - Executable files
 - AppImage files
 
-You can use `--install-file <INSTALL_FILE>` option when a tar archive or zip file contains many executables or
+You can use `--install-file <INSTALL_FILE>` option when a tar/zip archive contains many executables or
 when `dra` can't automatically detect which one to install:
 
 ```shell
@@ -210,7 +209,7 @@ dra download -a -i -o ~/.local/bin/ devmatteini/dra-tests
 ~/.local/bin/helloworld
 ```
 
-Install an executable file without an archive
+Install an executable file
 
 ```shell
 dra download -s helloworld-unix -i devmatteini/dra-tests
