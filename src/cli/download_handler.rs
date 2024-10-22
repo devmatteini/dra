@@ -12,6 +12,7 @@ use crate::github::repository::Repository;
 use crate::github::tagged_asset::TaggedAsset;
 use crate::installer::destination::Destination;
 use crate::installer::executable::Executable;
+use crate::installer::file::is_supported_archive;
 use crate::installer::install;
 use std::fs::File;
 use std::io::{Read, Write};
@@ -61,6 +62,10 @@ impl Install {
             Self::Yes(_) => true,
         }
     }
+
+    fn is_more_than_one(&self) -> bool {
+        false
+    }
 }
 
 impl DownloadHandler {
@@ -97,13 +102,13 @@ impl DownloadHandler {
            dra download -a -I exec1 -I exec2 any/repo
            This command should failed if selected asset is not an archive
         */
+        self.asset_may_not_be_archive(&selected_asset.name)?;
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&github, &selected_asset, &output_path)?;
         self.maybe_install(&selected_asset.name, &output_path, destination)?;
         Ok(())
     }
 
-    #[allow(dead_code)]
     fn selection_destination_for_install(&self) -> Result<Destination, HandlerError> {
         let cwd = Self::cwd()?;
         match self.install {
@@ -113,6 +118,25 @@ impl DownloadHandler {
                 Some(output) => Ok(Destination::File(output.clone())),
                 None => Ok(Destination::Directory(cwd)),
             },
+        }
+    }
+
+    fn asset_may_not_be_archive(&self, asset_name: &str) -> Result<(), HandlerError> {
+        if self.install.is_more_than_one() {
+            match is_supported_archive(asset_name) {
+                Ok(is_archive) => {
+                    if !is_archive {
+                        return Err(HandlerError::new(format!(
+                            "Selected asset {} is not an archive",
+                            asset_name
+                        )));
+                    }
+                    Ok(())
+                }
+                Err(e) => return Err(HandlerError::new(e.to_string())),
+            }
+        } else {
+            Ok(())
         }
     }
 
