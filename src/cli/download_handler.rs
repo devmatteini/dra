@@ -94,6 +94,7 @@ impl DownloadHandler {
            This command should failed as install destination is a file
         */
         let destination = self.selection_destination_for_install()?;
+        self.destination_may_not_dir(&destination)?;
         let github = GithubClient::from_environment();
         let release = self.fetch_release(&github)?;
         let selected_asset = self.select_asset(release)?;
@@ -118,6 +119,22 @@ impl DownloadHandler {
                 Some(output) => Ok(Destination::File(output.clone())),
                 None => Ok(Destination::Directory(cwd)),
             },
+        }
+    }
+
+    fn destination_may_not_dir(&self, destination: &Destination) -> Result<(), HandlerError> {
+        if self.install.is_more_than_one() {
+            match destination {
+                Destination::File(x) => Err(HandlerError::new(format!(
+                    "Multiple install target (-I,--install-file) are selected \
+                        but output (-o,--output) is not a directory\n \
+                        Output: {:?}",
+                    x
+                ))),
+                Destination::Directory(_) => Ok(()),
+            }
+        } else {
+            Ok(())
         }
     }
 
