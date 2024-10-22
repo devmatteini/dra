@@ -88,6 +88,7 @@ impl DownloadHandler {
            dra download -s archive.tar -o /any/fle -I exec1 -I exec2 any/repo
            This command should failed as install destination is a file
         */
+        let destination = self.selection_destination_for_install()?;
         let github = GithubClient::from_environment();
         let release = self.fetch_release(&github)?;
         let selected_asset = self.select_asset(release)?;
@@ -98,7 +99,7 @@ impl DownloadHandler {
         */
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&github, &selected_asset, &output_path)?;
-        self.maybe_install(&selected_asset.name, &output_path)?;
+        self.maybe_install(&selected_asset.name, &output_path, destination)?;
         Ok(())
     }
 
@@ -155,17 +156,15 @@ impl DownloadHandler {
         ))
     }
 
-    fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
+    fn maybe_install(
+        &self,
+        asset_name: &str,
+        path: &Path,
+        destination: Destination,
+    ) -> Result<(), HandlerError> {
         match &self.install {
             Install::No => Ok(()),
             Install::Yes(executable) => {
-                let cwd = Self::cwd()?;
-                let destination = match self.output.as_ref() {
-                    Some(output) if output.is_dir() => Destination::Directory(output.clone()),
-                    Some(output) => Destination::File(output.clone()),
-                    None => Destination::Directory(cwd),
-                };
-
                 let spinner = Spinner::install_layout();
                 spinner.show();
 
