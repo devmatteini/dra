@@ -32,8 +32,8 @@ mod install {
     }
 
     #[cfg(target_family = "unix")]
-    #[test_case("helloworld-unix", "helloworld-unix", "helloworld-v2"; "executable")]
-    #[test_case("helloworld.deb", "helloworld-unix", "helloworld-v2"; "deb")]
+    #[test_case("helloworld-unix", "helloworld", "helloworld-v2"; "executable")]
+    #[test_case("helloworld.deb", "helloworld", "helloworld-v2"; "deb")]
     fn selected_asset_is_not_archive(selected_asset: &str, exec1: &str, exec2: &str) {
         let output_dir = any_temp_dir();
 
@@ -52,6 +52,54 @@ mod install {
             "Selected asset {} is not an archive",
             selected_asset
         )));
+    }
+
+    #[cfg(target_family = "unix")]
+    #[test_case("helloworld-many-executables-unix.tar.gz", "random-script", "helloworld-v2"; "install 2 executables")]
+    fn installed_multiple_successfully(selected_asset: &str, exec1: &str, exec2: &str) {
+        let output_dir = any_temp_dir();
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-s", selected_asset])
+            .args(["-o", &path_to_string(output_dir.clone())])
+            .args(["-I", exec1])
+            .args(["-I", exec2])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result
+            .success()
+            .stdout(predicates::str::contains("Installation completed"));
+
+        assert_file_exists(output_dir.join(exec1).as_path());
+        assert_file_exists(output_dir.join(exec2).as_path());
+    }
+
+    #[cfg(target_family = "windows")]
+    #[test_case("helloworld-many-executables-windows.zip", "random-script.exe", "helloworld-v2.exe"; "install 2 executables")]
+    fn installed_multiple_successfully(selected_asset: &str, exec1: &str, exec2: &str) {
+        let output_dir = any_temp_dir();
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-s", selected_asset])
+            .args(["-o", &path_to_string(output_dir.clone())])
+            .args(["-I", exec1])
+            .args(["-I", exec2])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result
+            .success()
+            .stdout(predicates::str::contains("Installation completed"));
+
+        assert_file_exists(output_dir.join(exec1).as_path());
+        assert_file_exists(output_dir.join(exec2).as_path());
     }
 
     #[cfg(target_family = "windows")]
