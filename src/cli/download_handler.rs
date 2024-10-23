@@ -217,9 +217,20 @@ impl DownloadHandler {
                 let spinner = Spinner::install_layout();
                 spinner.show();
 
+                let mut error_msg = Vec::new();
+
                 for exec in executables {
-                    let _ = install(asset_name.to_string(), path, exec, destination.clone())
-                        .map_err(|x| HandlerError::new(x.to_string()))?;
+                    let install_result =
+                        install(asset_name.to_string(), path, exec, destination.clone())
+                            .map_err(|x| HandlerError::new(x.to_string()));
+
+                    match install_result {
+                        Ok(output) => {
+                            spinner.println(&Color::new(&output.to_string()).green().to_string())
+                        }
+                        Err(HandlerError::Default(msg)) => error_msg.push(msg),
+                        Err(x) => return Err(x),
+                    }
                 }
                 std::fs::remove_file(path).map_err(|x| {
                     HandlerError::new(format!(
@@ -227,6 +238,15 @@ impl DownloadHandler {
                         x
                     ))
                 })?;
+
+                if !error_msg.is_empty() {
+                    let mut message = String::new();
+                    for msg in error_msg {
+                        message = format!("{}\n{}", message, Color::new(&msg).bold().red(),);
+                    }
+                    spinner.finish();
+                    return Err(HandlerError::new(message));
+                }
 
                 let message = format!("{}\n", Color::new("Installation completed!").green());
                 spinner.finish_with_message(&message);
