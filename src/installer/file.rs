@@ -90,7 +90,7 @@ fn is_elf_file(path: &Path) -> bool {
 }
 
 pub fn is_supported_archive(file_name: &str) -> Result<bool, InstallError> {
-    let file_info = FileInfo::new(&file_name, PathBuf::from(file_name).as_ref());
+    let file_info = FileInfo::new(file_name, PathBuf::from(file_name).as_ref());
     let file_type =
         file_type_for(&file_info).ok_or(InstallError::NotSupported(file_name.to_string()))?;
     match file_type {
