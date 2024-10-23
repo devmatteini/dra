@@ -83,7 +83,7 @@ pub enum Command {
         ///
         /// If you use this option for other types of assets, it will be treated as the default install.
         #[arg(short = 'I', long, group = "install-feature", verbatim_doc_comment)]
-        install_file: Option<String>,
+        install_file: Option<Vec<String>>,
     },
 
     /// Select an asset and generate an untagged version of it
