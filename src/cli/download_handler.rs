@@ -97,20 +97,11 @@ impl DownloadHandler {
     }
 
     pub fn run(&self) -> HandlerResult {
-        /*
-           dra download -s archive.tar -o /any/fle -I exec1 -I exec2 any/repo
-           This command should failed as install destination is a file
-        */
         let destination = self.selection_destination_for_install()?;
         self.destination_may_not_dir(&destination)?;
         let github = GithubClient::from_environment();
         let release = self.fetch_release(&github)?;
         let selected_asset = self.select_asset(release)?;
-        /*
-           dra download -s not.archive -I exec1 -I exec2 any/repo
-           dra download -a -I exec1 -I exec2 any/repo
-           This command should failed if selected asset is not an archive
-        */
         self.asset_may_not_be_archive(&selected_asset.name)?;
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&github, &selected_asset, &output_path)?;
