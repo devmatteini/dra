@@ -44,14 +44,19 @@ impl DownloadMode {
 
 enum Install {
     No,
-    Yes(Executable),
+    Yes(Vec<Executable>),
 }
 
 impl Install {
-    fn new(install: bool, install_file: Option<String>, repository: &Repository) -> Self {
+    fn new(install: bool, install_file: Option<Vec<String>>, repository: &Repository) -> Self {
         match (install_file, install) {
-            (Some(executable_name), _) => Self::Yes(Executable::Selected(executable_name)),
-            (_, true) => Self::Yes(Executable::Automatic(repository.repo.clone())),
+            (Some(executable_names), _) => Self::Yes(
+                executable_names
+                    .iter()
+                    .map(|e| Executable::Selected(e.clone()))
+                    .collect(),
+            ),
+            (_, true) => Self::Yes(vec![Executable::Automatic(repository.repo.clone())]),
             (None, false) => Self::No,
         }
     }
@@ -64,7 +69,10 @@ impl Install {
     }
 
     fn is_more_than_one(&self) -> bool {
-        false
+        match self {
+            Self::No => false,
+            Self::Yes(x) => x.len() > 1,
+        }
     }
 }
 
@@ -76,7 +84,7 @@ impl DownloadHandler {
         tag: Option<String>,
         output: Option<PathBuf>,
         install: bool,
-        install_file: Option<String>,
+        install_file: Option<Vec<String>>,
     ) -> Self {
         let install = Install::new(install, install_file, &repository);
         DownloadHandler {
@@ -205,12 +213,14 @@ impl DownloadHandler {
     ) -> Result<(), HandlerError> {
         match &self.install {
             Install::No => Ok(()),
-            Install::Yes(executable) => {
+            Install::Yes(executables) => {
                 let spinner = Spinner::install_layout();
                 spinner.show();
 
-                let output = install(asset_name.to_string(), path, executable, destination)
-                    .map_err(|x| HandlerError::new(x.to_string()))?;
+                for exec in executables {
+                    let _ = install(asset_name.to_string(), path, exec, destination.clone())
+                        .map_err(|x| HandlerError::new(x.to_string()))?;
+                }
                 std::fs::remove_file(path).map_err(|x| {
                     HandlerError::new(format!(
                         "Unable to delete temporary file after installation: {}",
@@ -218,11 +228,7 @@ impl DownloadHandler {
                     ))
                 })?;
 
-                let message = format!(
-                    "{}\n{}",
-                    Color::new("Installation completed!").green(),
-                    output
-                );
+                let message = format!("{}\n", Color::new("Installation completed!").green());
                 spinner.finish_with_message(&message);
                 Ok(())
             }
