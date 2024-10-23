@@ -150,7 +150,7 @@ impl DownloadHandler {
                     }
                     Ok(())
                 }
-                Err(e) => return Err(HandlerError::new(e.to_string())),
+                Err(e) => Err(HandlerError::new(e.to_string())),
             }
         } else {
             Ok(())
