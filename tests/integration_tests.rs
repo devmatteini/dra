@@ -78,6 +78,54 @@ mod install {
         assert_file_exists(output_dir.join(exec2).as_path());
     }
 
+    #[cfg(target_family = "unix")]
+    #[test_case("helloworld-many-executables-unix.tar.gz", "wrong-exec", "helloworld-v2"; "executable not found")]
+    fn installed_multiple_partial_failed(selected_asset: &str, exec1: &str, exec2: &str) {
+        let output_dir = any_temp_dir();
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-s", selected_asset])
+            .args(["-o", &path_to_string(output_dir.clone())])
+            .args(["-I", exec1])
+            .args(["-I", exec2])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result.failure().stderr(predicates::str::contains(format!(
+            "Executable {} not found",
+            exec1
+        )));
+
+        assert_file_exists(output_dir.join(exec2).as_path());
+    }
+
+    #[cfg(target_family = "windows")]
+    #[test_case("helloworld-many-executables-windows.zip", "wrong-exec.exe", "helloworld-v2.exe"; "executable not found")]
+    fn installed_multiple_partial_failed(selected_asset: &str, exec1: &str, exec2: &str) {
+        let output_dir = any_temp_dir();
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-s", selected_asset])
+            .args(["-o", &path_to_string(output_dir.clone())])
+            .args(["-I", exec1])
+            .args(["-I", exec2])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result.failure().stderr(predicates::str::contains(format!(
+            "Executable {} not found",
+            exec1
+        )));
+
+        assert_file_exists(output_dir.join(exec2).as_path());
+    }
+
     #[cfg(target_family = "windows")]
     #[test_case("helloworld-many-executables-windows.zip", "random-script.exe", "helloworld-v2.exe"; "install 2 executables")]
     fn installed_multiple_successfully(selected_asset: &str, exec1: &str, exec2: &str) {
