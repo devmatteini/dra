@@ -6,11 +6,75 @@ mod install {
     use std::process::Command;
     use test_case::test_case;
 
-    use crate::fs::{any_temp_dir, path_to_string};
+    use crate::fs::{any_temp_dir, any_temp_file, path_to_string};
     use assert_cmd::assert::OutputAssertExt;
     use assert_cmd::prelude::CommandCargoExt;
 
     use crate::assertions::assert_file_exists;
+
+    #[test]
+    fn destination_is_not_dir() {
+        let output = any_temp_file("exec");
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-o", &path_to_string(output.clone())])
+            .args(["-I", "exec1"])
+            .args(["-I", "exec2"])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result.failure().stderr(predicates::str::contains(
+            "Multiple install target (-I,--install-file) are selected \
+                but output (-o,--output) is not a directory",
+        ));
+    }
+
+    #[cfg(target_family = "unix")]
+    #[test_case("helloworld-unix", "helloworld-unix", "helloworld-v2"; "executable")]
+    #[test_case("helloworld.deb", "helloworld-unix", "helloworld-v2"; "deb")]
+    fn selected_asset_is_not_archive(selected_asset: &str, exec1: &str, exec2: &str) {
+        let output_dir = any_temp_dir();
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-s", selected_asset])
+            .args(["-o", &path_to_string(output_dir.clone())])
+            .args(["-I", exec1])
+            .args(["-I", exec2])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result.failure().stderr(predicates::str::contains(format!(
+            "Selected asset {} is not an archive",
+            selected_asset
+        )));
+    }
+
+    #[cfg(target_family = "windows")]
+    #[test_case("helloworld.exe", "helloworld.exe", "helloworld-v2.exe"; "executable")]
+    fn selected_asset_is_not_archive(selected_asset: &str, exec1: &str, exec2: &str) {
+        let output_dir = any_temp_dir();
+
+        let mut cmd = Command::cargo_bin("dra").unwrap();
+
+        let result = cmd
+            .arg("download")
+            .args(["-s", selected_asset])
+            .args(["-o", &path_to_string(output_dir.clone())])
+            .args(["-I", exec1])
+            .args(["-I", exec2])
+            .arg("devmatteini/dra-tests")
+            .assert();
+
+        result.failure().stderr(predicates::str::contains(format!(
+            "Selected asset {} is not an archive",
+            selected_asset
+        )));
+    }
 
     #[cfg(target_family = "unix")]
     #[test_case("helloworld.tar.gz", "helloworld"; "tar gzip")]
