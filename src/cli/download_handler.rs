@@ -12,6 +12,7 @@ use crate::github::repository::Repository;
 use crate::github::tagged_asset::TaggedAsset;
 use crate::installer::destination::Destination;
 use crate::installer::executable::Executable;
+use crate::installer::file::is_supported_archive;
 use crate::installer::install;
 use std::fs::File;
 use std::io::{Read, Write};
@@ -43,14 +44,19 @@ impl DownloadMode {
 
 enum Install {
     No,
-    Yes(Executable),
+    Yes(Vec<Executable>),
 }
 
 impl Install {
-    fn new(install: bool, install_file: Option<String>, repository: &Repository) -> Self {
+    fn new(install: bool, install_file: Option<Vec<String>>, repository: &Repository) -> Self {
         match (install_file, install) {
-            (Some(executable_name), _) => Self::Yes(Executable::Selected(executable_name)),
-            (_, true) => Self::Yes(Executable::Automatic(repository.repo.clone())),
+            (Some(executable_names), _) => Self::Yes(
+                executable_names
+                    .iter()
+                    .map(|e| Executable::Selected(e.clone()))
+                    .collect(),
+            ),
+            (_, true) => Self::Yes(vec![Executable::Automatic(repository.repo.clone())]),
             (None, false) => Self::No,
         }
     }
@@ -59,6 +65,13 @@ impl Install {
         match self {
             Self::No => false,
             Self::Yes(_) => true,
+        }
+    }
+
+    fn is_more_than_one(&self) -> bool {
+        match self {
+            Self::No => false,
+            Self::Yes(x) => x.len() > 1,
         }
     }
 }
@@ -71,7 +84,7 @@ impl DownloadHandler {
         tag: Option<String>,
         output: Option<PathBuf>,
         install: bool,
-        install_file: Option<String>,
+        install_file: Option<Vec<String>>,
     ) -> Self {
         let install = Install::new(install, install_file, &repository);
         DownloadHandler {
@@ -84,13 +97,63 @@ impl DownloadHandler {
     }
 
     pub fn run(&self) -> HandlerResult {
+        let destination = self.selection_destination_for_install()?;
+        self.destination_may_not_dir(&destination)?;
         let github = GithubClient::from_environment();
         let release = self.fetch_release(&github)?;
         let selected_asset = self.select_asset(release)?;
+        self.asset_may_not_be_archive(&selected_asset.name)?;
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&github, &selected_asset, &output_path)?;
-        self.maybe_install(&selected_asset.name, &output_path)?;
+        self.maybe_install(&selected_asset.name, &output_path, destination)?;
         Ok(())
+    }
+
+    fn selection_destination_for_install(&self) -> Result<Destination, HandlerError> {
+        let cwd = Self::cwd()?;
+        match self.install {
+            Install::No => Ok(Destination::Directory(cwd)),
+            Install::Yes(_) => match self.output.as_ref() {
+                Some(output) if output.is_dir() => Ok(Destination::Directory(output.clone())),
+                Some(output) => Ok(Destination::File(output.clone())),
+                None => Ok(Destination::Directory(cwd)),
+            },
+        }
+    }
+
+    fn destination_may_not_dir(&self, destination: &Destination) -> Result<(), HandlerError> {
+        if self.install.is_more_than_one() {
+            match destination {
+                Destination::File(x) => Err(HandlerError::new(format!(
+                    "Multiple install target (-I,--install-file) are selected \
+                        but output (-o,--output) is not a directory\n \
+                        Output: {:?}",
+                    x
+                ))),
+                Destination::Directory(_) => Ok(()),
+            }
+        } else {
+            Ok(())
+        }
+    }
+
+    fn asset_may_not_be_archive(&self, asset_name: &str) -> Result<(), HandlerError> {
+        if self.install.is_more_than_one() {
+            match is_supported_archive(asset_name) {
+                Ok(is_archive) => {
+                    if !is_archive {
+                        return Err(HandlerError::new(format!(
+                            "Selected asset {} is not an archive",
+                            asset_name
+                        )));
+                    }
+                    Ok(())
+                }
+                Err(e) => Err(HandlerError::new(e.to_string())),
+            }
+        } else {
+            Ok(())
+        }
     }
 
     fn select_asset(&self, release: Release) -> Result<Asset, HandlerError> {
@@ -133,22 +196,33 @@ impl DownloadHandler {
         ))
     }
 
-    fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
+    fn maybe_install(
+        &self,
+        asset_name: &str,
+        path: &Path,
+        destination: Destination,
+    ) -> Result<(), HandlerError> {
         match &self.install {
             Install::No => Ok(()),
-            Install::Yes(executable) => {
-                let cwd = Self::cwd()?;
-                let destination = match self.output.as_ref() {
-                    Some(output) if output.is_dir() => Destination::Directory(output.clone()),
-                    Some(output) => Destination::File(output.clone()),
-                    None => Destination::Directory(cwd),
-                };
-
+            Install::Yes(executables) => {
                 let spinner = Spinner::install_layout();
                 spinner.show();
 
-                let output = install(asset_name.to_string(), path, executable, destination)
-                    .map_err(|x| HandlerError::new(x.to_string()))?;
+                let mut error_msg = Vec::new();
+
+                for exec in executables {
+                    let install_result =
+                        install(asset_name.to_string(), path, exec, destination.clone())
+                            .map_err(|x| HandlerError::new(x.to_string()));
+
+                    match install_result {
+                        Ok(output) => {
+                            spinner.println(&Color::new(&output.to_string()).green().to_string())
+                        }
+                        Err(HandlerError::Default(msg)) => error_msg.push(msg),
+                        Err(x) => return Err(x),
+                    }
+                }
                 std::fs::remove_file(path).map_err(|x| {
                     HandlerError::new(format!(
                         "Unable to delete temporary file after installation: {}",
@@ -156,11 +230,16 @@ impl DownloadHandler {
                     ))
                 })?;
 
-                let message = format!(
-                    "{}\n{}",
-                    Color::new("Installation completed!").green(),
-                    output
-                );
+                if !error_msg.is_empty() {
+                    let mut message = String::new();
+                    for msg in error_msg {
+                        message = format!("{}\n{}", message, Color::new(&msg).bold().red(),);
+                    }
+                    spinner.finish();
+                    return Err(HandlerError::new(message));
+                }
+
+                let message = format!("{}\n", Color::new("Installation completed!").green());
                 spinner.finish_with_message(&message);
                 Ok(())
             }

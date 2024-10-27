@@ -32,15 +32,17 @@ impl Spinner {
         self.pb.enable_steady_tick(TICK_DURATION);
     }
 
-    #[allow(dead_code)]
     pub fn finish(&self) {
         self.pb.finish_and_clear();
-        println!("{}", &self.end_message);
     }
 
     pub fn finish_with_message(&self, message: &str) {
         self.pb.finish_and_clear();
         println!("{}", message);
+    }
+
+    pub fn println(&self, message: &str) {
+        self.pb.println(message);
     }
 
     pub fn install_layout() -> Spinner {
