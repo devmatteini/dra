@@ -162,6 +162,7 @@ Supported assets that can be installed are:
 - Debian packages (requires elevated privileges)
 - Tar archives with executable(s)
 - Zip files with executable(s)
+- 7-Zip files with executable(s) (requires `7z` cli to be installed and in your `PATH`)
 - Compressed executable files
 - Executable files
 - AppImage files
