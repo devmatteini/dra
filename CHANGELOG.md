@@ -7,6 +7,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.3] - 2024-10-27
+
+### Added
+
+- `dra` is available on [Homebrew](https://formulae.brew.sh/formula/dra#default) for macOS/Linux
+- `install` feature now works with 7-Zip files ([#235](https://github.com/devmatteini/dra/issues/235))
+
+### Changed
+
+- Review and improve `dra [command] --help` messages to be clearer
+
+### Updated dependencies
+
+- bump `zip` from 0.6.6 to 2.2.0
+- bump `uuid` from 1.10.0 to 1.11.0
+- bump `tar` from 0.4.40 to 0.4.42
+- bump `serde` from 1.0.209 to 1.0.210
+- bump `flate2` from 1.0.33 to 1.0.34
+- bump `clap` from 4.5.16 to 4.5.18
+- bump `clap_complete` from 4.5.24 to 4.5.29
+
 ## [0.6.2] - 2024-09-07
 
 ### Fixed
