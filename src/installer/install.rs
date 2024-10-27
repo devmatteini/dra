@@ -6,6 +6,7 @@ use crate::installer::executable::Executable;
 use crate::installer::executable_file_installer::ExecutableFileInstaller;
 use crate::installer::file::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
 use crate::installer::result::InstallerResult;
+use crate::installer::seven_zip_archive_installer::SevenZipArchiveInstaller;
 use crate::installer::tar_archive_installer::TarArchiveInstaller;
 use crate::installer::zip_archive_installer::ZipArchiveInstaller;
 use std::path::Path;
@@ -38,7 +39,7 @@ fn find_installer_for(
         FileType::TarArchive(Compression::Xz) => TarArchiveInstaller::xz,
         FileType::TarArchive(Compression::Bz2) => TarArchiveInstaller::bz2,
         FileType::ZipArchive => ZipArchiveInstaller::run,
-        FileType::SevenZipArchive => todo!(),
+        FileType::SevenZipArchive => SevenZipArchiveInstaller::run,
         FileType::CompressedFile(Compression::Gz) => CompressedFileInstaller::gz,
         FileType::CompressedFile(Compression::Xz) => CompressedFileInstaller::xz,
         FileType::CompressedFile(Compression::Bz2) => CompressedFileInstaller::bz2,

@@ -9,6 +9,7 @@ mod executable_file_installer;
 mod file;
 mod install;
 mod result;
+mod seven_zip_archive_installer;
 mod tar_archive_installer;
 mod zip_archive_installer;
 

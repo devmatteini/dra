@@ -71,6 +71,9 @@ fn file_type_for(file: &FileInfo) -> Option<FileType> {
     if file_name.ends_with(".zip") {
         return Some(FileType::ZipArchive);
     }
+    if file_name.ends_with(".7z") {
+        return Some(FileType::SevenZipArchive);
+    }
     if is_elf_file(&file.path)
         || Path::new(&file_name).extension().is_none()
         || file_name.ends_with(".appimage")
@@ -142,6 +145,7 @@ mod tests {
     #[test_case("file.exe", FileType::ExecutableFile)]
     #[test_case("file", FileType::ExecutableFile)]
     #[test_case("file.AppImage", FileType::ExecutableFile)]
+    #[test_case("file.7z", FileType::SevenZipArchive)]
     fn supported_file(file_name: &str, expected_file_type: FileType) {
         let file_info = any_file_info(file_name);
         let result = validate_file(file_info);
