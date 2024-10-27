@@ -38,6 +38,7 @@ fn find_installer_for(
         FileType::TarArchive(Compression::Xz) => TarArchiveInstaller::xz,
         FileType::TarArchive(Compression::Bz2) => TarArchiveInstaller::bz2,
         FileType::ZipArchive => ZipArchiveInstaller::run,
+        FileType::SevenZipArchive => todo!(),
         FileType::CompressedFile(Compression::Gz) => CompressedFileInstaller::gz,
         FileType::CompressedFile(Compression::Xz) => CompressedFileInstaller::xz,
         FileType::CompressedFile(Compression::Bz2) => CompressedFileInstaller::bz2,

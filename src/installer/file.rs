@@ -16,6 +16,7 @@ pub enum FileType {
     Debian,
     TarArchive(Compression),
     ZipArchive,
+    SevenZipArchive,
     CompressedFile(Compression),
     ExecutableFile,
 }
