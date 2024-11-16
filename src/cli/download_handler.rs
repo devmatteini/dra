@@ -108,19 +108,18 @@ impl DownloadHandler {
         Ok(())
     }
 
-    fn destination_may_not_dir(&self, destination: &Destination) -> Result<(), HandlerError> {
-        if self.install.is_more_than_one() {
-            match destination {
-                Destination::File(x) => Err(HandlerError::new(format!(
-                    "Multiple install target (-I,--install-file) are selected \
+    fn check_destination_invariants(&self, destination: &Destination) -> Result<(), HandlerError> {
+        if !self.install.is_more_than_one() {
+            return Ok(());
+        }
+        match destination {
+            Destination::File(x) => Err(HandlerError::new(format!(
+                "Multiple install target (-I,--install-file) are selected \
                         but output (-o,--output) is not a directory\n \
                         Output: {:?}",
-                    x
-                ))),
-                Destination::Directory(_) => Ok(()),
-            }
-        } else {
-            Ok(())
+                x
+            ))),
+            Destination::Directory(_) => Ok(()),
         }
     }
 
@@ -193,7 +192,7 @@ impl DownloadHandler {
                     Some(output) => Destination::File(output.clone()),
                     None => Destination::Directory(cwd),
                 };
-                self.destination_may_not_dir(&destination)?;
+                self.check_destination_invariants(&destination)?;
 
                 let spinner = Spinner::install_layout();
                 spinner.show();
