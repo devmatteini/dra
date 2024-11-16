@@ -57,6 +57,7 @@ pub enum Command {
         /// Save asset to custom path (file or directory).
         /// Default path is current working directory and the name of the asset.
         /// When used with install feature, it will save the executable to the specified path when applicable.
+        /// If you install multiple executables, it must be a directory path.
         #[arg(short, long, value_hint = ValueHint::AnyPath, verbatim_doc_comment)]
         output: Option<PathBuf>,
 
