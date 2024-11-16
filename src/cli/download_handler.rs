@@ -113,12 +113,13 @@ impl DownloadHandler {
             return Ok(());
         }
         match destination {
-            Destination::File(x) => Err(HandlerError::new(format!(
-                "Multiple install target (-I,--install-file) are selected \
-                        but output (-o,--output) is not a directory\n \
-                        Output: {:?}",
-                x
-            ))),
+            Destination::File(x) => {
+                let message = format!(
+                    "{} is not a directory. When you specify multiple executables to install, you must provide a directory path",
+                    x.display()
+                );
+                Err(HandlerError::new(message))
+            }
             Destination::Directory(_) => Ok(()),
         }
     }
