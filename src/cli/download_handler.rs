@@ -180,9 +180,15 @@ impl DownloadHandler {
                 let mut error_msg = Vec::new();
 
                 for exec in executables {
-                    let install_result =
-                        install(asset_name.to_string(), path, exec, destination.clone())
-                            .map_err(|x| HandlerError::new(x.to_string()));
+                    let install_result = install(
+                        asset_name.to_string(),
+                        path,
+                        exec,
+                        destination.clone(),
+                        // TODO: this is temporary until the for-loop is removed, then we must pass all executables
+                        vec![exec.clone()],
+                    )
+                    .map_err(|x| HandlerError::new(x.to_string()));
 
                     match install_result {
                         Ok(output) => spinner.show_message(&output.to_string()),

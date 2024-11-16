@@ -16,24 +16,45 @@ impl TarArchiveInstaller {
         file_info: SupportedFileInfo,
         destination: Destination,
         executable: &Executable,
+        executables: Vec<Executable>,
     ) -> InstallerResult {
-        ArchiveInstaller::run(Self::extract_gz, file_info, destination, executable)
+        ArchiveInstaller::run(
+            Self::extract_gz,
+            file_info,
+            destination,
+            executable,
+            executables,
+        )
     }
 
     pub fn xz(
         file_info: SupportedFileInfo,
         destination: Destination,
         executable: &Executable,
+        executables: Vec<Executable>,
     ) -> InstallerResult {
-        ArchiveInstaller::run(Self::extract_xz, file_info, destination, executable)
+        ArchiveInstaller::run(
+            Self::extract_xz,
+            file_info,
+            destination,
+            executable,
+            executables,
+        )
     }
 
     pub fn bz2(
         file_info: SupportedFileInfo,
         destination: Destination,
         executable: &Executable,
+        executables: Vec<Executable>,
     ) -> InstallerResult {
-        ArchiveInstaller::run(Self::extract_bz2, file_info, destination, executable)
+        ArchiveInstaller::run(
+            Self::extract_bz2,
+            file_info,
+            destination,
+            executable,
+            executables,
+        )
     }
 
     fn extract_gz(source: &Path, temp_dir: &Path) -> Result<(), InstallError> {

@@ -11,6 +11,7 @@ impl ExecutableFileInstaller {
         file_info: SupportedFileInfo,
         destination: Destination,
         _executable: &Executable,
+        _executables: Vec<Executable>,
     ) -> InstallerResult {
         let executable_path = match destination {
             Destination::Directory(dir) => dir.join(file_info.name),

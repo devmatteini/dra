@@ -1,7 +1,7 @@
 use crate::installer::error::InstallError;
 use std::path::Path;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Executable {
     Automatic(String),
     Selected(String),

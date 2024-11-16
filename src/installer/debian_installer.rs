@@ -15,6 +15,7 @@ impl DebianInstaller {
         file_info: SupportedFileInfo,
         _destination: Destination,
         _executable: &Executable,
+        _executables: Vec<Executable>,
     ) -> InstallerResult {
         exec_command(
             DPKG,

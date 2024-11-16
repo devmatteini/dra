@@ -18,6 +18,7 @@ impl ArchiveInstaller {
         file_info: SupportedFileInfo,
         destination: Destination,
         executable: &Executable,
+        executables: Vec<Executable>,
     ) -> InstallerResult
     where
         F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
@@ -193,6 +194,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
+            vec![],
         );
 
         assert_ok(result);
@@ -215,6 +217,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
+            vec![],
         );
 
         assert_ok(result);
@@ -236,6 +239,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
+            vec![],
         );
 
         assert_no_executable(result);
@@ -259,6 +263,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
+            vec![],
         );
 
         assert_too_many_candidates(vec!["some-random-script", "mytool", "install.sh"], result)
@@ -283,6 +288,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
+            vec![],
         );
 
         assert_ok(result);
@@ -308,6 +314,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
+            vec![],
         );
 
         assert_executable_not_found(result, &mytool)
@@ -330,6 +337,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
+            vec![],
         );
 
         assert_ok(result);
