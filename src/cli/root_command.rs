@@ -77,10 +77,7 @@ pub enum Command {
         install: bool,
 
         /// Install downloaded asset and select which executable to install from a tar/zip archive.
-        ///
-        /// This option is useful when:
-        /// - `dra` can't automatically detect which executable to install
-        /// - The repository provides more than one executable, and you want to install them
+        /// You can install multiple executables by specifying `-I/--install-file` multiple times.
         ///
         /// If you use this option for other types of assets, it will be treated as the default install.
         #[arg(
