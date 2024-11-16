@@ -41,7 +41,7 @@ impl Spinner {
         println!("{}", message);
     }
 
-    pub fn println(&self, message: &str) {
+    pub fn show_message(&self, message: &str) {
         self.pb.println(message);
     }
 

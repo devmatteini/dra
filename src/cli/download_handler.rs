@@ -185,9 +185,8 @@ impl DownloadHandler {
                             .map_err(|x| HandlerError::new(x.to_string()));
 
                     match install_result {
-                        Ok(output) => {
-                            spinner.println(&Color::new(&output.to_string()).green().to_string())
-                        }
+                        Ok(output) => spinner
+                            .show_message(&Color::new(&output.to_string()).green().to_string()),
                         Err(HandlerError::Default(msg)) => error_msg.push(msg),
                         Err(x) => return Err(x),
                     }
