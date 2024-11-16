@@ -14,6 +14,7 @@ use crate::installer::destination::Destination;
 use crate::installer::executable::Executable;
 use crate::installer::file::is_supported_archive;
 use crate::installer::install;
+use crate::vector;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -51,7 +52,7 @@ impl Install {
     fn new(install: bool, install_file: Option<Vec<String>>, repository: &Repository) -> Self {
         match (install_file, install) {
             (Some(executable_names), _) => Self::Yes(
-                executable_names
+                vector::unique(executable_names)
                     .iter()
                     .map(|e| Executable::Selected(e.clone()))
                     .collect(),
