@@ -98,28 +98,14 @@ impl DownloadHandler {
     }
 
     pub fn run(&self) -> HandlerResult {
-        let destination = self.selection_destination_for_install()?;
-        self.destination_may_not_dir(&destination)?;
         let github = GithubClient::from_environment();
         let release = self.fetch_release(&github)?;
         let selected_asset = self.select_asset(release)?;
         self.asset_may_not_be_archive(&selected_asset.name)?;
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&github, &selected_asset, &output_path)?;
-        self.maybe_install(&selected_asset.name, &output_path, destination)?;
+        self.maybe_install(&selected_asset.name, &output_path)?;
         Ok(())
-    }
-
-    fn selection_destination_for_install(&self) -> Result<Destination, HandlerError> {
-        let cwd = Self::cwd()?;
-        match self.install {
-            Install::No => Ok(Destination::Directory(cwd)),
-            Install::Yes(_) => match self.output.as_ref() {
-                Some(output) if output.is_dir() => Ok(Destination::Directory(output.clone())),
-                Some(output) => Ok(Destination::File(output.clone())),
-                None => Ok(Destination::Directory(cwd)),
-            },
-        }
     }
 
     fn destination_may_not_dir(&self, destination: &Destination) -> Result<(), HandlerError> {
@@ -197,15 +183,18 @@ impl DownloadHandler {
         ))
     }
 
-    fn maybe_install(
-        &self,
-        asset_name: &str,
-        path: &Path,
-        destination: Destination,
-    ) -> Result<(), HandlerError> {
+    fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
         match &self.install {
             Install::No => Ok(()),
             Install::Yes(executables) => {
+                let cwd = Self::cwd()?;
+                let destination = match self.output.as_ref() {
+                    Some(output) if output.is_dir() => Destination::Directory(output.clone()),
+                    Some(output) => Destination::File(output.clone()),
+                    None => Destination::Directory(cwd),
+                };
+                self.destination_may_not_dir(&destination)?;
+
                 let spinner = Spinner::install_layout();
                 spinner.show();
 
