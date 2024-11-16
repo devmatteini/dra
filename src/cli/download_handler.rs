@@ -12,7 +12,6 @@ use crate::github::repository::Repository;
 use crate::github::tagged_asset::TaggedAsset;
 use crate::installer::destination::Destination;
 use crate::installer::executable::Executable;
-use crate::installer::file::is_supported_archive;
 use crate::installer::install;
 use crate::vector;
 use std::fs::File;
@@ -101,7 +100,6 @@ impl DownloadHandler {
         let github = GithubClient::from_environment();
         let release = self.fetch_release(&github)?;
         let selected_asset = self.select_asset(release)?;
-        self.asset_may_not_be_archive(&selected_asset.name)?;
         let output_path = self.choose_output_path(&selected_asset.name);
         Self::download_asset(&github, &selected_asset, &output_path)?;
         self.maybe_install(&selected_asset.name, &output_path)?;
@@ -121,25 +119,6 @@ impl DownloadHandler {
                 Err(HandlerError::new(message))
             }
             Destination::Directory(_) => Ok(()),
-        }
-    }
-
-    fn asset_may_not_be_archive(&self, asset_name: &str) -> Result<(), HandlerError> {
-        if self.install.is_more_than_one() {
-            match is_supported_archive(asset_name) {
-                Ok(is_archive) => {
-                    if !is_archive {
-                        return Err(HandlerError::new(format!(
-                            "Selected asset {} is not an archive",
-                            asset_name
-                        )));
-                    }
-                    Ok(())
-                }
-                Err(e) => Err(HandlerError::new(e.to_string())),
-            }
-        } else {
-            Ok(())
         }
     }
 

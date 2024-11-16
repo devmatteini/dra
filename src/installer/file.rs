@@ -89,16 +89,6 @@ fn is_elf_file(path: &Path) -> bool {
     check_elf_file(path).unwrap_or(false)
 }
 
-pub fn is_supported_archive(file_name: &str) -> Result<bool, InstallError> {
-    let file_info = FileInfo::new(file_name, PathBuf::from(file_name).as_ref());
-    let file_type =
-        file_type_for(&file_info).ok_or(InstallError::NotSupported(file_name.to_string()))?;
-    match file_type {
-        FileType::CompressedFile(_) | FileType::TarArchive(_) | FileType::ZipArchive => Ok(true),
-        _ => Ok(false),
-    }
-}
-
 // https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
 const ELF_MAGIC_NUMBER: [u8; 4] = [0x7F, b'E', b'L', b'F'];
 
@@ -137,30 +127,9 @@ mod tests {
     use test_case::test_case;
 
     use super::{
-        is_supported_archive, validate_file, Compression, FileInfo, FileType, SupportedFileInfo,
-        ELF_MAGIC_NUMBER,
+        validate_file, Compression, FileInfo, FileType, SupportedFileInfo, ELF_MAGIC_NUMBER,
     };
     use crate::installer::error::InstallError;
-
-    #[test_case("file.deb", false)]
-    #[test_case("file.tar.gz", true)]
-    #[test_case("file.tgz", true)]
-    #[test_case("file.gz", true)]
-    #[test_case("file.tar.bz2", true)]
-    #[test_case("file.tbz", true)]
-    #[test_case("file.bz2", true)]
-    #[test_case("file.tar.xz", true)]
-    #[test_case("file.txz", true)]
-    #[test_case("file.xz", true)]
-    #[test_case("file.zip", true)]
-    #[test_case("file.exe", false)]
-    #[test_case("file", false)]
-    #[test_case("file.AppImage", false)]
-    fn supported_archive_check(file_name: &str, expected_result: bool) {
-        let result = is_supported_archive(file_name).unwrap();
-
-        assert_eq!(result, expected_result)
-    }
 
     #[test_case("file.deb", FileType::Debian)]
     #[test_case("file.tar.gz", FileType::TarArchive(Compression::Gz))]
@@ -199,12 +168,6 @@ mod tests {
         let result = validate_file(file_info);
 
         assert_not_supported(result);
-
-        let result_2 = is_supported_archive(file_name);
-        assert_eq!(
-            result_2,
-            Err(InstallError::NotSupported(file_name.to_string()))
-        )
     }
 
     fn any_file_info(file_name: &str) -> FileInfo {
