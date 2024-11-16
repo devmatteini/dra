@@ -14,6 +14,7 @@ mod cli;
 mod github;
 mod installer;
 mod temp_file;
+mod vector;
 
 fn main() {
     let cli: Cli = Cli::parse();
