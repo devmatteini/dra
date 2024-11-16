@@ -185,8 +185,7 @@ impl DownloadHandler {
                             .map_err(|x| HandlerError::new(x.to_string()));
 
                     match install_result {
-                        Ok(output) => spinner
-                            .show_message(&Color::new(&output.to_string()).green().to_string()),
+                        Ok(output) => spinner.show_message(&output.to_string()),
                         Err(HandlerError::Default(msg)) => error_msg.push(msg),
                         Err(x) => return Err(x),
                     }
@@ -207,7 +206,7 @@ impl DownloadHandler {
                     return Err(HandlerError::new(message));
                 }
 
-                let message = format!("{}\n", Color::new("Installation completed!").green());
+                let message = format!("{}", Color::new("Installation completed!").green());
                 spinner.finish_with_message(&message);
                 Ok(())
             }
