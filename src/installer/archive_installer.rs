@@ -26,15 +26,25 @@ impl ArchiveInstaller {
         let temp_dir = Self::create_temp_dir()?;
         extract_files(&file_info.path, &temp_dir)?;
 
-        let executable = Self::find_executable(&temp_dir, executable)?;
+        let outputs = executables
+            .into_iter()
+            .map(|executable| {
+                Self::find_executable(&temp_dir, &executable)
+                    .and_then(|executable| {
+                        Self::copy_executable_to_destination(executable, &destination)
+                    })
+                    .map(|destination_path| {
+                        format!(
+                            "Extracted archive executable to '{}'",
+                            destination_path.display()
+                        )
+                    })
+            })
+            .collect::<Result<Vec<_>, _>>()?;
 
-        let destination_path = Self::copy_executable_to_destination(executable, destination)?;
         Self::cleanup(&temp_dir)?;
 
-        Ok(InstallOutput::new(format!(
-            "Extracted archive executable to '{}'",
-            destination_path.display()
-        )))
+        Ok(InstallOutput::new(outputs.join("\n")))
     }
 
     fn create_temp_dir() -> Result<PathBuf, InstallError> {
@@ -98,11 +108,11 @@ impl ArchiveInstaller {
 
     fn copy_executable_to_destination(
         executable: ExecutableFile,
-        destination: Destination,
+        destination: &Destination,
     ) -> Result<PathBuf, InstallError> {
         let to = match destination {
             Destination::Directory(dir) => dir.join(executable.name),
-            Destination::File(file) => file,
+            Destination::File(file) => file.clone(),
         };
 
         std::fs::copy(&executable.path, &to)
@@ -194,7 +204,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
-            vec![],
+            vec![executable.clone()],
         );
 
         assert_ok(result);
@@ -217,7 +227,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
-            vec![],
+            vec![executable.clone()],
         );
 
         assert_ok(result);
@@ -239,7 +249,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
-            vec![],
+            vec![executable.clone()],
         );
 
         assert_no_executable(result);
@@ -263,7 +273,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
-            vec![],
+            vec![executable.clone()],
         );
 
         assert_too_many_candidates(vec!["some-random-script", "mytool", "install.sh"], result)
@@ -288,7 +298,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
-            vec![],
+            vec![executable.clone()],
         );
 
         assert_ok(result);
@@ -314,7 +324,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
-            vec![],
+            vec![executable.clone()],
         );
 
         assert_executable_not_found(result, &mytool)
@@ -337,7 +347,7 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
-            vec![],
+            vec![executable.clone()],
         );
 
         assert_ok(result);
