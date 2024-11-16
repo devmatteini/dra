@@ -83,7 +83,13 @@ pub enum Command {
         /// - The repository provides more than one executable, and you want to install them
         ///
         /// If you use this option for other types of assets, it will be treated as the default install.
-        #[arg(short = 'I', long, group = "install-feature", verbatim_doc_comment)]
+        #[arg(
+            short = 'I',
+            long,
+            num_args = 1,
+            group = "install-feature",
+            verbatim_doc_comment
+        )]
         install_file: Option<Vec<String>>,
     },
 
