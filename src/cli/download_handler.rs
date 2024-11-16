@@ -53,8 +53,8 @@ impl Install {
         match (install_file, install) {
             (Some(executable_names), _) => Self::Yes(
                 vector::unique(executable_names)
-                    .iter()
-                    .map(|e| Executable::Selected(e.clone()))
+                    .into_iter()
+                    .map(Executable::Selected)
                     .collect(),
             ),
             (_, true) => Self::Yes(vec![Executable::Automatic(repository.repo.clone())]),
