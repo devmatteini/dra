@@ -17,8 +17,8 @@ impl ArchiveInstaller {
         extract_files: F,
         file_info: SupportedFileInfo,
         destination: Destination,
-        executable: &Executable,
-        executables: Vec<Executable>,
+        _executable: &Executable,
+        executables_to_install: Vec<Executable>,
     ) -> InstallerResult
     where
         F: FnOnce(&Path, &Path) -> Result<(), InstallError>,
@@ -26,10 +26,12 @@ impl ArchiveInstaller {
         let temp_dir = Self::create_temp_dir()?;
         extract_files(&file_info.path, &temp_dir)?;
 
-        let outputs = executables
+        let all_executables = Self::find_all_executables(&temp_dir);
+
+        let outputs = executables_to_install
             .into_iter()
             .map(|executable| {
-                Self::find_executable(&temp_dir, &executable)
+                Self::find_executable(&temp_dir, &executable, &all_executables)
                     .and_then(|executable| {
                         Self::copy_executable_to_destination(executable, &destination)
                     })
@@ -51,20 +53,23 @@ impl ArchiveInstaller {
         crate::temp_file::make_temp_dir().map_fatal_err("Error creating temp dir".into())
     }
 
-    fn find_executable(
-        directory: &Path,
-        executable: &Executable,
-    ) -> Result<ExecutableFile, InstallError> {
+    fn find_all_executables(directory: &Path) -> Vec<ExecutableFile> {
         let ignore_error = |result: walkdir::Result<walkdir::DirEntry>| result.ok();
 
-        let executables: Vec<_> = WalkDir::new(directory)
+        WalkDir::new(directory)
             .max_depth(3)
             .into_iter()
             .filter_map(ignore_error)
             .filter(Self::is_executable)
             .map(ExecutableFile::from_file)
-            .collect();
+            .collect()
+    }
 
+    fn find_executable(
+        directory: &Path,
+        executable: &Executable,
+        executables: &[ExecutableFile],
+    ) -> Result<ExecutableFile, InstallError> {
         match executable {
             Executable::Automatic(name) => Self::discover_executable(executables, name, directory),
             Executable::Selected(name) => Self::find_selected_executable(executables, name),
@@ -72,7 +77,7 @@ impl ArchiveInstaller {
     }
 
     fn discover_executable(
-        executables: Vec<ExecutableFile>,
+        executables: &[ExecutableFile],
         executable_name: &str,
         directory: &Path,
     ) -> Result<ExecutableFile, InstallError> {
@@ -81,7 +86,7 @@ impl ArchiveInstaller {
             return Ok(executable.clone());
         }
 
-        match executables.as_slice() {
+        match executables {
             [] => Err(InstallError::NoExecutable),
             [x] => Ok(x.clone()),
             candidates => Err(too_many_executable_candidates(candidates, directory)),
@@ -89,12 +94,13 @@ impl ArchiveInstaller {
     }
 
     fn find_selected_executable(
-        executables: Vec<ExecutableFile>,
+        executables: &[ExecutableFile],
         executable_name: &str,
     ) -> Result<ExecutableFile, InstallError> {
         executables
             .into_iter()
             .find(|x| x.name == executable_name)
+            .map(|x| x.clone())
             .ok_or_else(|| InstallError::ExecutableNotFound(executable_name.to_string()))
     }
 
