@@ -1,14 +1,36 @@
 use std::fmt::Formatter;
 use std::path::Path;
 
+pub type ExecutableName = String;
+
+#[derive(Debug, PartialEq)]
+pub enum ArchiveErrorType {
+    ExecutableNotFound,
+    TooManyExecutableCandidates(Vec<String>),
+    Fatal(String),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ArchiveError(pub ExecutableName, pub ArchiveErrorType);
+
+#[derive(Debug, PartialEq)]
+pub struct ArchiveInstallerError {
+    pub successes: Vec<ExecutableName>,
+    // TODO: it would be nice to have a NonEmptyVec
+    pub failures: Vec<ArchiveError>,
+}
+
 #[derive(Debug, PartialEq)]
 pub enum InstallError {
     NotAFile(String),
     NotSupported(String),
     Fatal(String),
     NoExecutable,
+    // TODO: remove when unused, this is now part of ArchiveError
     TooManyExecutableCandidates(Vec<String>),
+    // TODO: remove when unused, this is now part of ArchiveError
     ExecutableNotFound(String),
+    Archive(ArchiveInstallerError),
 }
 
 impl InstallError {
@@ -40,6 +62,10 @@ impl std::fmt::Display for InstallError {
             InstallError::ExecutableNotFound(executable) => {
                 let message = format!("Executable {} not found", executable);
                 f.write_str(&message)
+            }
+            InstallError::Archive(_error) => {
+                // TODO: create proper error message to show successes and failures
+                f.write_str("Archive error!!!")
             }
         }
     }

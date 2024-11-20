@@ -1,13 +1,15 @@
+use crate::installer::destination::Destination;
+use crate::installer::error::{
+    ArchiveError, ArchiveErrorType, ArchiveInstallerError, InstallError, InstallErrorMapErr,
+};
+use crate::installer::executable::Executable;
+use crate::installer::file::SupportedFileInfo;
+use crate::installer::result::{InstallOutput, InstallerResult};
+use itertools::{Either, Itertools};
 use std::ffi::OsString;
 #[cfg(target_family = "unix")]
 use std::os::unix::prelude::PermissionsExt;
 use std::path::{Path, PathBuf};
-
-use crate::installer::destination::Destination;
-use crate::installer::error::{InstallError, InstallErrorMapErr};
-use crate::installer::executable::Executable;
-use crate::installer::file::SupportedFileInfo;
-use crate::installer::result::{InstallOutput, InstallerResult};
 use walkdir::WalkDir;
 
 pub struct ArchiveInstaller;
@@ -28,13 +30,14 @@ impl ArchiveInstaller {
 
         let all_executables = Self::find_all_executables(&temp_dir)?;
 
-        let outputs = executables_to_install
+        let results = executables_to_install
             .into_iter()
             .map(|executable| {
                 Self::find_executable(&temp_dir, &executable, &all_executables)
                     .and_then(|executable| {
                         Self::copy_executable_to_destination(executable, &destination)
                     })
+                    .map_err(|error| ArchiveError(executable.name(), error))
                     .map(|destination_path| {
                         format!(
                             "Extracted archive executable to '{}'",
@@ -42,11 +45,24 @@ impl ArchiveInstaller {
                         )
                     })
             })
-            .collect::<Result<Vec<_>, _>>()?;
+            .collect::<Vec<_>>();
+
+        let (successes, failures): (Vec<_>, Vec<_>) =
+            results.into_iter().partition_map(|result| match result {
+                Ok(x) => Either::Left(x),
+                Err(x) => Either::Right(x),
+            });
+
+        if !failures.is_empty() {
+            return Err(InstallError::Archive(ArchiveInstallerError {
+                successes,
+                failures,
+            }));
+        }
 
         Self::cleanup(&temp_dir)?;
 
-        Ok(InstallOutput::new(outputs.join("\n")))
+        Ok(InstallOutput::new(successes.join("\n").to_string()))
     }
 
     fn create_temp_dir() -> Result<PathBuf, InstallError> {
@@ -76,7 +92,7 @@ impl ArchiveInstaller {
         directory: &Path,
         executable: &Executable,
         executables: &[ExecutableFile],
-    ) -> Result<ExecutableFile, InstallError> {
+    ) -> Result<ExecutableFile, ArchiveErrorType> {
         match executable {
             Executable::Automatic(name) => Self::discover_executable(executables, name, directory),
             Executable::Selected(name) => Self::find_selected_executable(executables, name),
@@ -87,7 +103,7 @@ impl ArchiveInstaller {
         executables: &[ExecutableFile],
         executable_name: &str,
         directory: &Path,
-    ) -> Result<ExecutableFile, InstallError> {
+    ) -> Result<ExecutableFile, ArchiveErrorType> {
         let default_executable = executables.iter().find(|x| x.name == executable_name);
         if let Some(executable) = default_executable {
             return Ok(executable.clone());
@@ -102,12 +118,12 @@ impl ArchiveInstaller {
     fn find_selected_executable(
         executables: &[ExecutableFile],
         executable_name: &str,
-    ) -> Result<ExecutableFile, InstallError> {
+    ) -> Result<ExecutableFile, ArchiveErrorType> {
         executables
             .into_iter()
             .find(|x| x.name == executable_name)
             .map(|x| x.clone())
-            .ok_or_else(|| InstallError::ExecutableNotFound(executable_name.to_string()))
+            .ok_or_else(|| ArchiveErrorType::ExecutableNotFound)
     }
 
     fn is_executable(x: &walkdir::DirEntry) -> bool {
@@ -121,7 +137,7 @@ impl ArchiveInstaller {
     fn copy_executable_to_destination(
         executable: ExecutableFile,
         destination: &Destination,
-    ) -> Result<PathBuf, InstallError> {
+    ) -> Result<PathBuf, ArchiveErrorType> {
         let to = match destination {
             Destination::Directory(dir) => dir.join(executable.name),
             Destination::File(file) => file.clone(),
@@ -129,11 +145,14 @@ impl ArchiveInstaller {
 
         std::fs::copy(&executable.path, &to)
             .map(|_| ())
-            .map_fatal_err(format!(
-                "Error copying {} to {}",
-                &executable.path.display(),
-                to.display(),
-            ))?;
+            .map_err(|e| {
+                ArchiveErrorType::Fatal(format!(
+                    "Error copying {} to {}:\n  {}",
+                    &executable.path.display(),
+                    to.display(),
+                    e
+                ))
+            })?;
 
         Ok(to)
     }
@@ -171,7 +190,7 @@ impl ExecutableFile {
 fn too_many_executable_candidates(
     candidates: &[ExecutableFile],
     base_directory: &Path,
-) -> InstallError {
+) -> ArchiveErrorType {
     let errors: Vec<_> = candidates
         .iter()
         .map(|x| {
@@ -181,7 +200,7 @@ fn too_many_executable_candidates(
         })
         .collect();
 
-    InstallError::TooManyExecutableCandidates(errors)
+    ArchiveErrorType::TooManyExecutableCandidates(errors)
 }
 
 #[cfg(test)]
@@ -192,6 +211,7 @@ mod tests {
 
     use super::ArchiveInstaller;
     use crate::installer::destination::Destination;
+    use crate::installer::error::{ArchiveError, ArchiveErrorType, ArchiveInstallerError};
     use crate::installer::executable::Executable;
     use crate::installer::result::InstallerResult;
     use crate::installer::{
@@ -292,10 +312,12 @@ mod tests {
     }
 
     #[test]
-    fn selected_executable_found() {
-        let destination_dir = temp_dir("selected_executable_found");
+    fn all_selected_executables_found() {
+        let destination_dir = temp_dir("all_selected_executables_found");
         let destination = Destination::Directory(destination_dir.clone());
         let mytool = executable_name("mytool");
+        let mytool2 = executable_name("mytool2");
+        let mytool3 = executable_name("mytool3");
         let executable = Executable::Selected(mytool.clone());
 
         let result = ArchiveInstaller::run(
@@ -304,24 +326,33 @@ mod tests {
                 create_file(temp_dir, "LICENSE");
                 create_executable_file(temp_dir, "some-random-script");
                 create_executable_file(temp_dir, "mytool");
-                create_executable_file(temp_dir, "mytool-v2");
+                create_executable_file(temp_dir, "mytool2");
+                create_executable_file(temp_dir, "mytool3");
                 Ok(())
             },
             any_file_info(),
             destination,
             &executable,
-            vec![executable.clone()],
+            vec![
+                executable.clone(),
+                Executable::Selected(mytool2.clone()),
+                Executable::Selected(mytool3.clone()),
+            ],
         );
 
         assert_ok(result);
-        assert_file_exists(executable_path(&destination_dir, &mytool))
+        assert_file_exists(executable_path(&destination_dir, &mytool));
+        assert_file_exists(executable_path(&destination_dir, &mytool2));
+        assert_file_exists(executable_path(&destination_dir, &mytool3));
     }
 
     #[test]
-    fn selected_executable_not_found() {
-        let destination_dir = temp_dir("selected_executable_not_found");
+    fn all_selected_executables_not_found() {
+        let destination_dir = temp_dir("all_selected_executables_not_found");
         let destination = Destination::Directory(destination_dir.clone());
         let mytool = executable_name("mytool");
+        let mytool2 = executable_name("mytool2");
+        let mytool3 = executable_name("mytool3");
         let executable = Executable::Selected(mytool.clone());
 
         let result = ArchiveInstaller::run(
@@ -336,10 +367,65 @@ mod tests {
             any_file_info(),
             destination,
             &executable,
-            vec![executable.clone()],
+            vec![
+                executable.clone(),
+                Executable::Selected(mytool2.clone()),
+                Executable::Selected(mytool3.clone()),
+            ],
         );
 
-        assert_executable_not_found(result, &mytool)
+        let error = assert_archive_error(result);
+
+        let expected = ArchiveInstallerError {
+            successes: vec![],
+            failures: vec![
+                ArchiveError(mytool, ArchiveErrorType::ExecutableNotFound),
+                ArchiveError(mytool2, ArchiveErrorType::ExecutableNotFound),
+                ArchiveError(mytool3, ArchiveErrorType::ExecutableNotFound),
+            ],
+        };
+        assert_eq!(expected, error);
+    }
+
+    #[test]
+    fn some_selected_executables_not_found() {
+        let destination_dir = temp_dir("some_selected_executables_not_found");
+        let destination = Destination::Directory(destination_dir.clone());
+        let mytool = executable_name("mytool");
+        let mytool2 = executable_name("mytool2");
+        let mytool3 = executable_name("mytool3");
+        let mytool4 = executable_name("mytool4");
+        let executable = Executable::Selected(mytool.clone());
+
+        let result = ArchiveInstaller::run(
+            |_, temp_dir| {
+                create_file(temp_dir, "README.md");
+                create_file(temp_dir, "LICENSE");
+                create_executable_file(temp_dir, "mytool");
+                create_executable_file(temp_dir, "mytool3");
+                Ok(())
+            },
+            any_file_info(),
+            destination,
+            &executable,
+            vec![
+                executable.clone(),
+                Executable::Selected(mytool2.clone()),
+                Executable::Selected(mytool3.clone()),
+                Executable::Selected(mytool4.clone()),
+            ],
+        );
+
+        let error = assert_archive_error(result);
+        // TODO: maybe we can find a way to check that mytool and mytool3 are present
+        assert_eq!(2, error.successes.len());
+        assert_eq!(
+            vec![
+                ArchiveError(mytool2, ArchiveErrorType::ExecutableNotFound),
+                ArchiveError(mytool4, ArchiveErrorType::ExecutableNotFound)
+            ],
+            error.failures
+        );
     }
 
     #[test]
@@ -461,46 +547,40 @@ mod tests {
     }
 
     fn assert_too_many_candidates(expected_candidates: Vec<&str>, result: InstallerResult) {
-        match result {
-            Ok(_) => {
-                panic!("No installer error");
+        let error = assert_archive_error(result);
+
+        assert_eq!(
+            1,
+            error.failures.len(),
+            "More than one failure, only expected one"
+        );
+        let archive_error = error.failures.into_iter().next().unwrap();
+
+        match archive_error.1 {
+            ArchiveErrorType::TooManyExecutableCandidates(candidates) => {
+                let contains_all_candidates = expected_candidates.iter().all(|expected| {
+                    candidates
+                        .iter()
+                        .any(|candidate| candidate.contains(expected))
+                });
+                assert!(
+                    contains_all_candidates,
+                    "Not all expected candidates found: {:?}",
+                    candidates
+                );
             }
-            Err(e) => match e {
-                InstallError::TooManyExecutableCandidates(candidates) => {
-                    let contains_all_candidates = expected_candidates.iter().all(|expected| {
-                        candidates
-                            .iter()
-                            .any(|candidate| candidate.contains(expected))
-                    });
-                    assert!(
-                        contains_all_candidates,
-                        "Not all expected candidates found: {:?}",
-                        candidates
-                    );
-                }
-                _ => {
-                    panic!(
-                        "Installer error is not TooManyExecutableCandidates: {:?}",
-                        e
-                    );
-                }
-            },
+            x => panic!("Expected TooManyExecutableCandidates, got {:?}", x),
         }
     }
 
-    fn assert_executable_not_found(result: InstallerResult, expected_name: &str) {
-        match result {
-            Ok(_) => {
-                panic!("No installer error");
-            }
-            Err(e) => match e {
-                InstallError::ExecutableNotFound(name) => {
-                    assert_eq!(expected_name, name);
-                }
-                _ => {
-                    panic!("Installer error is not NoExecutable: {:?}", e);
-                }
-            },
+    fn assert_archive_error(result: InstallerResult) -> ArchiveInstallerError {
+        if result.is_ok() {
+            panic!("No installer error");
+        }
+
+        match result.err().unwrap() {
+            InstallError::Archive(error) => error,
+            x => panic!("Expected InstallError::Archive, got {:?}", x),
         }
     }
 }

@@ -7,6 +7,15 @@ pub enum Executable {
     Selected(String),
 }
 
+impl Executable {
+    pub fn name(&self) -> String {
+        match self {
+            Executable::Automatic(name) => name.clone(),
+            Executable::Selected(name) => name.clone(),
+        }
+    }
+}
+
 #[cfg(target_family = "unix")]
 pub fn set_executable_permissions(path: &Path) -> Result<(), InstallError> {
     use crate::installer::error::InstallErrorMapErr;
