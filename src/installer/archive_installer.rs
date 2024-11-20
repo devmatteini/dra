@@ -26,7 +26,7 @@ impl ArchiveInstaller {
         let temp_dir = Self::create_temp_dir()?;
         extract_files(&file_info.path, &temp_dir)?;
 
-        let all_executables = Self::find_all_executables(&temp_dir);
+        let all_executables = Self::find_all_executables(&temp_dir)?;
 
         let outputs = executables_to_install
             .into_iter()
@@ -53,16 +53,23 @@ impl ArchiveInstaller {
         crate::temp_file::make_temp_dir().map_fatal_err("Error creating temp dir".into())
     }
 
-    fn find_all_executables(directory: &Path) -> Vec<ExecutableFile> {
+    fn find_all_executables(directory: &Path) -> Result<Vec<ExecutableFile>, InstallError> {
         let ignore_error = |result: walkdir::Result<walkdir::DirEntry>| result.ok();
 
-        WalkDir::new(directory)
+        let executables: Vec<_> = WalkDir::new(directory)
             .max_depth(3)
             .into_iter()
             .filter_map(ignore_error)
             .filter(Self::is_executable)
             .map(ExecutableFile::from_file)
-            .collect()
+            .collect();
+
+        if executables.is_empty() {
+            return Err(InstallError::NoExecutable);
+        }
+
+        // TODO: it would be nice to have a NonEmptyVec
+        Ok(executables)
     }
 
     fn find_executable(
@@ -87,7 +94,6 @@ impl ArchiveInstaller {
         }
 
         match executables {
-            [] => Err(InstallError::NoExecutable),
             [x] => Ok(x.clone()),
             candidates => Err(too_many_executable_candidates(candidates, directory)),
         }
@@ -241,7 +247,7 @@ mod tests {
     }
 
     #[test]
-    fn automatic_executable_with_no_executable() {
+    fn archive_with_no_executable() {
         let destination_dir = temp_dir("automatic_executable_with_no_executable");
         let destination = Destination::Directory(destination_dir.clone());
         let executable = Executable::Automatic(executable_name("my-tool"));
