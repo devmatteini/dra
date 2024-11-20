@@ -177,24 +177,14 @@ impl DownloadHandler {
                 let spinner = Spinner::install_layout();
                 spinner.show();
 
-                let mut error_msg = Vec::new();
+                let output = install(
+                    asset_name.to_string(),
+                    path,
+                    destination,
+                    executables.clone(),
+                )
+                .map_err(|x| HandlerError::new(x.to_string()))?;
 
-                for exec in executables {
-                    let install_result = install(
-                        asset_name.to_string(),
-                        path,
-                        destination.clone(),
-                        // TODO: this is temporary until the for-loop is removed, then we must pass all executables
-                        vec![exec.clone()],
-                    )
-                    .map_err(|x| HandlerError::new(x.to_string()));
-
-                    match install_result {
-                        Ok(output) => spinner.show_message(&output.to_string()),
-                        Err(HandlerError::Default(msg)) => error_msg.push(msg),
-                        Err(x) => return Err(x),
-                    }
-                }
                 std::fs::remove_file(path).map_err(|x| {
                     HandlerError::new(format!(
                         "Unable to delete temporary file after installation: {}",
@@ -202,16 +192,11 @@ impl DownloadHandler {
                     ))
                 })?;
 
-                if !error_msg.is_empty() {
-                    let mut message = String::new();
-                    for msg in error_msg {
-                        message = format!("{}\n{}", message, Color::new(&msg).bold().red(),);
-                    }
-                    spinner.finish();
-                    return Err(HandlerError::new(message));
-                }
-
-                let message = format!("{}", Color::new("Installation completed!").green());
+                let message = format!(
+                    "{}\n{}",
+                    output,
+                    Color::new("Installation completed!").green(),
+                );
                 spinner.finish_with_message(&message);
                 Ok(())
             }

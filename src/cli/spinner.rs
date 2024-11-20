@@ -32,6 +32,7 @@ impl Spinner {
         self.pb.enable_steady_tick(TICK_DURATION);
     }
 
+    #[allow(dead_code)]
     pub fn finish(&self) {
         self.pb.finish_and_clear();
     }
@@ -41,6 +42,7 @@ impl Spinner {
         println!("{}", message);
     }
 
+    #[allow(dead_code)]
     pub fn show_message(&self, message: &str) {
         self.pb.println(message);
     }
