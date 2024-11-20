@@ -26,10 +26,6 @@ pub enum InstallError {
     NotSupported(String),
     Fatal(String),
     NoExecutable,
-    // TODO: remove when unused, this is now part of ArchiveError
-    TooManyExecutableCandidates(Vec<String>),
-    // TODO: remove when unused, this is now part of ArchiveError
-    ExecutableNotFound(String),
     Archive(ArchiveInstallerError),
 }
 
@@ -50,19 +46,6 @@ impl std::fmt::Display for InstallError {
             InstallError::NotSupported(msg) => f.write_str(msg),
             InstallError::Fatal(msg) => f.write_str(msg),
             InstallError::NoExecutable => f.write_str("No executable found"),
-            InstallError::TooManyExecutableCandidates(candidates) => {
-                f.write_str("Many executable candidates found, you must select one:\n")?;
-                for candidate in candidates {
-                    let message = format!("- {}\n", candidate);
-                    f.write_str(&message)?;
-                }
-                f.write_str("\nYou can use --install-file <INSTALL_FILE> instead")?;
-                Ok(())
-            }
-            InstallError::ExecutableNotFound(executable) => {
-                let message = format!("Executable {} not found", executable);
-                f.write_str(&message)
-            }
             InstallError::Archive(_error) => {
                 // TODO: create proper error message to show successes and failures
                 f.write_str("Archive error!!!")
