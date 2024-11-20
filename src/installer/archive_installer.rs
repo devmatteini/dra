@@ -19,7 +19,6 @@ impl ArchiveInstaller {
         extract_files: F,
         file_info: SupportedFileInfo,
         destination: Destination,
-        _executable: &Executable,
         executables_to_install: Vec<Executable>,
     ) -> InstallerResult
     where
@@ -235,8 +234,7 @@ mod tests {
             },
             any_file_info(),
             destination,
-            &executable,
-            vec![executable.clone()],
+            vec![executable],
         );
 
         assert_ok(result);
@@ -258,8 +256,7 @@ mod tests {
             },
             any_file_info(),
             destination,
-            &executable,
-            vec![executable.clone()],
+            vec![executable],
         );
 
         assert_ok(result);
@@ -280,8 +277,7 @@ mod tests {
             },
             any_file_info(),
             destination,
-            &executable,
-            vec![executable.clone()],
+            vec![executable],
         );
 
         assert_no_executable(result);
@@ -304,8 +300,7 @@ mod tests {
             },
             any_file_info(),
             destination,
-            &executable,
-            vec![executable.clone()],
+            vec![executable],
         );
 
         assert_too_many_candidates(vec!["some-random-script", "mytool", "install.sh"], result)
@@ -318,7 +313,6 @@ mod tests {
         let mytool = executable_name("mytool");
         let mytool2 = executable_name("mytool2");
         let mytool3 = executable_name("mytool3");
-        let executable = Executable::Selected(mytool.clone());
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -332,9 +326,8 @@ mod tests {
             },
             any_file_info(),
             destination,
-            &executable,
             vec![
-                executable.clone(),
+                Executable::Selected(mytool.clone()),
                 Executable::Selected(mytool2.clone()),
                 Executable::Selected(mytool3.clone()),
             ],
@@ -353,7 +346,6 @@ mod tests {
         let mytool = executable_name("mytool");
         let mytool2 = executable_name("mytool2");
         let mytool3 = executable_name("mytool3");
-        let executable = Executable::Selected(mytool.clone());
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -366,9 +358,8 @@ mod tests {
             },
             any_file_info(),
             destination,
-            &executable,
             vec![
-                executable.clone(),
+                Executable::Selected(mytool.clone()),
                 Executable::Selected(mytool2.clone()),
                 Executable::Selected(mytool3.clone()),
             ],
@@ -395,7 +386,6 @@ mod tests {
         let mytool2 = executable_name("mytool2");
         let mytool3 = executable_name("mytool3");
         let mytool4 = executable_name("mytool4");
-        let executable = Executable::Selected(mytool.clone());
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -407,9 +397,8 @@ mod tests {
             },
             any_file_info(),
             destination,
-            &executable,
             vec![
-                executable.clone(),
+                Executable::Selected(mytool.clone()),
                 Executable::Selected(mytool2.clone()),
                 Executable::Selected(mytool3.clone()),
                 Executable::Selected(mytool4.clone()),
@@ -432,7 +421,6 @@ mod tests {
     fn executable_inside_nested_directory() {
         let destination_dir = temp_dir("executable_inside_nested_directory");
         let destination = Destination::Directory(destination_dir.clone());
-        let executable = any_automatic_executable_name();
 
         let result = ArchiveInstaller::run(
             |_, temp_dir| {
@@ -444,8 +432,7 @@ mod tests {
             },
             any_file_info(),
             destination,
-            &executable,
-            vec![executable.clone()],
+            vec![any_automatic_executable_name()],
         );
 
         assert_ok(result);

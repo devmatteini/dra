@@ -10,7 +10,6 @@ impl ExecutableFileInstaller {
     pub fn run(
         file_info: SupportedFileInfo,
         destination: Destination,
-        _executable: &Executable,
         _executables: Vec<Executable>,
     ) -> InstallerResult {
         let executable_path = match destination {

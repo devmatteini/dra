@@ -14,14 +14,13 @@ use std::path::Path;
 pub fn install(
     asset_name: String,
     source: &Path,
-    executable: &Executable,
     destination: Destination,
     executables: Vec<Executable>,
 ) -> InstallerResult {
     let file_info = file_info_from(&asset_name, source).and_then(validate_file)?;
     let installer = find_installer_for(&file_info.file_type);
 
-    installer(file_info, destination, executable, executables)
+    installer(file_info, destination, executables)
 }
 
 fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
@@ -33,7 +32,7 @@ fn file_info_from(name: &str, path: &Path) -> Result<FileInfo, InstallError> {
 
 fn find_installer_for(
     file_type: &FileType,
-) -> fn(SupportedFileInfo, Destination, &Executable, Vec<Executable>) -> InstallerResult {
+) -> fn(SupportedFileInfo, Destination, Vec<Executable>) -> InstallerResult {
     match file_type {
         FileType::Debian => DebianInstaller::run,
         FileType::TarArchive(Compression::Gz) => TarArchiveInstaller::gz,

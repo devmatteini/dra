@@ -14,7 +14,6 @@ impl CompressedFileInstaller {
     pub fn gz(
         file_info: SupportedFileInfo,
         destination: Destination,
-        _executable: &Executable,
         _executables: Vec<Executable>,
     ) -> InstallerResult {
         Self::decompress_and_move(
@@ -27,7 +26,6 @@ impl CompressedFileInstaller {
     pub fn xz(
         file_info: SupportedFileInfo,
         destination: Destination,
-        _executable: &Executable,
         _executables: Vec<Executable>,
     ) -> InstallerResult {
         Self::decompress_and_move(
@@ -40,7 +38,6 @@ impl CompressedFileInstaller {
     pub fn bz2(
         file_info: SupportedFileInfo,
         destination: Destination,
-        _executable: &Executable,
         _executables: Vec<Executable>,
     ) -> InstallerResult {
         Self::decompress_and_move(

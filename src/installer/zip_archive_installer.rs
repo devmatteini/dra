@@ -14,16 +14,9 @@ impl ZipArchiveInstaller {
     pub fn run(
         file_info: SupportedFileInfo,
         destination: Destination,
-        executable: &Executable,
         executables: Vec<Executable>,
     ) -> InstallerResult {
-        ArchiveInstaller::run(
-            Self::extract_archive,
-            file_info,
-            destination,
-            executable,
-            executables,
-        )
+        ArchiveInstaller::run(Self::extract_archive, file_info, destination, executables)
     }
 
     fn extract_archive(source: &Path, temp_dir: &Path) -> Result<(), InstallError> {

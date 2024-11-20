@@ -183,7 +183,6 @@ impl DownloadHandler {
                     let install_result = install(
                         asset_name.to_string(),
                         path,
-                        exec,
                         destination.clone(),
                         // TODO: this is temporary until the for-loop is removed, then we must pass all executables
                         vec![exec.clone()],

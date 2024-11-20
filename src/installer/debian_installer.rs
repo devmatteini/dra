@@ -14,7 +14,6 @@ impl DebianInstaller {
     pub fn run(
         file_info: SupportedFileInfo,
         _destination: Destination,
-        _executable: &Executable,
         _executables: Vec<Executable>,
     ) -> InstallerResult {
         exec_command(
