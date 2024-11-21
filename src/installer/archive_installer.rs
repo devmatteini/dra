@@ -63,7 +63,7 @@ impl ArchiveInstaller {
             .collect();
 
         if executables.is_empty() {
-            return Err(InstallError::NoExecutable);
+            return Err(InstallError::NoExecutables);
         }
 
         // TODO: it would be nice to have a NonEmptyVec
@@ -529,7 +529,7 @@ mod tests {
                 panic!("No installer error");
             }
             Err(e) => match e {
-                InstallError::NoExecutable => {}
+                InstallError::NoExecutables => {}
                 _ => {
                     panic!("Installer error is not NoExecutable: {:?}", e);
                 }

@@ -25,7 +25,7 @@ pub enum InstallError {
     NotAFile(String),
     NotSupported(String),
     Fatal(String),
-    NoExecutable,
+    NoExecutables,
     Archive(ArchiveInstallerError),
 }
 
@@ -45,7 +45,7 @@ impl std::fmt::Display for InstallError {
             InstallError::NotAFile(msg) => f.write_str(msg),
             InstallError::NotSupported(msg) => f.write_str(msg),
             InstallError::Fatal(msg) => f.write_str(msg),
-            InstallError::NoExecutable => f.write_str("No executable found"),
+            InstallError::NoExecutables => f.write_str("No executables found"),
             InstallError::Archive(error) => {
                 let message = format!("{}", error);
                 f.write_str(&message)

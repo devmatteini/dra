@@ -87,7 +87,7 @@ mod install {
 
         result
             .failure()
-            .stderr(predicates::str::contains("No executable found"));
+            .stderr(predicates::str::contains("No executables found"));
     }
 
     #[cfg(target_family = "unix")]
