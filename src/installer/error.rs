@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use std::fmt::Formatter;
 use std::path::{Path, PathBuf};
 
@@ -76,35 +75,40 @@ impl std::fmt::Display for ArchiveInstallerError {
         let failures = self
             .failures
             .iter()
-            .map(|ArchiveError(executable, error)| match error {
-                ArchiveErrorType::ExecutableNotFound => {
-                    format!("Executable {} not found", executable)
-                }
-                ArchiveErrorType::TooManyExecutableCandidates(candidates) => {
-                    let mut message = String::new();
-                    message.push_str("Many executable candidates found, you must select one:\n");
-                    for candidate in candidates {
-                        let x = format!("- {}\n", candidate);
-                        message.push_str(&x);
-                    }
-                    message.push_str("\nYou can use --install-file <INSTALL_FILE> instead");
-                    message
-                }
-                ArchiveErrorType::CopyExecutable(from, to, error) => {
-                    format!(
-                        "Unable to copy {} to {} ({})",
-                        from.display(),
-                        to.display(),
-                        error
-                    )
-                }
-            })
+            .map(|x| x.to_string())
+            .collect::<Vec<_>>()
             .join("\n")
             .to_string();
-
         f.write_str(&failures)?;
 
         Ok(())
+    }
+}
+
+impl std::fmt::Display for ArchiveError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let ArchiveError(executable, error) = self;
+        match error {
+            ArchiveErrorType::ExecutableNotFound => {
+                f.write_str(&format!("Executable {} not found", executable))
+            }
+            ArchiveErrorType::TooManyExecutableCandidates(candidates) => {
+                let mut message = String::new();
+                message.push_str("Many executable candidates found, you must select one:\n");
+                for candidate in candidates {
+                    let x = format!("- {}\n", candidate);
+                    message.push_str(&x);
+                }
+                message.push_str("\nYou can use --install-file <INSTALL_FILE> instead");
+                f.write_str(&message)
+            }
+            ArchiveErrorType::CopyExecutable(from, to, error) => f.write_str(&format!(
+                "Unable to copy {} to {} ({})",
+                from.display(),
+                to.display(),
+                error
+            )),
+        }
     }
 }
 
