@@ -76,7 +76,7 @@ impl ArchiveInstaller {
         executables_to_install: Vec<Executable>,
         all_executables: Vec<ExecutableFile>,
     ) -> (Vec<String>, Vec<ArchiveError>) {
-        let results = executables_to_install
+        executables_to_install
             .into_iter()
             .map(|executable| {
                 Self::find_executable(temp_dir, &executable, &all_executables)
@@ -91,12 +91,10 @@ impl ArchiveInstaller {
                         )
                     })
             })
-            .collect::<Vec<_>>();
-
-        results.into_iter().partition_map(|result| match result {
-            Ok(x) => Either::Left(x),
-            Err(x) => Either::Right(x),
-        })
+            .partition_map(|result| match result {
+                Ok(x) => Either::Left(x),
+                Err(x) => Either::Right(x),
+            })
     }
 
     fn find_executable(
