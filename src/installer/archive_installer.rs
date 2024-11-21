@@ -27,30 +27,13 @@ impl ArchiveInstaller {
         let temp_dir = Self::create_temp_dir()?;
         extract_files(&file_info.path, &temp_dir)?;
 
-        let all_executables = Self::find_all_executables(&temp_dir)?;
-
-        let results = executables_to_install
-            .into_iter()
-            .map(|executable| {
-                Self::find_executable(&temp_dir, &executable, &all_executables)
-                    .and_then(|executable| {
-                        Self::copy_executable_to_destination(executable, &destination)
-                    })
-                    .map_err(|error| ArchiveError(executable.name(), error))
-                    .map(|destination_path| {
-                        format!(
-                            "Extracted archive executable to '{}'",
-                            destination_path.display()
-                        )
-                    })
-            })
-            .collect::<Vec<_>>();
-
-        let (successes, failures): (Vec<_>, Vec<_>) =
-            results.into_iter().partition_map(|result| match result {
-                Ok(x) => Either::Left(x),
-                Err(x) => Either::Right(x),
-            });
+        let all_executables = Self::all_executables_from(&temp_dir)?;
+        let (successes, failures) = Self::try_install_executables(
+            &temp_dir,
+            &destination,
+            executables_to_install,
+            all_executables,
+        );
 
         if !failures.is_empty() {
             return Err(InstallError::Archive(ArchiveInstallerError {
@@ -68,7 +51,7 @@ impl ArchiveInstaller {
         crate::temp_file::make_temp_dir().map_fatal_err("Error creating temp dir".into())
     }
 
-    fn find_all_executables(directory: &Path) -> Result<Vec<ExecutableFile>, InstallError> {
+    fn all_executables_from(directory: &Path) -> Result<Vec<ExecutableFile>, InstallError> {
         let ignore_error = |result: walkdir::Result<walkdir::DirEntry>| result.ok();
 
         let executables: Vec<_> = WalkDir::new(directory)
@@ -85,6 +68,35 @@ impl ArchiveInstaller {
 
         // TODO: it would be nice to have a NonEmptyVec
         Ok(executables)
+    }
+
+    fn try_install_executables(
+        temp_dir: &Path,
+        destination: &Destination,
+        executables_to_install: Vec<Executable>,
+        all_executables: Vec<ExecutableFile>,
+    ) -> (Vec<String>, Vec<ArchiveError>) {
+        let results = executables_to_install
+            .into_iter()
+            .map(|executable| {
+                Self::find_executable(temp_dir, &executable, &all_executables)
+                    .and_then(|executable| {
+                        Self::copy_executable_to_destination(executable, destination)
+                    })
+                    .map_err(|error| ArchiveError(executable.name(), error))
+                    .map(|destination_path| {
+                        format!(
+                            "Extracted archive executable to '{}'",
+                            destination_path.display()
+                        )
+                    })
+            })
+            .collect::<Vec<_>>();
+
+        results.into_iter().partition_map(|result| match result {
+            Ok(x) => Either::Left(x),
+            Err(x) => Either::Right(x),
+        })
     }
 
     fn find_executable(
