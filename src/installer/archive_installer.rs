@@ -411,8 +411,7 @@ mod tests {
         );
 
         let error = assert_archive_error(result);
-        // TODO: maybe we can find a way to check that mytool and mytool3 are present
-        assert_eq!(2, error.successes.len());
+        assert_contains_exact(vec![mytool, mytool3], error.successes);
         assert_eq!(
             vec![
                 ArchiveError(mytool2, ArchiveErrorType::ExecutableNotFound),
@@ -574,5 +573,15 @@ mod tests {
             InstallError::Archive(error) => error,
             x => panic!("Expected InstallError::Archive, got {:?}", x),
         }
+    }
+
+    fn assert_contains_exact(expected: Vec<String>, actual: Vec<String>) {
+        assert!(
+            expected
+                .into_iter()
+                .all(|exp| actual.iter().any(|curr| curr.contains(&exp))),
+            "Not all expected values are present in the actual vector {:?}",
+            actual
+        );
     }
 }
