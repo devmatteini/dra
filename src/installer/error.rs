@@ -1,5 +1,5 @@
 use std::fmt::Formatter;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub type ExecutableName = String;
 
@@ -7,7 +7,7 @@ pub type ExecutableName = String;
 pub enum ArchiveErrorType {
     ExecutableNotFound,
     TooManyExecutableCandidates(Vec<String>),
-    Fatal(String),
+    CopyExecutable(PathBuf, PathBuf, String),
 }
 
 #[derive(Debug, PartialEq)]
@@ -80,8 +80,13 @@ impl std::fmt::Display for ArchiveInstallerError {
                     }
                     f.write_str("\nYou can use --install-file <INSTALL_FILE> instead")?;
                 }
-                ArchiveErrorType::Fatal(msg) => {
-                    let message = format!("{}: {}", executable, msg);
+                ArchiveErrorType::CopyExecutable(from, to, error) => {
+                    let message = format!(
+                        "Unable to copy {} to {} ({})",
+                        from.display(),
+                        to.display(),
+                        error
+                    );
                     f.write_str(&message)?;
                 }
             }

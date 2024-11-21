@@ -145,12 +145,7 @@ impl ArchiveInstaller {
         std::fs::copy(&executable.path, &to)
             .map(|_| ())
             .map_err(|e| {
-                ArchiveErrorType::Fatal(format!(
-                    "Error copying {} to {}:\n  {}",
-                    &executable.path.display(),
-                    to.display(),
-                    e
-                ))
+                ArchiveErrorType::CopyExecutable(executable.path.clone(), to.clone(), e.to_string())
             })?;
 
         Ok(to)
