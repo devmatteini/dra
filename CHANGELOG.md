@@ -7,6 +7,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+Install multiple executables from tar/zip archives in one
+command ([#234](https://github.com/devmatteini/dra/issues/234), thanks @duong-dt for
+the initial implementation).
+
+You can now pass `-I/--install-file` option multiple times:
+
+```shell
+$ dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 -I random-script devmatteini/dra-tests
+# [...]
+Extracted archive executable to '/home/<user>/helloworld-v2'
+Extracted archive executable to '/home/<user>/random-script'
+Installation completed!
+```
+
+Note that the following syntax is not valid as it's not backward compatible:
+
+```shell
+dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 random-script devmatteini/dra-tests
+#                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#                                                       you can't pass space-separated values to -I
+```
+
 ## [0.6.3] - 2024-10-27
 
 ### Added
