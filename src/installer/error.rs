@@ -59,26 +59,35 @@ impl std::fmt::Display for ArchiveInstallerError {
         let successes = self.successes.join("\n").to_string();
         f.write_str(&successes)?;
 
-        let some_or_all = if self.successes.is_empty() {
-            "all"
+        let failures_title_options = if self.successes.is_empty() {
+            ("", "all")
         } else {
-            "some"
+            ("\n\n", "some")
         };
-        let failures = format!("Failed to install {} executables:\n", some_or_all);
-        f.write_str(&failures)?;
+        let show_failures_title = self.successes.len() > 0 || self.failures.len() > 1;
+        if show_failures_title {
+            f.write_str(&format!(
+                "{}Failed to install {} executables:\n",
+                failures_title_options.0, failures_title_options.1
+            ))?;
+        }
+
+        let mut errors = vec![];
         for ArchiveError(executable, error) in self.failures.iter() {
             match error {
                 ArchiveErrorType::ExecutableNotFound => {
                     let message = format!("Executable {} not found", executable);
-                    f.write_str(&message)?;
+                    errors.push(message);
                 }
                 ArchiveErrorType::TooManyExecutableCandidates(candidates) => {
+                    let mut message = String::new();
                     f.write_str("Many executable candidates found, you must select one:\n")?;
                     for candidate in candidates {
-                        let message = format!("- {}\n", candidate);
-                        f.write_str(&message)?;
+                        let x = format!("- {}\n", candidate);
+                        message.push_str(&x);
                     }
-                    f.write_str("\nYou can use --install-file <INSTALL_FILE> instead")?;
+                    message.push_str("\nYou can use --install-file <INSTALL_FILE> instead");
+                    errors.push(message);
                 }
                 ArchiveErrorType::CopyExecutable(from, to, error) => {
                     let message = format!(
@@ -87,10 +96,13 @@ impl std::fmt::Display for ArchiveInstallerError {
                         to.display(),
                         error
                     );
-                    f.write_str(&message)?;
+                    errors.push(message);
                 }
             }
         }
+
+        let failures = errors.join("\n").to_string();
+        f.write_str(&failures)?;
 
         Ok(())
     }
@@ -103,5 +115,68 @@ pub trait InstallErrorMapErr<T> {
 impl<T> InstallErrorMapErr<T> for std::io::Result<T> {
     fn map_fatal_err(self, message: String) -> Result<T, InstallError> {
         self.map_err(|e| InstallError::Fatal(format!("{}:\n  {}", &message, e)))
+    }
+}
+
+#[cfg(test)]
+mod archive_installer_error_tests {
+    use super::*;
+
+    #[test]
+    fn successes_and_failures() {
+        let error = ArchiveInstallerError {
+            successes: vec!["mytool".to_string(), "mytool2".to_string()],
+            failures: vec![
+                ArchiveError("mytool3".to_string(), ArchiveErrorType::ExecutableNotFound),
+                ArchiveError("mytool4".to_string(), ArchiveErrorType::ExecutableNotFound),
+            ],
+        };
+
+        let result = error.to_string();
+
+        assert_eq!(
+            "mytool
+mytool2
+
+Failed to install some executables:
+Executable mytool3 not found
+Executable mytool4 not found",
+            result
+        );
+    }
+
+    #[test]
+    fn only_failures() {
+        let error = ArchiveInstallerError {
+            successes: vec![],
+            failures: vec![
+                ArchiveError("mytool".to_string(), ArchiveErrorType::ExecutableNotFound),
+                ArchiveError("mytool2".to_string(), ArchiveErrorType::ExecutableNotFound),
+            ],
+        };
+
+        let result = error.to_string();
+
+        assert_eq!(
+            "Failed to install all executables:
+Executable mytool not found
+Executable mytool2 not found",
+            result
+        );
+    }
+
+    #[test]
+    fn only_one_failure() {
+        let error = ArchiveInstallerError {
+            successes: vec![],
+            failures: vec![ArchiveError(
+                "mytool".to_string(),
+                ArchiveErrorType::ExecutableNotFound,
+            )],
+        };
+
+        let result = error.to_string();
+
+        assert_eq!("Executable mytool not found", result);
     }
 }
