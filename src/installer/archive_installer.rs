@@ -270,7 +270,7 @@ mod tests {
 
     #[test]
     fn archive_with_no_executable() {
-        let destination_dir = temp_dir("automatic_executable_with_no_executable");
+        let destination_dir = temp_dir("archive_with_no_executable");
         let destination = Destination::Directory(destination_dir.clone());
         let executable = Executable::Automatic(executable_name("my-tool"));
 
