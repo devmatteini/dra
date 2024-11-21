@@ -64,7 +64,7 @@ impl std::fmt::Display for ArchiveInstallerError {
         } else {
             ("\n\n", "some")
         };
-        let show_failures_title = self.successes.len() > 0 || self.failures.len() > 1;
+        let show_failures_title = !self.successes.is_empty() || self.failures.len() > 1;
         if show_failures_title {
             f.write_str(&format!(
                 "{}Failed to install {} executables:\n",

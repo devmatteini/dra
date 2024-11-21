@@ -129,10 +129,10 @@ impl ArchiveInstaller {
         executable_name: &str,
     ) -> Result<ExecutableFile, ArchiveErrorType> {
         executables
-            .into_iter()
+            .iter()
             .find(|x| x.name == executable_name)
-            .map(|x| x.clone())
-            .ok_or_else(|| ArchiveErrorType::ExecutableNotFound)
+            .cloned()
+            .ok_or(ArchiveErrorType::ExecutableNotFound)
     }
 
     fn is_executable(x: &walkdir::DirEntry) -> bool {
