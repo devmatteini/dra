@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use std::fmt::Formatter;
 use std::path::{Path, PathBuf};
 
@@ -72,36 +73,35 @@ impl std::fmt::Display for ArchiveInstallerError {
             ))?;
         }
 
-        let mut errors = vec![];
-        for ArchiveError(executable, error) in self.failures.iter() {
-            match error {
+        let failures = self
+            .failures
+            .iter()
+            .map(|ArchiveError(executable, error)| match error {
                 ArchiveErrorType::ExecutableNotFound => {
-                    let message = format!("Executable {} not found", executable);
-                    errors.push(message);
+                    format!("Executable {} not found", executable)
                 }
                 ArchiveErrorType::TooManyExecutableCandidates(candidates) => {
                     let mut message = String::new();
-                    f.write_str("Many executable candidates found, you must select one:\n")?;
+                    message.push_str("Many executable candidates found, you must select one:\n");
                     for candidate in candidates {
                         let x = format!("- {}\n", candidate);
                         message.push_str(&x);
                     }
                     message.push_str("\nYou can use --install-file <INSTALL_FILE> instead");
-                    errors.push(message);
+                    message
                 }
                 ArchiveErrorType::CopyExecutable(from, to, error) => {
-                    let message = format!(
+                    format!(
                         "Unable to copy {} to {} ({})",
                         from.display(),
                         to.display(),
                         error
-                    );
-                    errors.push(message);
+                    )
                 }
-            }
-        }
+            })
+            .join("\n")
+            .to_string();
 
-        let failures = errors.join("\n").to_string();
         f.write_str(&failures)?;
 
         Ok(())
