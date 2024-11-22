@@ -10,7 +10,7 @@ mod install {
     use assert_cmd::assert::OutputAssertExt;
     use assert_cmd::prelude::CommandCargoExt;
 
-    use crate::assertions::assert_file_exists;
+    use crate::assertions::{assert_file_exists, assert_file_not_exists};
 
     #[cfg(target_family = "unix")]
     #[test_case("helloworld.tar.gz", "helloworld"; "tar gzip")]
@@ -214,6 +214,7 @@ mod install {
             exec1
         )));
 
+        assert_file_not_exists(output_dir.join(exec1).as_path());
         assert_file_exists(output_dir.join(exec2).as_path());
     }
 
@@ -241,6 +242,7 @@ mod install {
             exec1
         )));
 
+        assert_file_not_exists(output_dir.join(exec1).as_path());
         assert_file_exists(output_dir.join(exec2).as_path());
     }
 }

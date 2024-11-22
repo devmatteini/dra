@@ -38,3 +38,9 @@ pub fn assert_file_exists(path: &Path) {
         panic!("File does not exist: {:?}", path)
     }
 }
+
+pub fn assert_file_not_exists(path: &Path) {
+    if path.exists() {
+        panic!("File exist: {:?}", path)
+    }
+}
