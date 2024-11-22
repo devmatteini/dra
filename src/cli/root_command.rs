@@ -22,6 +22,9 @@ use crate::github::repository::Repository;
 /// Download and install an asset:
 /// $ dra download --install devmatteini/dra-tests
 ///
+/// Download and install multiple executables from tar/zip archive asset:
+/// $ dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 -I random-script devmatteini/dra-tests
+///
 /// More examples can be found at:
 /// - https://github.com/devmatteini/dra#usage
 /// - https://github.com/devmatteini/dra#examples
