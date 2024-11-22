@@ -167,11 +167,17 @@ Supported assets that can be installed are:
 - Executable files
 - AppImage files
 
-You can use `--install-file <INSTALL_FILE>` option when a tar/zip archive contains many executables or
+You can use `-I/--install-file <INSTALL_FILE>` option when a tar/zip archive contains many executables or
 when `dra` can't automatically detect which one to install:
 
 ```shell
-dra download -s helloworld-many-executables-unix.tar.gz --install-file helloworld-v2 devmatteini/dra-tests
+dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 devmatteini/dra-tests
+```
+
+You can also specify this option multiple times to install multiples executables
+
+```shell
+dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 -I random-script devmatteini/dra-tests
 ```
 
 ### Private repositories & rate limit
@@ -234,12 +240,15 @@ dra download -s helloworld-unix -i -o helloworld devmatteini/dra-tests
 Install a specific executable when many are available
 
 ```shell
-# First download the main executable
 dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 devmatteini/dra-tests
 ./helloworld-v2
+```
 
-# Then download another executable
-dra download -s helloworld-many-executables-unix.tar.gz -I random-script devmatteini/dra-tests
+Install multiple executables from a tar/zip archive
+
+```shell
+dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 -I random-script devmatteini/dra-tests
+./helloworld-v2
 ./random-script
 ```
 
