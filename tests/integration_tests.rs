@@ -137,9 +137,12 @@ mod install {
     }
 
     #[cfg(target_family = "unix")]
-    #[test_case("helloworld-many-executables-unix.tar.gz", "random-script", "helloworld-v2"; "install 2 executables")]
-    fn installed_multiple_successfully(selected_asset: &str, exec1: &str, exec2: &str) {
+    #[test]
+    fn install_multiple_files_successfully() {
         let output_dir = any_temp_dir();
+        let selected_asset = "helloworld-many-executables-unix.tar.gz";
+        let exec1 = "random-script";
+        let exec2 = "helloworld-v2";
 
         let mut cmd = Command::cargo_bin("dra").unwrap();
 
@@ -161,9 +164,12 @@ mod install {
     }
 
     #[cfg(target_family = "windows")]
-    #[test_case("helloworld-many-executables-windows.zip", "random-script.exe", "helloworld-v2.exe"; "install 2 executables")]
-    fn installed_multiple_successfully(selected_asset: &str, exec1: &str, exec2: &str) {
+    #[test]
+    fn install_multiple_files_successfully() {
         let output_dir = any_temp_dir();
+        let selected_asset = "helloworld-many-executables-windows.zip";
+        let exec1 = "random-script.exe";
+        let exec2 = "helloworld-v2.exe";
 
         let mut cmd = Command::cargo_bin("dra").unwrap();
 
@@ -185,9 +191,12 @@ mod install {
     }
 
     #[cfg(target_family = "unix")]
-    #[test_case("helloworld-many-executables-unix.tar.gz", "wrong-exec", "helloworld-v2"; "executable not found")]
-    fn installed_multiple_partial_failed(selected_asset: &str, exec1: &str, exec2: &str) {
+    #[test]
+    fn partially_install_multiple_files() {
         let output_dir = any_temp_dir();
+        let selected_asset = "helloworld-many-executables-unix.tar.gz";
+        let exec1 = "wrong-exec";
+        let exec2 = "helloworld-v2";
 
         let mut cmd = Command::cargo_bin("dra").unwrap();
 
@@ -209,9 +218,12 @@ mod install {
     }
 
     #[cfg(target_family = "windows")]
-    #[test_case("helloworld-many-executables-windows.zip", "wrong-exec.exe", "helloworld-v2.exe"; "executable not found")]
-    fn installed_multiple_partial_failed(selected_asset: &str, exec1: &str, exec2: &str) {
+    #[test]
+    fn partially_install_multiple_files() {
         let output_dir = any_temp_dir();
+        let selected_asset = "helloworld-many-executables-windows.zip";
+        let exec1 = "wrong-exec.exe";
+        let exec2 = "helloworld-v2.exe";
 
         let mut cmd = Command::cargo_bin("dra").unwrap();
 
