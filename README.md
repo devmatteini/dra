@@ -8,6 +8,7 @@ A command line tool to download release assets from GitHub.
 [Why should I use dra?](#why-should-i-use-dra) •
 [Installation](#installation) •
 [Usage](#usage) •
+[Contributing](#contributing) •
 [License](#license)
 
 ![dra demo](./assets/demo.gif)
@@ -263,7 +264,21 @@ dra <command> --help
 
 ## Contributing
 
-Take a look at the [CONTRIBUTING.md](CONTRIBUTING.md) guide.
+Take a look at the [CONTRIBUTING.md](CONTRIBUTING.md) guidelines.
+
+### Found a Bug?
+
+If you find a bug in the source code, you can help us
+by [submitting an issue](https://github.com/devmatteini/dra/issues/new) to our GitHub Repository. Even
+better, you can submit a Pull Request with a fix.
+
+### Missing a Feature?
+
+You can request a new feature
+by [submitting a discussion](https://github.com/devmatteini/dra/discussions/new/choose) to
+our GitHub Repository.
+If you would like to implement a new feature, please consider the size of the change and reach out to
+better coordinate our efforts and prevent duplication of work.
 
 ## License
 
