@@ -9,8 +9,9 @@ Welcome, we really appreciate if you're considering to contribute to `dra`!
    ```
    git clone https://github.com/<username>/dra && cd dra
    ```
-3. Create a new branch
-4. Install Rust `>= 1.56.0` and run `make install-components` to install `rustfmt` and `clippy`
+3. Create a new branch with `git checkout -b my-branch`
+4. Install [Rust stable](https://www.rust-lang.org/tools/install) and run `make install-components` to install `rustfmt`
+   and `clippy`
 5. Build project with `make build`
 
 Other `make` targets:
@@ -52,10 +53,6 @@ Then you can build and test (only unit tests) by running:
 make build
 make test
 ```
-
-## Create an issue
-
-Before submitting a new issue, please search the issues to make sure there isn't a similar issue that already exist.
 
 ## License
 
