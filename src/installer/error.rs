@@ -45,7 +45,20 @@ impl std::fmt::Display for InstallError {
             InstallError::NotAFile(msg) => f.write_str(msg),
             InstallError::NotSupported(msg) => f.write_str(msg),
             InstallError::Fatal(msg) => f.write_str(msg),
-            InstallError::NoExecutables => f.write_str("No executables found"),
+            InstallError::NoExecutables => {
+                f.write_str("No executables found")?;
+                let hint = if cfg!(target_family = "unix") {
+                    Some("The archive may be empty or files in it may lack executable permissions")
+                } else if cfg!(target_os = "windows") {
+                    Some("The archive may be empty or may not have any executables (.exe)")
+                } else {
+                    None
+                };
+                match hint {
+                    Some(hint) => f.write_str(&format!("\n{}", hint)),
+                    None => Ok(()),
+                }
+            }
             InstallError::Archive(error) => {
                 let message = format!("{}", error);
                 f.write_str(&message)
