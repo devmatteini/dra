@@ -13,11 +13,27 @@ error(){
   exit 1
 }
 
-check_has_installed(){
-    if ! command -v "$1" &>/dev/null; then
-        echo "$1 is not installed"
-        return 1
-    fi
+check_command(){
+  if ! command -v "$1" &>/dev/null; then
+    return 1
+  fi
+}
+
+check_dependencies(){
+  local os=$1
+
+  if ! check_command curl && ! check_command wget; then
+    error "Missing 'curl' and 'wget'"
+  fi
+
+  check_command grep || error "Missing 'grep'"
+  check_command cut || error "Missing 'cut'"
+
+  if [[ $os == "Windows" ]]; then
+    check_command unzip || error "Missing 'unzip'"
+  else
+    check_command tar || error "Missing 'tar'"
+  fi
 }
 
 http_get(){
@@ -26,10 +42,8 @@ http_get(){
 
   if command -v curl &>/dev/null; then
     curl --proto =https --tlsv1.2 -sSfL -o "$output_path" "$url"
-  elif command -v wget &>/dev/null; then
-    wget --https-only --secure-protocol=TLSv1_2 --quiet -O "$output_path" "$url"
   else
-    error "Missing curl and wget, you need to install one of the two"
+    wget --https-only --secure-protocol=TLSv1_2 --quiet -O "$output_path" "$url"
   fi
 }
 
@@ -116,9 +130,10 @@ copy_executable(){
 main(){
   os=$(get_os)
   arch=$(get_arch)
+  check_dependencies "$os"
+
   target=$(get_target "$os" "$arch")
   archive_extension=$(get_archive_extension "$target")
-
   version=$(load_latest_release)
   asset="dra-$version-$target.$archive_extension"
 
