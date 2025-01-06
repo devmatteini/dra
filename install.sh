@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-GITHUB_REPOSITORY=devmatteini/dra
+GITHUB_REPOSITORY="devmatteini/dra"
 
 info(){
   echo -e "$1" >&2
@@ -127,7 +127,41 @@ copy_executable(){
   fi
 }
 
+help() {
+  cat <<'EOF'
+Install latest release of dra from GitHub Releases
+
+USAGE:
+    install.sh [options]
+
+FLAGS:
+    -h, --help      Display this message
+
+OPTIONS:
+    --to LOCATION   Save dra to custom path [default: current working directory]
+EOF
+}
+
 main(){
+  destination="$PWD"
+
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      -h|--help)
+        help
+        exit 0
+        ;;
+      --to)
+        destination="$2"
+        shift
+        shift
+        ;;
+      *)
+        error "Unknown option $1"
+        ;;
+    esac
+  done
+
   os=$(get_os)
   arch=$(get_arch)
   check_dependencies "$os"
@@ -147,10 +181,10 @@ main(){
   asset_path=$(download_asset "$version" "$asset" "$temp_dir")
 
   info "Extracting archive $asset_path"
-  destination="$PWD"
   extract_archive "$asset_path" "$temp_dir"
   copy_executable "$temp_dir" "$destination" "$os"
 
+  info "dra saved to $destination"
   info "Installation completed!"
 }
 
