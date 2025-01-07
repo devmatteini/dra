@@ -42,6 +42,8 @@ jobs:
 
       - name: Test script
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           bash install.sh --to /tmp
           /tmp/dra --version
