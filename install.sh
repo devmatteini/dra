@@ -109,7 +109,7 @@ extract_archive(){
   local output_dir=$2
 
   case "$asset_path" in
-    *zip) unzip -j -d "$output_dir" "$asset_path" ;;
+    *zip) unzip -q -j -d "$output_dir" "$asset_path" ;;
     *tar.gz) tar xf "$asset_path" --strip-components=1 -C "$output_dir" ;;
     *) error "Unknown archive $asset_path" ;;
   esac

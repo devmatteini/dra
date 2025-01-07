@@ -43,6 +43,5 @@ jobs:
       - name: Test script
         shell: bash
         run: |
-          set -x
           bash install.sh --to /tmp
           /tmp/dra --version
