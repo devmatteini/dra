@@ -127,7 +127,7 @@ copy_executable(){
   fi
 }
 
-help() {
+help(){
   cat <<'EOF'
 Install latest release of dra from GitHub Releases
 
@@ -139,6 +139,19 @@ FLAGS:
 
 OPTIONS:
     --to LOCATION   Save dra to custom path [default: current working directory]
+EOF
+}
+
+installation_completed(){
+  cat <<'EOF'
+
+Thanks for installing dra!
+
+You can run `dra --help` to get started and see useful examples.
+
+More examples can be found in the documentation:
+- https://github.com/devmatteini/dra#usage
+- https://github.com/devmatteini/dra#examples
 EOF
 }
 
@@ -185,10 +198,7 @@ main(){
   copy_executable "$temp_dir" "$destination" "$os"
 
   info "dra saved to $destination"
-  info "Installation completed!"
+  installation_completed
 }
-
-# TODO:
-# - Add post install help message on getting started with dra
 
 main "$@"
