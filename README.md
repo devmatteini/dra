@@ -34,6 +34,14 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 Download the prebuilt versions of `dra` for all supported platforms from
 the [latest release](https://github.com/devmatteini/dra/releases/latest).
 
+You can use this script to automatically download the latest release across all supported platforms.
+Replace `<DESTINATION>` with the path where you want to place dra (e.g `~/.local/bin`).
+If you omit `--to` option, the default value is the current working directory.
+
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/devmatteini/dra/refs/heads/main/install.sh | bash -s -- --to <DESTINATION>
+```
+
 ### Debian-based distributions
 
 Download the latest `.deb` package from the [release page](https://github.com/devmatteini/dra/releases/latest) and

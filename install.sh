@@ -138,7 +138,7 @@ FLAGS:
     -h, --help      Display this message
 
 OPTIONS:
-    --to LOCATION   Save dra to custom path [default: current working directory]
+    --to <DESTINATION>   Save dra to custom path [default: current working directory]
 EOF
 }
 
