@@ -8,10 +8,12 @@ on:
     paths-ignore:
       - "**.md"
       - "assets/**"
+      - "install.sh"
   pull_request:
     paths-ignore:
       - "**.md"
       - "assets/**"
+      - "install.sh"
 
 env:
   CARGO_TERM_COLOR: always

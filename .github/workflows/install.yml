@@ -1,0 +1,48 @@
+name: Check automated install script
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "install.sh"
+  pull_request:
+    paths:
+      - "install.sh"
+
+# NOTE: always set shell: bash, otherwise on Windows there might be problems!
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Check script
+        run: shellcheck install.sh
+
+  test:
+    name: ${{ matrix.os }}
+    needs: [ lint ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test script
+        shell: bash
+        run: |
+          set -x
+          bash install.sh --to /tmp
+          /tmp/dra --version

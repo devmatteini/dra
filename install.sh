@@ -189,8 +189,6 @@ main(){
 }
 
 # TODO:
-# - test on windows, macos, linux arm64, linux armv6
-# - create automated test in GH Actions to verify this script is working
 # - Add post install help message on getting started with dra
 
 main "$@"
