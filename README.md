@@ -34,7 +34,7 @@ You can do everything `dra` does with the official [GitHub cli](https://cli.gith
 Download the prebuilt versions of `dra` for all supported platforms from
 the [latest release](https://github.com/devmatteini/dra/releases/latest).
 
-You can use this script to automatically download the latest release across all supported platforms.
+You can use this `bash` script to automatically download the latest release across all supported platforms.
 Replace `<DESTINATION>` with the path where you want to place dra (e.g `~/.local/bin`).
 If you omit `--to` option, the default value is the current working directory.
 
