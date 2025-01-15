@@ -7,6 +7,41 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.1] - 2025-01-15
+
+### Added
+
+Automated bash script for initial dra download (see README.md for more information)
+
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/devmatteini/dra/refs/heads/main/install.sh | bash -s -- --to <DESTINATION>
+```
+
+### Changed
+
+Improve `install` feature error message when no executables are found to provide more context to the user (based
+on [#232](https://github.com/devmatteini/dra/issues/232))
+
+### Fixed
+
+Automatic download on Linux prioritize musl-based archives when multiple musl assets are available, ensuring better
+compatibility across distributions. ([#267](https://github.com/devmatteini/dra/issues/267))
+
+### Updated dependencies
+
+- bump `zip` from 2.2.0 to 2.2.2
+- bump `ureq` from 2.10.1 to 2.12.1
+- bump `tar` from 0.4.42 to 0.4.43
+- bump `serde` from 1.0.214 to 1.0.217
+- bump `predicates` from 3.1.2 to 3.1.3
+- bump `itertools` from 0.13.0 to 0.14.0
+- bump `indicatif` from 0.17.8 to 0.17.9
+- bump `hashbrown` from 0.15.0 to 0.15.2
+- bump `flate2` from 1.0.34 to 1.0.35
+- bump `clap` from 4.5.20 to 4.5.23
+- bump `clap_complete` from 4.5.34 to 4.5.40
+- bump `bzip2` from 0.4.4 to 0.5.0
+
 ## [0.7.0] - 2024-11-22
 
 ### Added
