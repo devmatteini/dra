@@ -64,12 +64,17 @@ fn contains_extension(os: &str, asset_name: &str) -> bool {
 const ARCHIVES: [&str; 7] = [".gz", ".tgz", ".bz2", ".tbz", ".xz", ".txz", ".zip"];
 
 fn asset_priority(a: &Asset) -> i32 {
-    if a.name.contains("musl") {
+    let is_archive = ARCHIVES.iter().any(|x| a.name.ends_with(x));
+    let is_musl = a.name.contains("musl");
+
+    if is_musl && is_archive {
         1
-    } else if ARCHIVES.iter().any(|x| a.name.ends_with(x)) {
+    } else if is_musl {
         2
-    } else {
+    } else if is_archive {
         3
+    } else {
+        4
     }
 }
 
@@ -144,6 +149,7 @@ mod tests {
     fn order_assets_by_priority() {
         let mut assets = vec![
             asset("mypackage-linux-amd64.deb"),
+            asset("mypackage-linux-amd64-musl.deb"),
             asset("mypackage-linux-gnu.zip"),
             asset("mypackage-linux-x86_64.rpm"),
             asset("mypackage-linux-musl.tar.gz"),
@@ -157,6 +163,7 @@ mod tests {
         assert_eq!(
             vec![
                 "mypackage-linux-musl.tar.gz",
+                "mypackage-linux-amd64-musl.deb",
                 "mypackage-linux-musl",
                 "mypackage-linux-gnu.zip",
                 "mypackage-linux-amd64.deb",
