@@ -75,6 +75,34 @@ make release
 ./target/release/dra --version
 ```
 
+### Update dra
+
+The method to update `dra` depends on how you initially installed it.
+
+**If you used a package manager** (e.g [Homebrew](#macoslinux-with-homebrew) or [pacman](#arch-linux)), use the
+corresponding package manager commands to update `dra`.
+
+**If you downloaded a prebuilt binary** from GitHub Releases, you have two options:
+
+#### Option 1: Use dra to update itself
+
+- Linux (_Note that you can't replace a binary while it's executing_)
+  ```shell
+  dra download -a -i -o dra-new devmatteini/dra && mv dra-new /path/to/dra
+  ```
+- macOS
+  ```shell
+  dra download -a -i -o /path/to/dra devmatteini/dra
+  ```
+- Windows (_Note that you can't replace a binary while it's executing_)
+  ```shell
+  dra download -a -i -o dra-new.exe devmatteini/dra && mv dra-new.exe /path/to/dra.exe
+  ```
+
+#### Option 2: Use the automated bash script
+
+Follow the installation instructions on how to use the [automated bash script](#prebuilt-binaries)
+
 ## Usage
 
 - [Download assets with interactive mode](#interactive-download)
