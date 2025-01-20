@@ -225,7 +225,7 @@ is the default for unauthenticated users), `dra` must make authenticated request
 
 You can create
 a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
-and then export of the following environment variables:
+and then export one of the following environment variables:
 
 1. `DRA_GITHUB_TOKEN`
 2. `GITHUB_TOKEN`
