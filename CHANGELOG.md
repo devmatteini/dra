@@ -7,6 +7,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.0] - 2025-01-21
+
+### Added
+
+Before, you needed to export environment variable `GITHUB_TOKEN` to make authenticated requests to download assets from
+private repositories and avoid rate limit issues.
+
+Now, you can also export one of the following environment variables:
+
+1. `DRA_GITHUB_TOKEN`
+2. `GITHUB_TOKEN` (same as before)
+3. `GH_TOKEN`
+
+If none of the above environment variables are set,
+the [GitHub cli token](https://cli.github.com/manual/gh_auth_token) (if available) will be used as default value.
+
+If you would like to disable GitHub authentication, you can export the environment variable
+`DRA_DISABLE_GITHUB_AUTHENTICATION=true`
+
 ## [0.7.1] - 2025-01-15
 
 ### Added
