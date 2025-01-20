@@ -12,5 +12,7 @@ pub fn boolean(name: &str) -> bool {
 }
 
 pub fn string(name: &str) -> Option<String> {
-    std::env::var(name).ok()
+    std::env::var(name)
+        .ok()
+        .and_then(|x| if x.is_empty() { None } else { Some(x) })
 }
