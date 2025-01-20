@@ -3,6 +3,7 @@ use crate::github::release::{Asset, Release, Tag};
 use crate::github::release_response::ReleaseResponse;
 use crate::github::repository::Repository;
 use std::io::Read;
+use std::process::Command;
 use std::time::Duration;
 
 const DRA_GITHUB_TOKEN: &str = "DRA_GITHUB_TOKEN";
@@ -23,8 +24,8 @@ impl GithubClient {
         let token = std::env::var(DRA_GITHUB_TOKEN)
             .ok()
             .or_else(|| std::env::var(GITHUB_TOKEN).ok())
-            .or_else(|| std::env::var(GH_TOKEN).ok());
-        // TODO: if token is still empty, try run "gh auth token"
+            .or_else(|| std::env::var(GH_TOKEN).ok())
+            .or_else(github_cli_token);
 
         Self::new(token)
     }
@@ -68,6 +69,21 @@ impl GithubClient {
             .and_then(|v| v.parse().ok());
         Ok((response.into_reader(), content_length))
     }
+}
+
+fn github_cli_token() -> Option<String> {
+    Command::new("gh")
+        .args(["auth", "token"])
+        .output()
+        .ok()
+        .and_then(|output| {
+            if output.status.success() {
+                String::from_utf8(output.stdout).ok()
+            } else {
+                None
+            }
+        })
+        .map(|x| x.trim().to_string())
 }
 
 fn get_release_url(repository: &Repository, tag: Option<&Tag>) -> String {
