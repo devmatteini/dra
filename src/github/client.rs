@@ -5,7 +5,9 @@ use crate::github::repository::Repository;
 use std::io::Read;
 use std::time::Duration;
 
+const DRA_GITHUB_TOKEN: &str = "DRA_GITHUB_TOKEN";
 const GITHUB_TOKEN: &str = "GITHUB_TOKEN";
+const GH_TOKEN: &str = "GH_TOKEN";
 
 pub struct GithubClient {
     pub token: Option<String>,
@@ -17,7 +19,14 @@ impl GithubClient {
     }
 
     pub fn from_environment() -> Self {
-        Self::new(std::env::var(GITHUB_TOKEN).ok())
+        // TODO: if DRA_DISABLE_GITHUB_AUTHENTICATION is set, set token to None
+        let token = std::env::var(DRA_GITHUB_TOKEN)
+            .ok()
+            .or_else(|| std::env::var(GITHUB_TOKEN).ok())
+            .or_else(|| std::env::var(GH_TOKEN).ok());
+        // TODO: if token is still empty, try run "gh auth token"
+
+        Self::new(token)
     }
 
     fn get(&self, url: &str) -> ureq::Request {
