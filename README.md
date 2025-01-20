@@ -109,7 +109,7 @@ Follow the installation instructions on how to use the [automated bash script](#
 - [Download assets with non-interactive mode](#non-interactive-download)
 - [Download options](#download-options)
 - [Install assets](#install-assets)
-- [Private repositories & rate limit](#private-repositories--rate-limit)
+- [Authentication](#authentication)
 - [Shell completion](#shell-completion)
 - [Examples](#examples)
 
@@ -217,14 +217,28 @@ You can also specify this option multiple times to install multiples executables
 dra download -s helloworld-many-executables-unix.tar.gz -I helloworld-v2 -I random-script devmatteini/dra-tests
 ```
 
-### Private repositories & rate limit
+### Authentication
 
-In order to download assets from private repositories (and avoid rate limit issues) export an environment
-variable `GITHUB_TOKEN=<token>`.
+In order to download assets from private repositories and avoid rate limit
+issues ([60 requests per hour](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#primary-rate-limit-for-unauthenticated-users)
+is the default for unauthenticated users), `dra` must make authenticated requests to GitHub.
 
-Follow the official guide to create
-a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
-The minimum set of scopes needed is: `Full control of private repositories `.
+You can create
+a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+and then export of the following environment variables:
+
+1. `DRA_GITHUB_TOKEN`
+2. `GITHUB_TOKEN`
+3. `GH_TOKEN`
+
+If none of the above environment variables are set,
+the [GitHub cli token](https://cli.github.com/manual/gh_auth_token) (if available) will be used as default value.
+You need to install [GitHub cli](https://cli.github.com/) and then run `gh auth login`.
+
+#### Disable authentication
+
+If you would like to disable GitHub authentication, you can export the environment variable
+`DRA_DISABLE_GITHUB_AUTHENTICATION=true`
 
 ### Shell completion
 
