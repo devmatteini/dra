@@ -11,6 +11,7 @@ use clap::Parser;
 use std::process::exit;
 
 mod cli;
+mod env_var;
 mod github;
 mod installer;
 mod temp_file;

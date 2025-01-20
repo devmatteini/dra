@@ -6,6 +6,7 @@ use std::io::Read;
 use std::process::Command;
 use std::time::Duration;
 
+const DRA_DISABLE_GITHUB_AUTHENTICATION: &str = "DRA_DISABLE_GITHUB_AUTHENTICATION";
 const DRA_GITHUB_TOKEN: &str = "DRA_GITHUB_TOKEN";
 const GITHUB_TOKEN: &str = "GITHUB_TOKEN";
 const GH_TOKEN: &str = "GH_TOKEN";
@@ -20,7 +21,11 @@ impl GithubClient {
     }
 
     pub fn from_environment() -> Self {
-        // TODO: if DRA_DISABLE_GITHUB_AUTHENTICATION is set, set token to None
+        let is_auth_disabled = crate::env_var::boolean(DRA_DISABLE_GITHUB_AUTHENTICATION);
+        if is_auth_disabled {
+            return Self::new(None);
+        }
+
         let token = std::env::var(DRA_GITHUB_TOKEN)
             .ok()
             .or_else(|| std::env::var(GITHUB_TOKEN).ok())
