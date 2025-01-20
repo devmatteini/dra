@@ -1,4 +1,7 @@
 use crate::env_var;
+use crate::github::constants::{
+    DRA_DISABLE_GITHUB_AUTHENTICATION, DRA_GITHUB_TOKEN, GH_TOKEN, GITHUB_TOKEN,
+};
 use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::release_response::ReleaseResponse;
@@ -6,11 +9,6 @@ use crate::github::repository::Repository;
 use std::io::Read;
 use std::process::Command;
 use std::time::Duration;
-
-const DRA_DISABLE_GITHUB_AUTHENTICATION: &str = "DRA_DISABLE_GITHUB_AUTHENTICATION";
-const DRA_GITHUB_TOKEN: &str = "DRA_GITHUB_TOKEN";
-const GITHUB_TOKEN: &str = "GITHUB_TOKEN";
-const GH_TOKEN: &str = "GH_TOKEN";
 
 pub struct GithubClient {
     pub token: Option<String>,
