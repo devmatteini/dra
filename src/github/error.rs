@@ -40,6 +40,8 @@ impl std::fmt::Display for GithubError {
                 let message = format!(
                     "GitHub API rate limit exceeded.
 Export one of {} environment variable to avoid this error.
+Otherwise, login with GitHub cli 'gh auth login' to use the authentication token automatically.
+
 More information can be found at https://github.com/devmatteini/dra#usage",
                     authentication_tokens()
                 );
@@ -48,7 +50,8 @@ More information can be found at https://github.com/devmatteini/dra#usage",
             GithubError::Unauthorized => {
                 let message = format!(
                     "Invalid GitHub credentials.
-Make sure one of {} is valid",
+Make sure one of {} environment variable is valid.
+Otherwise, login with GitHub cli 'gh auth login' to use the authentication token automatically.",
                     authentication_tokens()
                 );
                 f.write_str(&message)
