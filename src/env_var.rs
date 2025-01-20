@@ -10,3 +10,7 @@ pub fn boolean(name: &str) -> bool {
         })
         .unwrap_or(false)
 }
+
+pub fn string(name: &str) -> Option<String> {
+    std::env::var(name).ok()
+}

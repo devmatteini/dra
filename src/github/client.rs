@@ -1,3 +1,4 @@
+use crate::env_var;
 use crate::github::error::GithubError;
 use crate::github::release::{Asset, Release, Tag};
 use crate::github::release_response::ReleaseResponse;
@@ -21,15 +22,14 @@ impl GithubClient {
     }
 
     pub fn from_environment() -> Self {
-        let is_auth_disabled = crate::env_var::boolean(DRA_DISABLE_GITHUB_AUTHENTICATION);
+        let is_auth_disabled = env_var::boolean(DRA_DISABLE_GITHUB_AUTHENTICATION);
         if is_auth_disabled {
             return Self::new(None);
         }
 
-        let token = std::env::var(DRA_GITHUB_TOKEN)
-            .ok()
-            .or_else(|| std::env::var(GITHUB_TOKEN).ok())
-            .or_else(|| std::env::var(GH_TOKEN).ok())
+        let token = env_var::string(DRA_GITHUB_TOKEN)
+            .or_else(|| env_var::string(GITHUB_TOKEN))
+            .or_else(|| env_var::string(GH_TOKEN))
             .or_else(github_cli_token);
 
         Self::new(token)
