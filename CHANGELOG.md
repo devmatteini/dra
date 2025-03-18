@@ -7,6 +7,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.1] - 2025-03-18
+
+This is a maintenance release that updates our dependencies.
+
+### Updated dependencies
+
+- bump `zip` from 2.2.2 to 2.3.0
+- bump `uuid` from 1.11.0 to 1.15.1
+- bump `tar` from 0.4.43 to 0.4.44
+- bump `serde` from 1.0.217 to 1.0.218
+- bump `ring` from 0.17.3 to 0.17.13
+- bump `indicatif` from 0.17.9 to 0.17.11
+- bump `flate2` from 1.0.35 to 1.1.0
+- bump `clap` from 4.5.23 to 4.5.31
+- bump `clap_complete` from 4.5.40 to 4.5.46
+- bump `bzip2` from 0.5.0 to 0.5.2
+
 ## [0.8.0] - 2025-01-21
 
 ### Added
