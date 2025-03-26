@@ -18,7 +18,7 @@ lto = true
 codegen-units = 1
 
 [dependencies]
-ureq = { version = "2.12.1", default-features = false, features = ["tls", "json", "proxy-from-env"] }
+ureq = { version = "3.0.10", default-features = false, features = ["rustls", "json"] }
 serde = { version = "1.0.218", features = ["derive"] }
 clap = { version = "4.5.31", features = ["derive"] }
 clap_complete = "4.5.46"

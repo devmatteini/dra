@@ -33,11 +33,24 @@ impl GithubClient {
         Self::new(token)
     }
 
-    fn get(&self, url: &str) -> ureq::Request {
+    fn get(
+        &self,
+        url: &str,
+        timeout: Option<Duration>,
+    ) -> ureq::RequestBuilder<ureq::typestate::WithoutBody> {
+        let agent: ureq::Agent = ureq::Agent::config_builder()
+            .timeout_global(timeout)
+            .build()
+            .into();
+
         self.token
             .as_ref()
-            .map(|x| ureq::get(url).set("Authorization", &format!("token {}", x)))
-            .unwrap_or_else(|| ureq::get(url))
+            .map(|x| {
+                agent
+                    .get(url)
+                    .header("Authorization", &format!("token {}", x))
+            })
+            .unwrap_or_else(|| agent.get(url))
     }
 
     // DOCS:
@@ -49,12 +62,12 @@ impl GithubClient {
         tag: Option<&Tag>,
     ) -> Result<Release, GithubError> {
         let url = get_release_url(repository, tag);
-        self.get(&url)
-            .timeout(Duration::from_secs(5))
+        let response = self
+            .get(&url, Some(Duration::from_secs(5)))
             .call()
-            .map_err(GithubError::from)
-            .and_then(deserialize)
-            .map(to_release(repository))
+            .map_err(GithubError::from)?;
+        let (_, mut body) = response.into_parts();
+        deserialize(&mut body).map(to_release(repository))
     }
 
     // DOCS: https://docs.github.com/en/rest/releases/assets#get-a-release-asset
@@ -63,14 +76,17 @@ impl GithubClient {
         asset: &Asset,
     ) -> Result<(impl Read + Send, Option<u64>), GithubError> {
         let response = self
-            .get(&asset.download_url)
-            .set("Accept", "application/vnd.github.raw")
+            .get(&asset.download_url, None)
+            .header("Accept", "application/vnd.github.raw")
             .call()
             .map_err(GithubError::from)?;
-        let content_length = response
-            .header("Content-Length")
-            .and_then(|v| v.parse().ok());
-        Ok((response.into_reader(), content_length))
+        let (head, body) = response.into_parts();
+        let content_length = head
+            .headers
+            .get("Content-Length")
+            .and_then(|v| v.to_str().ok())
+            .and_then(|v| v.parse::<u64>().ok());
+        Ok((body.into_reader(), content_length))
     }
 }
 
@@ -100,10 +116,10 @@ fn get_release_url(repository: &Repository, tag: Option<&Tag>) -> String {
     )
 }
 
-fn deserialize(response: ureq::Response) -> Result<ReleaseResponse, GithubError> {
+fn deserialize(response: &mut ureq::Body) -> Result<ReleaseResponse, GithubError> {
     response
-        .into_json::<ReleaseResponse>()
-        .map_err(GithubError::JsonDeserialization)
+        .read_json::<ReleaseResponse>()
+        .map_err(GithubError::from)
 }
 
 fn to_release(repository: &Repository) -> impl Fn(ReleaseResponse) -> Release + '_ {

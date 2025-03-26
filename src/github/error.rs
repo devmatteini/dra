@@ -4,7 +4,7 @@ use std::fmt::Formatter;
 #[derive(Debug)]
 pub enum GithubError {
     Http(Box<ureq::Error>),
-    JsonDeserialization(std::io::Error),
+    JsonDeserialization(String),
     RepositoryOrReleaseNotFound,
     RateLimitExceeded,
     Unauthorized,
@@ -13,11 +13,11 @@ pub enum GithubError {
 impl GithubError {
     pub fn from(error: ureq::Error) -> Self {
         match error {
-            ureq::Error::Status(401, _) => Self::Unauthorized,
-            ureq::Error::Status(403, _) => Self::RateLimitExceeded,
-            ureq::Error::Status(404, _) => Self::RepositoryOrReleaseNotFound,
-            ureq::Error::Status(_, _) => Self::Http(Box::new(error)),
-            ureq::Error::Transport(_) => Self::Http(Box::new(error)),
+            ureq::Error::StatusCode(401) => Self::Unauthorized,
+            ureq::Error::StatusCode(403) => Self::RateLimitExceeded,
+            ureq::Error::StatusCode(404) => Self::RepositoryOrReleaseNotFound,
+            ureq::Error::Json(error) => Self::JsonDeserialization(error.to_string()),
+            other => Self::Http(Box::new(other)),
         }
     }
 }
