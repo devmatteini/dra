@@ -332,10 +332,12 @@ mod tests {
     fn choose_output_install(output: Option<PathBuf>) {
         let result = choose_output_path_from(output.as_ref(), INSTALL, ANY_ASSET_NAME, not_dir);
 
-        assert!(result
-            .to_str()
-            .expect("Error: no path available")
-            .contains("dra-"))
+        assert!(
+            result
+                .to_str()
+                .expect("Error: no path available")
+                .contains("dra-")
+        )
     }
 
     /// CLI command:

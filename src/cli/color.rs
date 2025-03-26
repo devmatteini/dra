@@ -1,4 +1,4 @@
-use dialoguer::console::{style, StyledObject};
+use dialoguer::console::{StyledObject, style};
 use std::fmt::{Display, Formatter};
 
 pub struct Color<'a> {

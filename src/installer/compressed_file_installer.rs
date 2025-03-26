@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 use crate::installer::destination::Destination;
 use crate::installer::error::InstallErrorMapErr;
-use crate::installer::executable::{set_executable_permissions, Executable};
+use crate::installer::executable::{Executable, set_executable_permissions};
 use crate::installer::file::SupportedFileInfo;
 use crate::installer::result::{InstallOutput, InstallerResult};
 

@@ -1,7 +1,7 @@
 use crate::cli::result::HandlerError;
 use crate::github::release::Asset;
-use dialoguer::theme::ColorfulTheme;
 use dialoguer::Select;
+use dialoguer::theme::ColorfulTheme;
 
 pub struct Messages<'a> {
     pub select_prompt: &'a str,
