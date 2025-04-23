@@ -144,7 +144,7 @@ impl DownloadHandler {
     ) -> HandlerError {
         let title = urlencoding::encode("Error: automatic download of asset");
         let body = format!(
-            "## dra version\n{}\n## Bug report\nRepository: {}\nRelease: {}\nOS: {}\nARCH: {}",
+            "## dra version\n{}\n## Bug report\nRepository: https://github.com/{}\nRelease: {}\nOS: {}\nARCH: {}\n\n---",
             env!("CARGO_PKG_VERSION"),
             repository,
             release.0,
