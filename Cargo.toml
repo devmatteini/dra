@@ -18,7 +18,7 @@ lto = true
 codegen-units = 1
 
 [dependencies]
-ureq = { version = "3.0.10", default-features = false, features = ["rustls", "json"] }
+ureq = { version = "3.0.11", default-features = false, features = ["rustls", "json"] }
 serde = { version = "1.0.219", features = ["derive"] }
 clap = { version = "4.5.34", features = ["derive"] }
 clap_complete = "4.5.47"
