@@ -1,6 +1,6 @@
 [package]
 name = "dra"
-version = "0.8.1"
+version = "0.8.2"
 edition = "2024"
 authors = ["Cosimo Matteini <dev.matteini@gmail.com>"]
 description = "A command line tool to download release assets from GitHub"

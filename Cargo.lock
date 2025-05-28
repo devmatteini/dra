@@ -368,7 +368,7 @@ dependencies = [
 
 [[package]]
 name = "dra"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "assert_cmd",
  "bzip2",
