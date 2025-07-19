@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-GITHUB_REPOSITORY="devmatteini/dra"
+readonly GITHUB_REPOSITORY="devmatteini/dra"
 
 info(){
   echo -e "$1" >&2
