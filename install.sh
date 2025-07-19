@@ -156,7 +156,7 @@ EOF
 }
 
 main(){
-  destination="$PWD"
+  local destination="$PWD"
 
   while [[ $# -gt 0 ]]; do
     case $1 in
@@ -175,10 +175,12 @@ main(){
     esac
   done
 
+  local os arch
   os=$(get_os)
   arch=$(get_arch)
   check_dependencies "$os"
 
+  local target archive_extension version asset
   target=$(get_target "$os" "$arch")
   archive_extension=$(get_archive_extension "$target")
   version=$(load_latest_release)
@@ -190,6 +192,7 @@ main(){
   info "Asset:        $asset"
 
   info "\nDownloading $asset"
+  local temp_dir asset_path
   temp_dir=$(mktemp -d)
   asset_path=$(download_asset "$version" "$asset" "$temp_dir")
 
