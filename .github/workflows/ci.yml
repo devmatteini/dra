@@ -21,7 +21,7 @@ env:
 # NOTE: always set shell: bash, otherwise on Windows there might be problems!
 jobs:
   format-check:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install Rust
@@ -40,7 +40,7 @@ jobs:
       matrix:
         job:
           - os: linux
-            runner: ubuntu-22.04
+            runner: ubuntu-24.04
           - os: macos-arm64
             runner: macos-latest
           - os: windows
@@ -90,15 +90,15 @@ jobs:
       matrix:
         job:
           - os: linux-musl
-            runner: ubuntu-22.04
+            runner: ubuntu-24.04
             target: x86_64-unknown-linux-musl
             use-cross: true
           - os: linux-armv6
-            runner: ubuntu-22.04
+            runner: ubuntu-24.04
             target: arm-unknown-linux-gnueabihf
             use-cross: true
           - os: linux-arm64
-            runner: ubuntu-22.04
+            runner: ubuntu-24.04
             target: aarch64-unknown-linux-gnu
             use-cross: true
           - os: macos-x86_64
