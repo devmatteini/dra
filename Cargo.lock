@@ -387,6 +387,7 @@ dependencies = [
  "tar",
  "test-case",
  "ureq",
+ "url",
  "urlencoding",
  "uuid",
  "walkdir",

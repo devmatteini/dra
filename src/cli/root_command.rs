@@ -39,7 +39,7 @@ pub struct Cli {
 pub enum Command {
     /// Select and download an asset
     Download {
-        /// GitHub repository using format {owner}/{repo}
+        /// GitHub repository using format {owner}/{repo} or the repository URL https://github.com/{owner}/{repo}
         #[arg(value_parser = Repository::try_parse)]
         repo: Repository,
 
@@ -95,7 +95,7 @@ pub enum Command {
 
     /// Select an asset and generate an untagged version of it
     Untag {
-        /// GitHub repository using format {owner}/{repo}
+        /// GitHub repository using format {owner}/{repo} or the repository URL https://github.com/{owner}/{repo}
         #[arg(value_parser = Repository::try_parse)]
         repo: Repository,
     },

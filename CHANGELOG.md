@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.9.0] - 2025-08-14
+
+### Added
+
+- You can now also pass GitHub URL as repository argument to every
+  subcommand ([#307](https://github.com/devmatteini/dra/issues/307))
+
+```shell
+dra download https://github.com/devmatteini/dra-tests
+```
+
 ## [0.8.2] - 2025-05-28
 
 - Fix windows executable by including static crt ([#302](https://github.com/devmatteini/dra/issues/302))
