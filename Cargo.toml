@@ -22,7 +22,7 @@ ureq = { version = "3.0.12", default-features = false, features = ["rustls", "js
 serde = { version = "1.0.219", features = ["derive"] }
 clap = { version = "4.5.45", features = ["derive"] }
 clap_complete = "4.5.57"
-dialoguer = "0.11.0"
+dialoguer = "0.12.0"
 indicatif = "0.18.0"
 uuid = { version = "1.16.0", features = ["v4"] }
 ctrlc = "3.4.7"
