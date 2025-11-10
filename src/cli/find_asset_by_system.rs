@@ -30,7 +30,7 @@ fn is_same_os(os: &str, asset_name: &str) -> bool {
     }
     let aliases: Vec<&str> = match os {
         "macos" => vec!["darwin", "apple", "osx"],
-        "windows" => vec!["win64"],
+        "windows" => vec!["win64", "win-64bit"],
         _ => return false,
     };
     aliases.into_iter().any(|alias| asset_name.contains(alias))
@@ -41,7 +41,7 @@ fn is_same_arch(arch: &str, asset_name: &str) -> bool {
         return true;
     }
     let aliases: Vec<&str> = match arch {
-        "x86_64" => vec!["amd64", "x64", "win64"],
+        "x86_64" => vec!["amd64", "x64", "win64", "win-64bit"],
         "aarch64" => vec!["arm64"],
         "arm" => vec!["armv6", "armv7"],
         _ => return false,
@@ -214,17 +214,18 @@ mod tests {
         assert_eq_asset("mypackage-x86_64-linux-musl.tar.gz", result)
     }
 
-    #[test]
-    fn windows_os_and_arch_aliases() {
+    #[test_case("mypackage-win64.zip")]
+    #[test_case("mypackage-win-64bit.zip")]
+    fn windows_os_and_arch_aliases(asset_name: &str) {
         let assets = vec![
             asset("mypackage.AppImage"),
             asset("mypackage-linux.zip"),
-            asset("mypackage-win64.zip"),
+            asset(asset_name),
         ];
 
         let result = find_asset_by_system("windows", "x86_64", assets);
 
-        assert_eq_asset("mypackage-win64.zip", result)
+        assert_eq_asset(asset_name, result)
     }
 
     fn assert_eq_asset(expected_name: &str, actual: Option<Asset>) {

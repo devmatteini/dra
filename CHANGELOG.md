@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Asset detection for automatic download on windows when `win-64bit` is used for both OS and
+  ARCH ([#333](https://github.com/devmatteini/dra/issues/333))
+
 ## [0.9.0] - 2025-08-14
 
 ### Added
