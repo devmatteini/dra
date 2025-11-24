@@ -2,7 +2,7 @@ mod assertions;
 mod docker;
 
 use crate::assertions::{assert_contains, assert_error, assert_success};
-use crate::docker::{images, users, Docker, ExecArgs};
+use crate::docker::{Docker, ExecArgs, images, users};
 
 #[test]
 fn installed_successfully() {

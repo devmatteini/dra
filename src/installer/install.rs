@@ -4,7 +4,7 @@ use crate::installer::destination::Destination;
 use crate::installer::error::InstallError;
 use crate::installer::executable::Executable;
 use crate::installer::executable_file_installer::ExecutableFileInstaller;
-use crate::installer::file::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
+use crate::installer::file::{Compression, FileInfo, FileType, SupportedFileInfo, validate_file};
 use crate::installer::result::InstallerResult;
 use crate::installer::rpm_installer::RpmInstaller;
 use crate::installer::seven_zip_archive_installer::SevenZipArchiveInstaller;

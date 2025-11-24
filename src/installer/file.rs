@@ -131,7 +131,7 @@ mod tests {
     use test_case::test_case;
 
     use super::{
-        validate_file, Compression, FileInfo, FileType, SupportedFileInfo, ELF_MAGIC_NUMBER,
+        Compression, ELF_MAGIC_NUMBER, FileInfo, FileType, SupportedFileInfo, validate_file,
     };
     use crate::installer::error::InstallError;
 
