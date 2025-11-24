@@ -124,7 +124,7 @@ mod tests {
 
         let result = matches("macos", "arm", &asset);
 
-        assert_eq!(false, result)
+        assert!(!result)
     }
 
     #[test]
@@ -176,7 +176,7 @@ mod tests {
 
         let result = matches("macos", "x86_64", &asset);
 
-        assert_eq!(false, result);
+        assert!(!result);
     }
 
     fn any_asset(name: &str) -> Asset {

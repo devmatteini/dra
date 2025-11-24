@@ -141,7 +141,7 @@ mod tests {
 
         let result = matches(LinuxArmV6::OS, LinuxArmV6::ARCH, &asset);
 
-        assert_eq!(false, result)
+        assert!(!result)
     }
 
     #[test]
@@ -197,7 +197,7 @@ mod tests {
 
         let result = matches(LinuxAmd64::OS, LinuxAmd64::ARCH, &asset);
 
-        assert_eq!(false, result);
+        assert!(!result);
     }
 
     fn any_asset(name: &str) -> Asset {

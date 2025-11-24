@@ -105,7 +105,7 @@ mod tests {
 
         let result = WINDOWS_X86_64.matches(&asset);
 
-        assert_eq!(false, result)
+        assert!(!result)
     }
 
     #[test]
@@ -157,7 +157,7 @@ mod tests {
 
         let result = WINDOWS_X86_64.matches(&asset);
 
-        assert_eq!(false, result);
+        assert!(!result);
     }
 
     #[test_case("mypackage-win64.zip")]
