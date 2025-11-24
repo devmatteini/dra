@@ -46,7 +46,7 @@ fn is_same_arch(arch: &str, asset_name: &str) -> bool {
 }
 
 fn contains_extension(asset_name: &str) -> bool {
-    let extensions = vec![".exe"];
+    let extensions = vec![".exe", ".msi"];
     extensions
         .into_iter()
         .any(|extension| asset_name.ends_with(extension))
