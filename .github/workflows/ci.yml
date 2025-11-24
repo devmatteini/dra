@@ -81,6 +81,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make debian-tests
 
+      - name: Fedora integration tests
+        if: matrix.job.os == 'linux'
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make fedora-tests
+
   check-other-targets:
     name: ${{ matrix.job.os }}
     needs: [ format-check ]
