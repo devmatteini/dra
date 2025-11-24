@@ -1,5 +1,5 @@
 use crate::github::release::Asset;
-use crate::system::system::System;
+use crate::system::core::System;
 
 pub fn find_asset_by_system(system: &impl System, assets: Vec<Asset>) -> Option<Asset> {
     let mut matches: Vec<_> = assets

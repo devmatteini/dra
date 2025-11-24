@@ -1,5 +1,5 @@
 use crate::github::release::Asset;
-use crate::system::system::System;
+use crate::system::core::System;
 
 pub struct LinuxAmd64;
 impl LinuxAmd64 {

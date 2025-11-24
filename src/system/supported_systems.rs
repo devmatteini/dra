@@ -1,5 +1,5 @@
 use crate::github::release::Asset;
-use crate::system::system::System;
+use crate::system::core::System;
 use crate::system::{linux, macos, windows};
 use linux::{LinuxAmd64, LinuxArm64, LinuxArmV6};
 use macos::{MacOSAmd64, MacOSArm64};

@@ -1,5 +1,5 @@
 use crate::github::release::Asset;
-use crate::system::system::System;
+use crate::system::core::System;
 
 pub struct WindowsAmd64;
 impl WindowsAmd64 {
