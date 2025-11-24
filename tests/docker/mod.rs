@@ -5,6 +5,7 @@ use std::process::{Command, Stdio};
 
 pub mod images {
     pub const UBUNTU: &str = "dra-ubuntu";
+    pub const FEDORA: &str = "dra-fedora";
 }
 
 pub mod users {

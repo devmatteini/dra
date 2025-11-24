@@ -4,8 +4,9 @@ use crate::installer::destination::Destination;
 use crate::installer::error::InstallError;
 use crate::installer::executable::Executable;
 use crate::installer::executable_file_installer::ExecutableFileInstaller;
-use crate::installer::file::{Compression, FileInfo, FileType, SupportedFileInfo, validate_file};
+use crate::installer::file::{validate_file, Compression, FileInfo, FileType, SupportedFileInfo};
 use crate::installer::result::InstallerResult;
+use crate::installer::rpm_installer::RpmInstaller;
 use crate::installer::seven_zip_archive_installer::SevenZipArchiveInstaller;
 use crate::installer::tar_archive_installer::TarArchiveInstaller;
 use crate::installer::zip_archive_installer::ZipArchiveInstaller;
@@ -35,6 +36,7 @@ fn find_installer_for(
 ) -> fn(SupportedFileInfo, Destination, Vec<Executable>) -> InstallerResult {
     match file_type {
         FileType::Debian => DebianInstaller::run,
+        FileType::Rpm => RpmInstaller::run,
         FileType::TarArchive(Compression::Gz) => TarArchiveInstaller::gz,
         FileType::TarArchive(Compression::Xz) => TarArchiveInstaller::xz,
         FileType::TarArchive(Compression::Bz2) => TarArchiveInstaller::bz2,

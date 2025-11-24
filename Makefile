@@ -8,9 +8,13 @@ all: format-check build lint test
 build:
 	${CARGO_BIN} build ${CARGO_TARGET_FLAG}
 
-build-docker: build
+build-debian-docker: build
 # @ prevents to show github token in output
 	@docker build --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t dra-ubuntu -f ./devtools/Dockerfile.ubuntu .
+
+build-fedora-docker: build
+# @ prevents to show github token in output
+	@docker build --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t dra-fedora -f ./devtools/Dockerfile.fedora .
 
 test:
 # only unit tests
@@ -25,8 +29,12 @@ integration-tests:
 	cargo test --test integration_tests
 
 # NOTE: This only works on linux x86_64
-debian-tests: build-docker
+debian-tests: build-debian-docker
 	cargo test --test debian
+
+# NOTE: This only works on linux x86_64
+fedora-tests: build-fedora-docker
+	cargo test --test fedora
 
 release:
 	${CARGO_BIN} build --release --locked ${CARGO_TARGET_FLAG}
@@ -46,4 +54,4 @@ lint-w:
 install-components:
 	rustup component add rustfmt clippy
 
-.PHONY: all build build-docker test integration-tests debian-tests release format format-check lint install-components
+.PHONY: all build build-debian-docker test integration-tests debian-tests release format format-check lint install-components build-fedora-docker fedora-tests

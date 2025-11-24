@@ -14,6 +14,7 @@ pub enum Compression {
 #[derive(Debug, Eq, PartialEq)]
 pub enum FileType {
     Debian,
+    Rpm,
     TarArchive(Compression),
     ZipArchive,
     SevenZipArchive,
@@ -49,6 +50,9 @@ fn file_type_for(file: &FileInfo) -> Option<FileType> {
 
     if file_name.ends_with(".deb") {
         return Some(FileType::Debian);
+    }
+    if file_name.ends_with(".rpm") {
+        return Some(FileType::Rpm);
     }
     if file_name.ends_with(".tar.gz") || file_name.ends_with(".tgz") {
         return Some(FileType::TarArchive(Compression::Gz));
@@ -127,7 +131,7 @@ mod tests {
     use test_case::test_case;
 
     use super::{
-        Compression, ELF_MAGIC_NUMBER, FileInfo, FileType, SupportedFileInfo, validate_file,
+        validate_file, Compression, FileInfo, FileType, SupportedFileInfo, ELF_MAGIC_NUMBER,
     };
     use crate::installer::error::InstallError;
 
@@ -146,6 +150,7 @@ mod tests {
     #[test_case("file", FileType::ExecutableFile)]
     #[test_case("file.AppImage", FileType::ExecutableFile)]
     #[test_case("file.7z", FileType::SevenZipArchive)]
+    #[test_case("file.rpm", FileType::Rpm)]
     fn supported_file(file_name: &str, expected_file_type: FileType) {
         let file_info = any_file_info(file_name);
         let result = validate_file(file_info);
