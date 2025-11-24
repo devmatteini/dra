@@ -1,7 +1,7 @@
 use crate::github::release::Asset;
 use crate::system::system::System;
 
-pub fn find_asset_by_system(system: impl System, assets: Vec<Asset>) -> Option<Asset> {
+pub fn find_asset_by_system(system: &impl System, assets: Vec<Asset>) -> Option<Asset> {
     let mut matches: Vec<_> = assets
         .into_iter()
         .filter(skip_ignored_asset)
@@ -34,7 +34,7 @@ mod acceptance_tests {
             asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
         ];
 
-        let result = find_asset_by_system(system, assets);
+        let result = find_asset_by_system(&system, assets);
 
         assert_eq_asset("mypackage-x86_64-unknown-linux-musl.tar.gz", result)
     }
@@ -49,7 +49,7 @@ mod acceptance_tests {
             asset("mypackage-x86_64-unknown-linux-musl.tar.gz"),
         ];
 
-        let result = find_asset_by_system(system, assets);
+        let result = find_asset_by_system(&system, assets);
 
         assert!(result.is_none())
     }
@@ -58,6 +58,12 @@ mod acceptance_tests {
         asset: String,
     }
     impl System for FixedAssetSystem {
+        fn os(&self) -> &str {
+            "any"
+        }
+        fn arch(&self) -> &str {
+            "any"
+        }
         fn matches(&self, asset: &Asset) -> bool {
             self.asset == asset.name
         }

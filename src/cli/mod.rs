@@ -1,7 +1,6 @@
 pub mod color;
 pub mod completion_handler;
 pub mod download_handler;
-mod find_asset_by_system;
 mod github_release;
 mod progress_bar;
 pub mod result;

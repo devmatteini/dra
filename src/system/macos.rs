@@ -8,6 +8,12 @@ impl MacOSAmd64 {
 }
 
 impl System for MacOSAmd64 {
+    fn os(&self) -> &str {
+        Self::OS
+    }
+    fn arch(&self) -> &str {
+        Self::ARCH
+    }
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }
@@ -23,6 +29,12 @@ impl MacOSArm64 {
 }
 
 impl System for MacOSArm64 {
+    fn os(&self) -> &str {
+        Self::OS
+    }
+    fn arch(&self) -> &str {
+        Self::ARCH
+    }
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }

@@ -1,5 +1,4 @@
 use crate::cli::color::Color;
-use crate::cli::find_asset_by_system::find_asset_by_system;
 use crate::cli::github_release::fetch_release_for;
 use crate::cli::progress_bar::ProgressBar;
 use crate::cli::result::{HandlerError, HandlerResult};
@@ -13,7 +12,7 @@ use crate::github::tagged_asset::TaggedAsset;
 use crate::installer::destination::Destination;
 use crate::installer::executable::Executable;
 use crate::installer::install;
-use crate::vector;
+use crate::{system, vector};
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
@@ -127,20 +126,44 @@ impl DownloadHandler {
             DownloadMode::Interactive => Self::ask_select_asset(release.assets),
             DownloadMode::Selection(untagged) => Self::autoselect_asset(release, untagged),
             DownloadMode::Automatic => {
-                let os = std::env::consts::OS;
-                let arch = std::env::consts::ARCH;
-                find_asset_by_system(os, arch, release.assets).ok_or_else(|| {
-                    Self::automatic_download_error(&self.repository, &release.tag, os, arch)
+                let system = system::from_environment().map_err(|e| {
+                    Self::automatic_download_system_error(&self.repository, &release.tag, e)
+                })?;
+                system::find_asset_by_system(&system, release.assets).ok_or_else(|| {
+                    Self::automatic_download_error(&self.repository, &release.tag, &system)
                 })
             }
         }
     }
 
+    fn automatic_download_system_error(
+        repository: &Repository,
+        release: &Tag,
+        error: system::SystemError,
+    ) -> HandlerError {
+        let title = urlencoding::encode("Error: System error automatic download of asset");
+        let body = format!(
+            "## dra version\n{}\n## Bug report\nRepository: https://github.com/{}\nRelease: {}\nError: {}\n\n---",
+            env!("CARGO_PKG_VERSION"),
+            repository,
+            release.0,
+            error
+        );
+        let body = urlencoding::encode(&body);
+        let issue_url = format!(
+            "https://github.com/devmatteini/dra/issues/new?title={}&body={}",
+            title, body
+        );
+        HandlerError::new(format!(
+            "There was an error determining your system configuration for automatic download: {}\nPlease report the issue: {}\n",
+            error, issue_url
+        ))
+    }
+
     fn automatic_download_error(
         repository: &Repository,
         release: &Tag,
-        os: &str,
-        arch: &str,
+        system: &impl system::System,
     ) -> HandlerError {
         let title = urlencoding::encode("Error: automatic download of asset");
         let body = format!(
@@ -148,8 +171,8 @@ impl DownloadHandler {
             env!("CARGO_PKG_VERSION"),
             repository,
             release.0,
-            os,
-            arch
+            system.os(),
+            system.arch()
         );
         let body = urlencoding::encode(&body);
         let issue_url = format!(
@@ -158,7 +181,9 @@ impl DownloadHandler {
         );
         HandlerError::new(format!(
             "Cannot find asset that matches your system {} {}\nIf you think this is a bug, please report the issue: {}",
-            os, arch, issue_url
+            system.os(),
+            system.arch(),
+            issue_url
         ))
     }
 

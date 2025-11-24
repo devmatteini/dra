@@ -8,6 +8,12 @@ impl WindowsAmd64 {
 }
 
 impl System for WindowsAmd64 {
+    fn os(&self) -> &str {
+        Self::OS
+    }
+    fn arch(&self) -> &str {
+        Self::ARCH
+    }
     fn matches(&self, asset: &Asset) -> bool {
         let asset_name = asset.name.to_lowercase();
         let same_arch = is_same_arch(Self::ARCH, &asset_name);

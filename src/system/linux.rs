@@ -8,6 +8,12 @@ impl LinuxAmd64 {
 }
 
 impl System for LinuxAmd64 {
+    fn os(&self) -> &str {
+        Self::OS
+    }
+    fn arch(&self) -> &str {
+        Self::ARCH
+    }
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }
@@ -23,6 +29,12 @@ impl LinuxArmV6 {
 }
 
 impl System for LinuxArmV6 {
+    fn os(&self) -> &str {
+        Self::OS
+    }
+    fn arch(&self) -> &str {
+        Self::ARCH
+    }
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }
@@ -38,6 +50,12 @@ impl LinuxArm64 {
 }
 
 impl System for LinuxArm64 {
+    fn os(&self) -> &str {
+        Self::OS
+    }
+    fn arch(&self) -> &str {
+        Self::ARCH
+    }
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }
