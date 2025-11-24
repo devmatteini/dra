@@ -66,7 +66,6 @@ fn is_same_arch(arch: &str, asset_name: &str) -> bool {
     let aliases: Vec<&str> = match arch {
         "x86_64" => vec!["amd64", "x64"],
         "aarch64" => vec!["arm64"],
-        "arm" => vec!["armv6", "armv7"],
         _ => return false,
     };
     aliases.into_iter().any(|alias| asset_name.contains(alias))
