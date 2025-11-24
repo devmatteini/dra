@@ -16,7 +16,13 @@ impl RpmInstaller {
         _destination: Destination,
         _executables: Vec<Executable>,
     ) -> InstallerResult {
-        exec_command(RPM, Command::new(RPM).arg("--install").arg(file_info.path))
-            .map(|_| InstallOutput::new(format!("RPM package '{}' installed", file_info.name)))
+        exec_command(
+            RPM,
+            Command::new(RPM)
+                .arg("--install")
+                .arg("--replacepkgs")
+                .arg(file_info.path),
+        )
+        .map(|_| InstallOutput::new(format!("RPM package '{}' installed", file_info.name)))
     }
 }

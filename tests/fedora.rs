@@ -18,6 +18,23 @@ fn installed_successfully() {
 }
 
 #[test]
+fn upgrade_successfully() {
+    let container = Docker::run(images::FEDORA);
+
+    let result = container.exec(
+        "dra download -i -s helloworld.rpm devmatteini/dra-tests",
+        ExecArgs::Default,
+    );
+    assert_success(result);
+
+    let result = container.exec(
+        "dra download -i -s helloworld.rpm devmatteini/dra-tests",
+        ExecArgs::Default,
+    );
+    assert_success(result);
+}
+
+#[test]
 fn wrong_privileges() {
     let container = Docker::run(images::FEDORA);
 
