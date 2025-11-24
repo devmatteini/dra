@@ -2,11 +2,12 @@ use crate::github::release::Asset;
 use crate::system::system::System;
 
 pub struct MacOSAmd64;
-
-impl System for MacOSAmd64 {
+impl MacOSAmd64 {
     const OS: &'static str = "macos";
     const ARCH: &'static str = "x86_64";
+}
 
+impl System for MacOSAmd64 {
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }
@@ -16,11 +17,12 @@ impl System for MacOSAmd64 {
 }
 
 pub struct MacOSArm64;
-
-impl System for MacOSArm64 {
+impl MacOSArm64 {
     const OS: &'static str = "macos";
     const ARCH: &'static str = "aarch64";
+}
 
+impl System for MacOSArm64 {
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }

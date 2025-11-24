@@ -2,11 +2,12 @@ use crate::github::release::Asset;
 use crate::system::system::System;
 
 pub struct LinuxAmd64;
-
-impl System for LinuxAmd64 {
+impl LinuxAmd64 {
     const OS: &'static str = "linux";
     const ARCH: &'static str = "x86_64";
+}
 
+impl System for LinuxAmd64 {
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }
@@ -16,11 +17,12 @@ impl System for LinuxAmd64 {
 }
 
 pub struct LinuxArmV6;
-
-impl System for LinuxArmV6 {
+impl LinuxArmV6 {
     const OS: &'static str = "linux";
     const ARCH: &'static str = "arm";
+}
 
+impl System for LinuxArmV6 {
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }
@@ -30,11 +32,12 @@ impl System for LinuxArmV6 {
 }
 
 pub struct LinuxArm64;
-
-impl System for LinuxArm64 {
+impl LinuxArm64 {
     const OS: &'static str = "linux";
     const ARCH: &'static str = "aarch64";
+}
 
+impl System for LinuxArm64 {
     fn matches(&self, asset: &Asset) -> bool {
         matches(Self::OS, Self::ARCH, asset)
     }

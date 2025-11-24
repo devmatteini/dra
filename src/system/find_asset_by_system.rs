@@ -58,9 +58,6 @@ mod acceptance_tests {
         asset: String,
     }
     impl System for FixedAssetSystem {
-        const OS: &'static str = "fake";
-        const ARCH: &'static str = "x86_64";
-
         fn matches(&self, asset: &Asset) -> bool {
             self.asset == asset.name
         }

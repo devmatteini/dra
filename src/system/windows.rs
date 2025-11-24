@@ -2,11 +2,12 @@ use crate::github::release::Asset;
 use crate::system::system::System;
 
 pub struct WindowsAmd64;
-
-impl System for WindowsAmd64 {
+impl WindowsAmd64 {
     const OS: &'static str = "windows";
     const ARCH: &'static str = "x86_64";
+}
 
+impl System for WindowsAmd64 {
     fn matches(&self, asset: &Asset) -> bool {
         let asset_name = asset.name.to_lowercase();
         let same_arch = is_same_arch(Self::ARCH, &asset_name);
