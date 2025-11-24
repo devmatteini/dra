@@ -35,6 +35,7 @@ impl Docker {
         Self { id }
     }
 
+    #[allow(clippy::zombie_processes)]
     pub fn stop(&self) {
         Command::new("docker")
             .arg("stop")
