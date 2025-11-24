@@ -14,6 +14,7 @@ mod cli;
 mod env_var;
 mod github;
 mod installer;
+mod system;
 mod temp_file;
 mod vector;
 
