@@ -340,7 +340,7 @@ fn remove_temporary_file(path: &Path) -> Result<(), HandlerError> {
 }
 
 #[cfg(test)]
-mod tests {
+mod choose_output_path {
     use test_case::test_case;
 
     use super::*;
@@ -353,7 +353,7 @@ mod tests {
     /// dra download -i -o /some/path <REPO> or dra download -i <REPO>
     #[test_case(Some(PathBuf::from("/some/path")); "any_custom_output")]
     #[test_case(None; "no_output")]
-    fn choose_output_install(output: Option<PathBuf>) {
+    fn install_mode(output: Option<PathBuf>) {
         let result = choose_output_path_from(output.as_ref(), INSTALL, ANY_ASSET_NAME, not_dir);
 
         assert!(
@@ -368,7 +368,7 @@ mod tests {
     /// dra download -s my_asset.deb <REPO>
     /// output: $PWD/my_asset.deb
     #[test]
-    fn choose_output_nothing_chosen() {
+    fn default_path() {
         let result = choose_output_path_from(None, NO_INSTALL, "my_asset.deb", not_dir);
 
         assert_eq!(PathBuf::from("my_asset.deb"), result)
@@ -378,7 +378,7 @@ mod tests {
     /// dra download -o /some/path.zip <REPO>
     /// output: /some/path.zip
     #[test]
-    fn choose_output_custom_file_path() {
+    fn custom_file_path() {
         let output = PathBuf::from("/some/path.zip");
 
         let result = choose_output_path_from(Some(&output), NO_INSTALL, ANY_ASSET_NAME, not_dir);
@@ -390,7 +390,7 @@ mod tests {
     /// dra download -s my_asset.tar.gz -o /my/custom-dir/ <REPO>
     /// output: /my/custom-dir/my_asset.tar.gz
     #[test]
-    fn choose_output_custom_directory_path() {
+    fn custom_directory_path() {
         let output = PathBuf::from("/my/custom-dir/");
         let asset_name = "my_asset.tar.gz";
 
