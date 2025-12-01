@@ -25,7 +25,7 @@ clap_complete = "4.5.57"
 dialoguer = "0.11.0"
 indicatif = "0.18.0"
 uuid = { version = "1.16.0", features = ["v4"] }
-ctrlc = "3.4.7"
+ctrlc = "3.5.1"
 walkdir = "2.5.0"
 zip = { version = "6.0.0", default-features = false, features = ["deflate"] }
 flate2 = { version = "1.1.2", features = ["zlib"] }
