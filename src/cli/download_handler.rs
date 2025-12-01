@@ -142,7 +142,7 @@ impl DownloadHandler {
         progress_bar.show();
         let (mut stream, maybe_content_length) = github
             .download_asset_stream(selected_asset)
-            .map_err(download_error)?;
+            .map_err(download_asset_error)?;
         progress_bar.set_length(maybe_content_length);
 
         let mut destination = create_file(output_path)?;
@@ -311,7 +311,7 @@ where
         .unwrap_or_else(|| PathBuf::from(asset_name))
 }
 
-fn download_error(e: GithubError) -> HandlerError {
+fn download_asset_error(e: GithubError) -> HandlerError {
     HandlerError::new(format!("Error downloading asset: {}", e))
 }
 
