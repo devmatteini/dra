@@ -105,93 +105,70 @@ impl DownloadHandler {
         Ok(())
     }
 
-    fn check_destination_invariants(&self, destination: &Destination) -> Result<(), HandlerError> {
-        if !self.install.is_more_than_one() {
-            return Ok(());
-        }
-        match destination {
-            Destination::File(x) => {
-                let message = format!(
-                    "{} is not a directory. When you specify multiple executables to install, you must provide a directory path",
-                    x.display()
-                );
-                Err(HandlerError::new(message))
-            }
-            Destination::Directory(_) => Ok(()),
-        }
+    fn fetch_release(&self, github: &GithubClient) -> Result<Release, HandlerError> {
+        fetch_release_for(github, &self.repository, self.tag.as_ref())
     }
 
     fn select_asset(&self, release: Release) -> Result<Asset, HandlerError> {
         match &self.mode {
-            DownloadMode::Interactive => Self::ask_select_asset(release.assets),
-            DownloadMode::Selection(untagged) => Self::autoselect_asset(release, untagged),
+            DownloadMode::Interactive => ask_select_asset(release.assets),
+            DownloadMode::Selection(untagged) => autoselect_asset(release, untagged),
             DownloadMode::Automatic => {
                 let system = system::from_environment().map_err(|e| {
-                    Self::automatic_download_system_error(&self.repository, &release.tag, e)
+                    automatic_download_system_error(&self.repository, &release.tag, e)
                 })?;
                 system::find_asset_by_system(&system, release.assets).ok_or_else(|| {
-                    Self::automatic_download_error(&self.repository, &release.tag, &system)
+                    automatic_download_error(&self.repository, &release.tag, &system)
                 })
             }
         }
     }
 
-    fn automatic_download_system_error(
-        repository: &Repository,
-        release: &Tag,
-        error: system::SystemError,
-    ) -> HandlerError {
-        let title = urlencoding::encode("Error: System error automatic download of asset");
-        let body = format!(
-            "## dra version\n{}\n## Bug report\nRepository: https://github.com/{}\nRelease: {}\nError: {}\n\n---",
-            env!("CARGO_PKG_VERSION"),
-            repository,
-            release.0,
-            error
-        );
-        let body = urlencoding::encode(&body);
-        let issue_url = format!(
-            "https://github.com/devmatteini/dra/issues/new?title={}&body={}",
-            title, body
-        );
-        HandlerError::new(format!(
-            "There was an error determining your system configuration for automatic download: {}\nPlease report the issue: {}\n",
-            error, issue_url
-        ))
+    fn choose_output_path(&self, asset_name: &str) -> PathBuf {
+        choose_output_path_from(
+            self.output.as_ref(),
+            self.install.as_bool(),
+            asset_name,
+            Path::is_dir,
+        )
     }
 
-    fn automatic_download_error(
-        repository: &Repository,
-        release: &Tag,
-        system: &impl system::System,
-    ) -> HandlerError {
-        let title = urlencoding::encode("Error: automatic download of asset");
-        let body = format!(
-            "## dra version\n{}\n## Bug report\nRepository: https://github.com/{}\nRelease: {}\nOS: {}\nARCH: {}\n\n---",
-            env!("CARGO_PKG_VERSION"),
-            repository,
-            release.0,
-            system.os(),
-            system.arch()
-        );
-        let body = urlencoding::encode(&body);
-        let issue_url = format!(
-            "https://github.com/devmatteini/dra/issues/new?title={}&body={}",
-            title, body
-        );
-        HandlerError::new(format!(
-            "Cannot find asset that matches your system {} {}\nIf you think this is a bug, please report the issue: {}",
-            system.os(),
-            system.arch(),
-            issue_url
-        ))
+    fn download_asset(
+        github: &GithubClient,
+        selected_asset: &Asset,
+        output_path: &Path,
+    ) -> Result<(), HandlerError> {
+        let progress_bar = ProgressBar::download_layout(&selected_asset.name, output_path);
+        progress_bar.show();
+        let (mut stream, maybe_content_length) = github
+            .download_asset_stream(selected_asset)
+            .map_err(download_error)?;
+        progress_bar.set_length(maybe_content_length);
+
+        let mut destination = create_file(output_path)?;
+        let mut total_bytes = 0;
+        let mut buffer = [0; 1024];
+        while let Ok(bytes) = stream.read(&mut buffer) {
+            if bytes == 0 {
+                break;
+            }
+
+            destination
+                .write(&buffer[..bytes])
+                .map_err(|x| save_to_file_error(&selected_asset.name, output_path, x))?;
+
+            total_bytes += bytes as u64;
+            progress_bar.update_progress(total_bytes);
+        }
+        progress_bar.finish();
+        Ok(())
     }
 
     fn maybe_install(&self, asset_name: &str, path: &Path) -> Result<(), HandlerError> {
         match &self.install {
             Install::No => Ok(()),
             Install::Yes(executables) => {
-                let cwd = Self::cwd()?;
+                let cwd = cwd()?;
                 let destination = match self.output.as_ref() {
                     Some(output) if output.is_dir() => Destination::Directory(output.clone()),
                     Some(output) => Destination::File(output.clone()),
@@ -228,92 +205,91 @@ impl DownloadHandler {
         }
     }
 
-    fn cwd() -> Result<PathBuf, HandlerError> {
-        std::env::current_dir()
-            .map_err(|x| HandlerError::new(format!("Error retrieving current directory: {}", x)))
-    }
-
-    fn autoselect_asset(release: Release, untagged: &str) -> Result<Asset, HandlerError> {
-        let asset_name = TaggedAsset::tag(&release.tag, untagged);
-        release
-            .assets
-            .into_iter()
-            .find(|x| x.name == asset_name)
-            .ok_or_else(|| HandlerError::new(format!("No asset found for {}", untagged)))
-    }
-
-    fn fetch_release(&self, github: &GithubClient) -> Result<Release, HandlerError> {
-        fetch_release_for(github, &self.repository, self.tag.as_ref())
-    }
-
-    fn ask_select_asset(assets: Vec<Asset>) -> select_assets::AskSelectAssetResult {
-        select_assets::ask_select_asset(
-            assets,
-            select_assets::Messages {
-                select_prompt: "Pick the asset to download",
-                quit_select: "No asset selected",
-            },
-        )
-    }
-
-    fn download_asset(
-        github: &GithubClient,
-        selected_asset: &Asset,
-        output_path: &Path,
-    ) -> Result<(), HandlerError> {
-        let progress_bar = ProgressBar::download_layout(&selected_asset.name, output_path);
-        progress_bar.show();
-        let (mut stream, maybe_content_length) = github
-            .download_asset_stream(selected_asset)
-            .map_err(Self::download_error)?;
-        progress_bar.set_length(maybe_content_length);
-
-        let mut destination = Self::create_file(output_path)?;
-        let mut total_bytes = 0;
-        let mut buffer = [0; 1024];
-        while let Ok(bytes) = stream.read(&mut buffer) {
-            if bytes == 0 {
-                break;
-            }
-
-            destination
-                .write(&buffer[..bytes])
-                .map_err(|x| Self::write_err(&selected_asset.name, output_path, x))?;
-
-            total_bytes += bytes as u64;
-            progress_bar.update_progress(total_bytes);
+    fn check_destination_invariants(&self, destination: &Destination) -> Result<(), HandlerError> {
+        if !self.install.is_more_than_one() {
+            return Ok(());
         }
-        progress_bar.finish();
-        Ok(())
+        match destination {
+            Destination::File(x) => {
+                let message = format!(
+                    "{} is not a directory. When you specify multiple executables to install, you must provide a directory path",
+                    x.display()
+                );
+                Err(HandlerError::new(message))
+            }
+            Destination::Directory(_) => Ok(()),
+        }
     }
+}
 
-    pub fn choose_output_path(&self, asset_name: &str) -> PathBuf {
-        choose_output_path_from(
-            self.output.as_ref(),
-            self.install.as_bool(),
-            asset_name,
-            Path::is_dir,
-        )
-    }
+fn ask_select_asset(assets: Vec<Asset>) -> select_assets::AskSelectAssetResult {
+    select_assets::ask_select_asset(
+        assets,
+        select_assets::Messages {
+            select_prompt: "Pick the asset to download",
+            quit_select: "No asset selected",
+        },
+    )
+}
 
-    fn create_file(path: &Path) -> Result<File, HandlerError> {
-        File::create(path).map_err(|e| {
-            HandlerError::new(format!("Failed to create file {}: {}", path.display(), e))
-        })
-    }
+fn autoselect_asset(release: Release, untagged: &str) -> Result<Asset, HandlerError> {
+    let asset_name = TaggedAsset::tag(&release.tag, untagged);
+    release
+        .assets
+        .into_iter()
+        .find(|x| x.name == asset_name)
+        .ok_or_else(|| HandlerError::new(format!("No asset found for {}", untagged)))
+}
 
-    pub fn write_err(asset_name: &str, output_path: &Path, error: std::io::Error) -> HandlerError {
-        HandlerError::new(format!(
-            "Error saving {} to {}: {}",
-            asset_name,
-            output_path.display(),
-            error
-        ))
-    }
+fn automatic_download_system_error(
+    repository: &Repository,
+    release: &Tag,
+    error: system::SystemError,
+) -> HandlerError {
+    let title = urlencoding::encode("Error: System error automatic download of asset");
+    let body = format!(
+        "## dra version\n{}\n## Bug report\nRepository: https://github.com/{}\nRelease: {}\nError: {}\n\n---",
+        env!("CARGO_PKG_VERSION"),
+        repository,
+        release.0,
+        error
+    );
+    let body = urlencoding::encode(&body);
+    let issue_url = format!(
+        "https://github.com/devmatteini/dra/issues/new?title={}&body={}",
+        title, body
+    );
+    HandlerError::new(format!(
+        "There was an error determining your system configuration for automatic download: {}\nPlease report the issue: {}\n",
+        error, issue_url
+    ))
+}
 
-    fn download_error(e: GithubError) -> HandlerError {
-        HandlerError::new(format!("Error downloading asset: {}", e))
-    }
+fn automatic_download_error(
+    repository: &Repository,
+    release: &Tag,
+    system: &impl system::System,
+) -> HandlerError {
+    let title = urlencoding::encode("Error: automatic download of asset");
+    let body = format!(
+        "## dra version\n{}\n## Bug report\nRepository: https://github.com/{}\nRelease: {}\nOS: {}\nARCH: {}\n\n---",
+        env!("CARGO_PKG_VERSION"),
+        repository,
+        release.0,
+        system.os(),
+        system.arch()
+    );
+    let body = urlencoding::encode(&body);
+    let issue_url = format!(
+        "https://github.com/devmatteini/dra/issues/new?title={}&body={}",
+        title, body
+    );
+    HandlerError::new(format!(
+        "Cannot find asset that matches your system {} {}\nIf you think this is a bug, please report the issue: {}",
+        system.os(),
+        system.arch(),
+        issue_url
+    ))
 }
 
 fn choose_output_path_from<IsDir>(
@@ -338,6 +314,29 @@ where
             }
         })
         .unwrap_or_else(|| PathBuf::from(asset_name))
+}
+
+fn download_error(e: GithubError) -> HandlerError {
+    HandlerError::new(format!("Error downloading asset: {}", e))
+}
+
+fn create_file(path: &Path) -> Result<File, HandlerError> {
+    File::create(path)
+        .map_err(|e| HandlerError::new(format!("Failed to create file {}: {}", path.display(), e)))
+}
+
+fn save_to_file_error(asset_name: &str, output_path: &Path, error: std::io::Error) -> HandlerError {
+    HandlerError::new(format!(
+        "Error saving {} to {}: {}",
+        asset_name,
+        output_path.display(),
+        error
+    ))
+}
+
+fn cwd() -> Result<PathBuf, HandlerError> {
+    std::env::current_dir()
+        .map_err(|x| HandlerError::new(format!("Error retrieving current directory: {}", x)))
 }
 
 #[cfg(test)]
