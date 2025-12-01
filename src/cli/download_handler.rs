@@ -112,7 +112,7 @@ impl DownloadHandler {
     fn select_asset(&self, release: Release) -> Result<Asset, HandlerError> {
         match &self.mode {
             DownloadMode::Interactive => ask_select_asset(release.assets),
-            DownloadMode::Selection(untagged) => autoselect_asset(release, untagged),
+            DownloadMode::Selection(selection) => autoselect_asset(release, selection),
             DownloadMode::Automatic => {
                 let system = system::from_environment().map_err(|e| {
                     automatic_download_system_error(&self.repository, &release.tag, e)
@@ -227,13 +227,15 @@ fn ask_select_asset(assets: Vec<Asset>) -> select_assets::AskSelectAssetResult {
     )
 }
 
-fn autoselect_asset(release: Release, untagged: &str) -> Result<Asset, HandlerError> {
-    let asset_name = TaggedAsset::tag(&release.tag, untagged);
+fn autoselect_asset(release: Release, selection: &str) -> Result<Asset, HandlerError> {
+    let asset_name = TaggedAsset::tag(&release.tag, selection);
+    let pattern = wildmatch::WildMatch::new(&asset_name);
+
     release
         .assets
         .into_iter()
-        .find(|x| x.name == asset_name)
-        .ok_or_else(|| HandlerError::new(format!("No asset found for {}", untagged)))
+        .find(|x| pattern.matches(&x.name))
+        .ok_or_else(|| HandlerError::new(format!("No asset found for {}", selection)))
 }
 
 fn automatic_download_system_error(
@@ -412,6 +414,7 @@ mod choose_output_path {
 #[cfg(test)]
 mod autoselect_asset {
     use super::*;
+    use test_case::test_case;
 
     #[test]
     fn untagged_selection() {
@@ -430,7 +433,7 @@ mod autoselect_asset {
     }
 
     #[test]
-    fn default_selection() {
+    fn literal_selection() {
         let release = any_release(
             "v1.0.0",
             vec![
@@ -446,7 +449,42 @@ mod autoselect_asset {
     }
 
     #[test]
-    fn nothing_matches() {
+    fn wildcard_selection() {
+        let release = any_release(
+            "v1.0.0",
+            vec![
+                "my_asset_abcd.deb",
+                "my_asset_abcd.zip",
+                "my_asset_efgh.zip",
+            ],
+        );
+
+        let result = autoselect_asset(release, "my_asset_*.zip");
+
+        assert_ok_and_equal(result, "my_asset_abcd.zip");
+    }
+
+    #[test]
+    fn untagged_and_wildcard_selection() {
+        let release = any_release(
+            "v1.0.0",
+            vec![
+                "my_asset-v1.0.0_abcd.deb",
+                "my_asset-v1.0.0_abcd.zip",
+                "my_asset-v1.0.0_efgh.zip",
+            ],
+        );
+
+        let result = autoselect_asset(release, "my_asset-v{tag}_*.zip");
+
+        assert_ok_and_equal(result, "my_asset-v1.0.0_abcd.zip");
+    }
+
+    #[test_case("my_asset_v1.0.0-musl.tar.gz"; "literal")]
+    #[test_case("my_asset_v{tag}-musl.tar.gz"; "untagged")]
+    #[test_case("my_asset_*-musl.tar.gz"; "wildcard")]
+    #[test_case("my_asset_v{tag}-*.tar.gz"; "untagged_and_wildcard")]
+    fn nothing_matches(selection: &str) {
         let release = any_release(
             "v1.0.0",
             vec![
@@ -456,7 +494,7 @@ mod autoselect_asset {
             ],
         );
 
-        let result = autoselect_asset(release, "my_asset_v1.0.0-musl.tar.gz");
+        let result = autoselect_asset(release, selection);
 
         assert_err(result);
     }
@@ -483,9 +521,8 @@ mod autoselect_asset {
     }
 
     fn assert_err(result: Result<Asset, HandlerError>) {
-        match result {
-            Ok(asset) => panic!("Expected Err, got Ok: {:?}", asset),
-            Err(_) => (),
+        if let Ok(asset) = result {
+            panic!("Expected Err, got Ok: {:?}", asset)
         }
     }
 }

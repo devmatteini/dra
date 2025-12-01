@@ -35,6 +35,7 @@ bzip2 = "0.6.0"
 urlencoding = "2.1.3"
 itertools = "0.14.0"
 url = "2.5.4"
+wildmatch = "2.6.1"
 
 [dev-dependencies]
 test-case = "3.3.1"
