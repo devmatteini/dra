@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum HandlerError {
     Default(String),
     OperationCancelled(String),

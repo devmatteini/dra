@@ -408,3 +408,84 @@ mod choose_output_path {
         false
     }
 }
+
+#[cfg(test)]
+mod autoselect_asset {
+    use super::*;
+
+    #[test]
+    fn untagged_selection() {
+        let release = any_release(
+            "v1.0.0",
+            vec![
+                "my_asset_v1.0.0.deb",
+                "my_asset_v1.0.0.zip",
+                "my_asset_v1.0.0.tar.gz",
+            ],
+        );
+
+        let result = autoselect_asset(release, "my_asset_v{tag}.zip");
+
+        assert_ok_and_equal(result, "my_asset_v1.0.0.zip");
+    }
+
+    #[test]
+    fn default_selection() {
+        let release = any_release(
+            "v1.0.0",
+            vec![
+                "my_asset_v1.0.0.deb",
+                "my_asset_v1.0.0.zip",
+                "my_asset.tar.gz",
+            ],
+        );
+
+        let result = autoselect_asset(release, "my_asset.tar.gz");
+
+        assert_ok_and_equal(result, "my_asset.tar.gz");
+    }
+
+    #[test]
+    fn nothing_matches() {
+        let release = any_release(
+            "v1.0.0",
+            vec![
+                "my_asset_v1.0.0.deb",
+                "my_asset_v1.0.0.zip",
+                "my_asset.tar.gz",
+            ],
+        );
+
+        let result = autoselect_asset(release, "my_asset_v1.0.0-musl.tar.gz");
+
+        assert_err(result);
+    }
+
+    fn any_release(tag: &str, asset_names: Vec<&str>) -> Release {
+        Release {
+            tag: Tag(tag.into()),
+            assets: asset_names
+                .into_iter()
+                .map(|name| Asset {
+                    name: name.into(),
+                    display_name: None,
+                    download_url: "any".into(),
+                })
+                .collect(),
+        }
+    }
+
+    fn assert_ok_and_equal(result: Result<Asset, HandlerError>, expected_name: &str) {
+        match result {
+            Ok(asset) => assert_eq!(asset.name, expected_name),
+            Err(e) => panic!("Expected Ok, got Err: {:?}", e),
+        }
+    }
+
+    fn assert_err(result: Result<Asset, HandlerError>) {
+        match result {
+            Ok(asset) => panic!("Expected Err, got Ok: {:?}", asset),
+            Err(_) => (),
+        }
+    }
+}
