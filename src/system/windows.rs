@@ -1,13 +1,13 @@
 use crate::github::release::Asset;
 use crate::system::core::{Arch, System, OS};
 
-pub struct WindowsAmd64;
-impl WindowsAmd64 {
+pub struct WindowsX86_64;
+impl WindowsX86_64 {
     const OS: OS = OS::Windows;
     const ARCH: Arch = Arch::X86_64;
 }
 
-impl System for WindowsAmd64 {
+impl System for WindowsX86_64 {
     fn os(&self) -> OS {
         Self::OS
     }
@@ -175,5 +175,5 @@ mod tests {
         }
     }
 
-    const WINDOWS_X86_64: WindowsAmd64 = WindowsAmd64 {};
+    const WINDOWS_X86_64: WindowsX86_64 = WindowsX86_64 {};
 }

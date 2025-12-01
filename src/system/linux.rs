@@ -1,13 +1,13 @@
 use crate::github::release::Asset;
 use crate::system::core::{Arch, System, OS};
 
-pub struct LinuxAmd64;
-impl LinuxAmd64 {
+pub struct LinuxX86_64;
+impl LinuxX86_64 {
     const OS: OS = OS::Linux;
     const ARCH: Arch = Arch::X86_64;
 }
 
-impl System for LinuxAmd64 {
+impl System for LinuxX86_64 {
     fn os(&self) -> OS {
         Self::OS
     }
@@ -117,7 +117,7 @@ mod tests {
     fn asset_found() {
         let asset = any_asset("mypackage-x86_64-unknown-linux-musl.tar.gz");
 
-        let result = matches(LinuxAmd64::OS, LinuxAmd64::ARCH, &asset);
+        let result = matches(LinuxX86_64::OS, LinuxX86_64::ARCH, &asset);
 
         assert!(result)
     }
@@ -126,7 +126,7 @@ mod tests {
     fn found_by_arch_alias() {
         let asset = any_asset("mypackage-linux-amd64.tar.gz");
 
-        let result = matches(LinuxAmd64::OS, LinuxAmd64::ARCH, &asset);
+        let result = matches(LinuxX86_64::OS, LinuxX86_64::ARCH, &asset);
 
         assert!(result)
     }
@@ -144,7 +144,7 @@ mod tests {
     fn find_asset_case_insensitive() {
         let asset = any_asset("mypackage-X86_64-unknown-LiNuX-musl.tar.gz");
 
-        let result = matches(LinuxAmd64::OS, LinuxAmd64::ARCH, &asset);
+        let result = matches(LinuxX86_64::OS, LinuxX86_64::ARCH, &asset);
 
         assert!(result)
     }
@@ -181,7 +181,7 @@ mod tests {
     fn found_by_asset_extension_and_arch() {
         let asset = any_asset("mypackage-amd64.AppImage");
 
-        let result = matches(LinuxAmd64::OS, LinuxAmd64::ARCH, &asset);
+        let result = matches(LinuxX86_64::OS, LinuxX86_64::ARCH, &asset);
 
         assert!(result)
     }
@@ -191,7 +191,7 @@ mod tests {
     fn not_found_by_asset_extension_without_arch() {
         let asset = any_asset("mypackage.AppImage");
 
-        let result = matches(LinuxAmd64::OS, LinuxAmd64::ARCH, &asset);
+        let result = matches(LinuxX86_64::OS, LinuxX86_64::ARCH, &asset);
 
         assert!(!result);
     }

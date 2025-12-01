@@ -1,13 +1,13 @@
 use crate::github::release::Asset;
 use crate::system::core::{Arch, System, OS};
 
-pub struct MacOSAmd64;
-impl MacOSAmd64 {
+pub struct MacOSX86_64;
+impl MacOSX86_64 {
     const OS: OS = OS::Mac;
     const ARCH: Arch = Arch::X86_64;
 }
 
-impl System for MacOSAmd64 {
+impl System for MacOSX86_64 {
     fn os(&self) -> OS {
         Self::OS
     }
