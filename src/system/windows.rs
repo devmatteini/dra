@@ -27,10 +27,7 @@ impl System for WindowsX86_64 {
 }
 
 fn is_same_os(os: OS, asset_name: &str) -> bool {
-    if asset_name.contains(os.as_str()) {
-        return true;
-    }
-    let aliases = vec!["win64", "win-64bit"];
+    let aliases = vec![os.as_str(), "win64", "win-64bit"];
     aliases.into_iter().any(|alias| asset_name.contains(alias))
 }
 

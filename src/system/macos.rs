@@ -52,10 +52,7 @@ fn matches(os: OS, arch: Arch, asset: &Asset) -> bool {
 }
 
 fn is_same_os(os: OS, asset_name: &str) -> bool {
-    if asset_name.contains(os.as_str()) {
-        return true;
-    }
-    let aliases = vec!["darwin", "apple", "osx"];
+    let aliases = vec![os.as_str(), "darwin", "apple", "osx"];
     aliases.into_iter().any(|alias| asset_name.contains(alias))
 }
 
