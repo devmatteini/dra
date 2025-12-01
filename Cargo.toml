@@ -27,7 +27,7 @@ indicatif = "0.18.0"
 uuid = { version = "1.16.0", features = ["v4"] }
 ctrlc = "3.4.7"
 walkdir = "2.5.0"
-zip = { version = "2.6.1", default-features = false, features = ["deflate"] }
+zip = { version = "6.0.0", default-features = false, features = ["deflate"] }
 flate2 = { version = "1.1.2", features = ["zlib"] }
 tar = "0.4.44"
 xz2 = "0.1.7"
