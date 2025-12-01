@@ -187,12 +187,7 @@ impl DownloadHandler {
                 )
                 .map_err(|x| HandlerError::new(x.to_string()))?;
 
-                std::fs::remove_file(path).map_err(|x| {
-                    HandlerError::new(format!(
-                        "Unable to delete temporary file after installation: {}",
-                        x
-                    ))
-                })?;
+                remove_temporary_file(path)?;
 
                 let message = format!(
                     "{}\n{}",
@@ -337,6 +332,11 @@ fn save_to_file_error(asset_name: &str, output_path: &Path, error: std::io::Erro
 fn cwd() -> Result<PathBuf, HandlerError> {
     std::env::current_dir()
         .map_err(|x| HandlerError::new(format!("Error retrieving current directory: {}", x)))
+}
+
+fn remove_temporary_file(path: &Path) -> Result<(), HandlerError> {
+    std::fs::remove_file(path)
+        .map_err(|x| HandlerError::new(format!("Unable to delete temporary file: {}", x)))
 }
 
 #[cfg(test)]
