@@ -1,5 +1,5 @@
 use crate::github::release::Asset;
-use crate::system::core::System;
+use crate::system::core::{Arch, System, OS};
 use crate::system::{linux, macos, windows};
 use linux::{LinuxAmd64, LinuxArm64, LinuxArmV6};
 use macos::{MacOSAmd64, MacOSArm64};
@@ -16,7 +16,7 @@ pub enum SupportedSystem {
 }
 
 impl System for SupportedSystem {
-    fn os(&self) -> &str {
+    fn os(&self) -> OS {
         match self {
             SupportedSystem::LinuxAmd64(system) => system.os(),
             SupportedSystem::LinuxArmV6(system) => system.os(),
@@ -27,7 +27,7 @@ impl System for SupportedSystem {
         }
     }
 
-    fn arch(&self) -> &str {
+    fn arch(&self) -> Arch {
         match self {
             SupportedSystem::LinuxAmd64(system) => system.arch(),
             SupportedSystem::LinuxArmV6(system) => system.arch(),

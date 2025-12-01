@@ -1,17 +1,17 @@
 use crate::github::release::Asset;
-use crate::system::core::System;
+use crate::system::core::{Arch, System, OS};
 
 pub struct LinuxAmd64;
 impl LinuxAmd64 {
-    const OS: &'static str = "linux";
-    const ARCH: &'static str = "x86_64";
+    const OS: OS = OS::Linux;
+    const ARCH: Arch = Arch::X86_64;
 }
 
 impl System for LinuxAmd64 {
-    fn os(&self) -> &str {
+    fn os(&self) -> OS {
         Self::OS
     }
-    fn arch(&self) -> &str {
+    fn arch(&self) -> Arch {
         Self::ARCH
     }
     fn matches(&self, asset: &Asset) -> bool {
@@ -24,15 +24,15 @@ impl System for LinuxAmd64 {
 
 pub struct LinuxArmV6;
 impl LinuxArmV6 {
-    const OS: &'static str = "linux";
-    const ARCH: &'static str = "arm";
+    const OS: OS = OS::Linux;
+    const ARCH: Arch = Arch::ArmV6;
 }
 
 impl System for LinuxArmV6 {
-    fn os(&self) -> &str {
+    fn os(&self) -> OS {
         Self::OS
     }
-    fn arch(&self) -> &str {
+    fn arch(&self) -> Arch {
         Self::ARCH
     }
     fn matches(&self, asset: &Asset) -> bool {
@@ -45,15 +45,15 @@ impl System for LinuxArmV6 {
 
 pub struct LinuxArm64;
 impl LinuxArm64 {
-    const OS: &'static str = "linux";
-    const ARCH: &'static str = "aarch64";
+    const OS: OS = OS::Linux;
+    const ARCH: Arch = Arch::Arm64;
 }
 
 impl System for LinuxArm64 {
-    fn os(&self) -> &str {
+    fn os(&self) -> OS {
         Self::OS
     }
-    fn arch(&self) -> &str {
+    fn arch(&self) -> Arch {
         Self::ARCH
     }
     fn matches(&self, asset: &Asset) -> bool {
@@ -64,7 +64,7 @@ impl System for LinuxArm64 {
     }
 }
 
-fn matches(os: &str, arch: &str, asset: &Asset) -> bool {
+fn matches(os: OS, arch: Arch, asset: &Asset) -> bool {
     let asset_name = asset.name.to_lowercase();
     let same_arch = is_same_arch(arch, &asset_name);
     let is_same_system = is_same_os(os, &asset_name) && same_arch;
@@ -72,19 +72,15 @@ fn matches(os: &str, arch: &str, asset: &Asset) -> bool {
     is_same_system || is_same_arch_and_extension
 }
 
-fn is_same_os(os: &str, asset_name: &str) -> bool {
-    asset_name.contains(os)
+fn is_same_os(os: OS, asset_name: &str) -> bool {
+    asset_name.contains(os.as_str())
 }
 
-fn is_same_arch(arch: &str, asset_name: &str) -> bool {
-    if asset_name.contains(arch) {
-        return true;
-    }
+fn is_same_arch(arch: Arch, asset_name: &str) -> bool {
     let aliases: Vec<&str> = match arch {
-        "x86_64" => vec!["amd64", "x64"],
-        "aarch64" => vec!["arm64"],
-        "arm" => vec!["armv6", "armv7"],
-        _ => return false,
+        Arch::X86_64 => vec!["x86_64", "amd64", "x64"],
+        Arch::Arm64 => vec!["aarch64", "arm64"],
+        Arch::ArmV6 => vec!["arm", "armv6", "armv7"],
     };
     aliases.into_iter().any(|alias| asset_name.contains(alias))
 }

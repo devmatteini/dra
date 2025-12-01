@@ -22,6 +22,7 @@ fn skip_ignored_asset(asset: &Asset) -> bool {
 #[cfg(test)]
 mod acceptance_tests {
     use super::*;
+    use crate::system::core::{Arch, OS};
 
     #[test]
     fn asset_found() {
@@ -58,11 +59,11 @@ mod acceptance_tests {
         asset: String,
     }
     impl System for FixedAssetSystem {
-        fn os(&self) -> &str {
-            "any"
+        fn os(&self) -> OS {
+            OS::Linux
         }
-        fn arch(&self) -> &str {
-            "any"
+        fn arch(&self) -> Arch {
+            Arch::X86_64
         }
         fn matches(&self, asset: &Asset) -> bool {
             self.asset == asset.name
