@@ -1,5 +1,5 @@
 use crate::github::release::Asset;
-use crate::system::core::{Arch, System, OS};
+use crate::system::core::{Arch, OS, System};
 
 pub struct MacOSX86_64;
 impl MacOSX86_64 {
