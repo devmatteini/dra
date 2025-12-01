@@ -3,12 +3,10 @@ mod docker;
 mod fs;
 
 mod install {
-    use std::process::Command;
     use test_case::test_case;
 
     use crate::fs::{any_temp_dir, path_to_string};
-    use assert_cmd::assert::OutputAssertExt;
-    use assert_cmd::prelude::CommandCargoExt;
+    use assert_cmd::cargo_bin_cmd;
 
     use crate::assertions::{assert_file_exists, assert_file_not_exists};
 
@@ -26,7 +24,7 @@ mod install {
     fn installed_successfully(asset: &str, expected_executable: &str) {
         let output_dir = any_temp_dir();
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -54,7 +52,7 @@ mod install {
     fn installed_successfully(asset: &str, expected_executable: &str) {
         let output_dir = any_temp_dir();
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -75,7 +73,7 @@ mod install {
     fn no_executable() {
         let output_dir = path_to_string(any_temp_dir());
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -97,7 +95,7 @@ mod install {
         let expected_installed_file = temp_dir.join(file);
         let output_dir = path_to_string(temp_dir);
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -120,7 +118,7 @@ mod install {
         let expected_installed_file = temp_dir.join(file);
         let output_dir = path_to_string(temp_dir);
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -144,7 +142,7 @@ mod install {
         let exec1 = "random-script";
         let exec2 = "helloworld-v2";
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -171,7 +169,7 @@ mod install {
         let exec1 = "random-script.exe";
         let exec2 = "helloworld-v2.exe";
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -198,7 +196,7 @@ mod install {
         let exec1 = "wrong-exec";
         let exec2 = "helloworld-v2";
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -226,7 +224,7 @@ mod install {
         let exec1 = "wrong-exec.exe";
         let exec2 = "helloworld-v2.exe";
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -249,13 +247,13 @@ mod install {
 
 mod download {
     use crate::fs::{any_temp_dir, any_temp_file, path_to_string};
-    use assert_cmd::Command;
+    use assert_cmd::cargo_bin_cmd;
 
     #[test]
     fn download_source_code_successfully() {
         let output_file = path_to_string(any_temp_file("dra-tests-src"));
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -272,7 +270,7 @@ mod download {
     fn cannot_use_display_name_to_select_asset() {
         let output_file = path_to_string(any_temp_file("dra-tests-any"));
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         let result = cmd
             .arg("download")
@@ -291,7 +289,7 @@ mod download {
     fn automatic_download() {
         let temp_dir = any_temp_dir();
 
-        let mut cmd = Command::cargo_bin("dra").unwrap();
+        let mut cmd = cargo_bin_cmd!("dra");
 
         cmd.current_dir(&temp_dir)
             .arg("download")
