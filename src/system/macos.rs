@@ -76,8 +76,15 @@ const ARCHIVES: [&str; 7] = [".gz", ".tgz", ".bz2", ".tbz", ".xz", ".txz", ".zip
 
 fn asset_priority(a: &Asset) -> i32 {
     let is_archive = ARCHIVES.iter().any(|x| a.name.ends_with(x));
+    let is_dmg = a.name.ends_with(".dmg");
 
-    if is_archive { 1 } else { 2 }
+    if is_archive {
+        1
+    } else if is_dmg {
+        2
+    } else {
+        3
+    }
 }
 
 #[cfg(test)]
