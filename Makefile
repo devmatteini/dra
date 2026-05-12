@@ -22,7 +22,7 @@ test:
 
 test-w:
 # only unit tests
-	cargo watch -x "test --bins"
+	bacon test -- --bins
 
 # NOTE: we cannot run this tests with cross
 integration-tests:
