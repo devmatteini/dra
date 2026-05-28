@@ -79,6 +79,7 @@ fn file_type_for(file: &FileInfo) -> Option<FileType> {
         return Some(FileType::SevenZipArchive);
     }
     if is_elf_file(&file.path)
+        || is_macho_file(&file.path)
         || Path::new(&file_name).extension().is_none()
         || file_name.ends_with(".appimage")
         || file_name.ends_with(".exe")
@@ -103,6 +104,30 @@ fn check_elf_file(path: &Path) -> std::io::Result<bool> {
     file.read_exact(&mut header)?;
 
     Ok(header == ELF_MAGIC_NUMBER)
+}
+
+fn is_macho_file(path: &Path) -> bool {
+    check_macho_file(path).unwrap_or(false)
+}
+
+// https://en.wikipedia.org/wiki/Mach-O
+const MACHO_MAGIC_32_BIG_ENDIAN: [u8; 4] = [0xFE, 0xED, 0xFA, 0xCE];
+const MACHO_MAGIC_64_BIG_ENDIAN: [u8; 4] = [0xFE, 0xED, 0xFA, 0xCF];
+const MACHO_MAGIC_32_LITTLE_ENDIAN: [u8; 4] = [0xCE, 0xFA, 0xED, 0xFE];
+const MACHO_MAGIC_64_LITTLE_ENDIAN: [u8; 4] = [0xCF, 0xFA, 0xED, 0xFE];
+const MACHO_MAGIC_FAT: [u8; 4] = [0xCA, 0xFE, 0xBA, 0xBE];
+
+fn check_macho_file(path: &Path) -> std::io::Result<bool> {
+    let mut file = std::fs::File::open(path)?;
+    let mut header = [0u8; 4];
+
+    file.read_exact(&mut header)?;
+
+    Ok(header == MACHO_MAGIC_32_BIG_ENDIAN
+        || header == MACHO_MAGIC_64_BIG_ENDIAN
+        || header == MACHO_MAGIC_32_LITTLE_ENDIAN
+        || header == MACHO_MAGIC_64_LITTLE_ENDIAN
+        || header == MACHO_MAGIC_FAT)
 }
 
 impl Display for Compression {
@@ -131,7 +156,8 @@ mod tests {
     use test_case::test_case;
 
     use super::{
-        Compression, ELF_MAGIC_NUMBER, FileInfo, FileType, SupportedFileInfo, validate_file,
+        Compression, ELF_MAGIC_NUMBER, FileInfo, FileType, MACHO_MAGIC_64_BIG_ENDIAN,
+        SupportedFileInfo, validate_file,
     };
     use crate::installer::error::InstallError;
 
@@ -167,6 +193,15 @@ mod tests {
         assert_ok_equal(FileType::ExecutableFile, result);
     }
 
+    #[test]
+    fn supported_macos_binary_file() {
+        let file_info = create_macho_file("file.macho");
+
+        let result = validate_file(file_info);
+
+        assert_ok_equal(FileType::ExecutableFile, result);
+    }
+
     #[test_case("file.txt")]
     fn not_supported(file_name: &str) {
         let file_info = any_file_info(file_name);
@@ -192,6 +227,21 @@ mod tests {
 
         let mut file = std::fs::File::create(&path).unwrap();
         file.write_all(&ELF_MAGIC_NUMBER).unwrap();
+
+        FileInfo {
+            path,
+            name: file_name.to_string(),
+        }
+    }
+
+    fn create_macho_file(file_name: &str) -> FileInfo {
+        let temp_dir = std::env::temp_dir().join("dra-file-macho-tests");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        let path = temp_dir.join(file_name);
+
+        let mut file = std::fs::File::create(&path).unwrap();
+        file.write_all(&MACHO_MAGIC_64_BIG_ENDIAN).unwrap();
 
         FileInfo {
             path,
