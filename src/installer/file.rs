@@ -186,7 +186,7 @@ mod tests {
 
     #[test]
     fn supported_elf_file() {
-        let file_info = create_elf_file("file");
+        let file_info = create_elf_file("file.elf");
 
         let result = validate_file(file_info);
 
