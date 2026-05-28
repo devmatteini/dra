@@ -7,6 +7,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-05-28
+
+### Fixed
+
+- Install feature detects macOS specific executables properly when they are released as
+  assets without an archive ([#351](https://github.com/devmatteini/dra/issues/351))
+
+### Updated dependencies
+
+- bump `uuid` from 1.18.1 to 1.19.0
+- bump `clap_complete` from 4.5.61 to 4.5.64
+
 ## [0.10.1] - 2026-01-02
 
 ### Fixed
