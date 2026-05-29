@@ -29,7 +29,7 @@ ctrlc = "3.5.1"
 walkdir = "2.5.0"
 zip = { version = "6.0.0", default-features = false, features = ["deflate"] }
 flate2 = "1.1.5"
-tar = "0.4.44"
+tar = "0.4.46"
 xz2 = { version = "0.1.7", features = ["static"] }
 bzip2 = { version = "0.6.1", features = ["static"] }
 urlencoding = "2.1.3"
