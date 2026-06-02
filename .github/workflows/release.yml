@@ -14,7 +14,7 @@ jobs:
     if: github.repository_owner == 'devmatteini'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
 
       - name: Get the release version from the tag
         run: |
@@ -67,7 +67,7 @@ jobs:
             target: x86_64-pc-windows-msvc
             use-cross: false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
 
       - name: Get the release version from the tag
         shell: bash
@@ -83,11 +83,12 @@ jobs:
           esac
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
         with:
+          toolchain: "stable"
           targets: "${{ matrix.job.target }}"
 
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@873c7452cadb7c034694a1282227095d93fbdf92 # 2.79.14
         if: matrix.job.use-cross == true
         with:
           tool: cross

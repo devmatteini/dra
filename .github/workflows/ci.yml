@@ -23,10 +23,11 @@ jobs:
   format-check:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
         with:
+          toolchain: "stable"
           components: "rustfmt"
       - name: Format check
         run: make format-check
@@ -46,14 +47,15 @@ jobs:
           - os: windows
             runner: windows-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
         with:
+          toolchain: "stable"
           components: "clippy"
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # 2.9.1
         if: ${{ github.event_name != 'pull_request' }}
 
       - name: Build
@@ -113,15 +115,16 @@ jobs:
             target: x86_64-apple-darwin
             use-cross: false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
         with:
+          toolchain: "stable"
           targets: "${{ matrix.job.target }}"
           components: "clippy"
 
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@873c7452cadb7c034694a1282227095d93fbdf92 # 2.79.14
         if: matrix.job.use-cross == true
         with:
           tool: cross
