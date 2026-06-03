@@ -136,7 +136,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cargo install cargo-deb
+          cargo install --version 3.7.0 --locked cargo-deb
           deb_file=$(./scripts/create-deb.sh "$CARGO_TARGET")
 
           ./scripts/upload-github-release-assets.sh "$DRA_VERSION" "$deb_file"
