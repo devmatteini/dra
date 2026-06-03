@@ -49,7 +49,7 @@ lint:
 	cargo clippy --all-targets --all-features
 
 lint-w:
-	cargo watch -x clippy
+	bacon clippy -- --all-targets --all-features
 
 install-components:
 	rustup component add rustfmt clippy
