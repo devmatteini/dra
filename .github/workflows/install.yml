@@ -7,16 +7,19 @@ on:
       - main
     paths:
       - "install.sh"
-  pull_request:
-    paths:
-      - "install.sh"
+
+permissions:
+  contents: read
 
 # NOTE: always set shell: bash, otherwise on Windows there might be problems!
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
 
       - name: Install Dependencies
         run: |
@@ -30,6 +33,7 @@ jobs:
     name: ${{ matrix.os }}
     needs: [ lint ]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
     strategy:
       fail-fast: false
       matrix:
@@ -39,6 +43,8 @@ jobs:
           - windows-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
 
       - name: Test script
         shell: bash
