@@ -160,11 +160,12 @@ mod tests {
     where
         F: FnOnce(&str),
     {
-        if actual.is_ok() {
-            panic!("actual is ok: {:#?}", actual.unwrap())
+        match actual {
+            Ok(value) => {
+                panic!("actual is ok: {:#?}", value)
+            }
+            Err(error) => assert(&error),
         }
-        let error = actual.err().unwrap();
-        assert(&error);
     }
 
     fn assert_contains(expected: &str, actual: &str) {
