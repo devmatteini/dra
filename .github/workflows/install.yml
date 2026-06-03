@@ -40,7 +40,7 @@ jobs:
         os:
           - ubuntu-24.04
           - macos-15
-          - windows-2025
+          - windows-2025-vs2026
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
         with:
