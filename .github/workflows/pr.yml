@@ -42,9 +42,9 @@ jobs:
           - os: linux
             runner: ubuntu-24.04
           - os: macos-arm64
-            runner: macos-latest
+            runner: macos-15
           - os: windows
-            runner: windows-latest
+            runner: windows-2025
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
         with:
