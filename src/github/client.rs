@@ -40,6 +40,7 @@ impl GithubClient {
     ) -> ureq::RequestBuilder<ureq::typestate::WithoutBody> {
         let agent: ureq::Agent = ureq::Agent::config_builder()
             .timeout_global(timeout)
+            .timeout_connect(Some(Duration::from_secs(5)))
             .build()
             .into();
 
