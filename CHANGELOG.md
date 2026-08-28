@@ -7,6 +7,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.10.3] - 2026-08-28
+
+### Fixed
+
+- Set connection timeout to allow DNS failover ([#358](https://github.com/devmatteini/dra/issues/358)), thanks
+  @plutonium-239!
+
+### Updated dependencies
+
+- bump `zip` from 6.0.0 to 8.6.0
+- bump `uuid` from 1.19.0 to 1.23.2
+- bump `url` from 2.5.7 to 2.5.8
+- bump `ureq` from 3.1.4 to 3.3.0
+- bump `tar` from 0.4.44 to 0.4.46
+- bump `predicates` from 3.1.3 to 3.1.4
+- bump `indicatif` from 0.18.3 to 0.18.4
+- bump `flate2` from 1.1.5 to 1.1.9
+- bump `clap` from 4.5.53 to 4.6.1
+- bump `clap_complete` from 4.5.64 to 4.6.5
+- bump `assert_cmd` from 2.1.1 to 2.2.2
+
 ## [0.10.2] - 2026-05-28
 
 ### Fixed
